@@ -1,0 +1,140 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "path": "dataset-sha256.txt",
+      "bytes": 3876,
+      "sha256": "6a9cb91bb05874444dd58214eb0a3123d090b38637b4aaa622dcf530393ce4a9"
+    },
+    {
+      "path": "graph-mindgraph-run-1.txt",
+      "bytes": 7091,
+      "sha256": "3d7a0f2b12842b471904ed865427f27231887d9f7dc8ac8d43b6f416b7a26b3a"
+    },
+    {
+      "path": "graph-mindgraph-run-2.txt",
+      "bytes": 7093,
+      "sha256": "336eda42d48b195d8ade28abca560fa8295e5c2d4a79ba36a84eaa5d9d87d0a0"
+    },
+    {
+      "path": "graph-mindgraph-run-3.txt",
+      "bytes": 7092,
+      "sha256": "9cf3acc504b2039c589980a0aa86605c9b66b729e0dab4831dd04493667be460"
+    },
+    {
+      "path": "graph-mindgraph-run-4.txt",
+      "bytes": 7092,
+      "sha256": "e90718730312a2a1f5673f8a8981760912129491d6fa100414ce6b80d66dde2c"
+    },
+    {
+      "path": "graph-mindgraph-run-5.txt",
+      "bytes": 7091,
+      "sha256": "fe5e66009a7f900e851c2467abb3a1ad0388a79058f8223ccdd1ca9c88f0d9dd"
+    },
+    {
+      "path": "graph-mindgraph-warmup.txt",
+      "bytes": 7092,
+      "sha256": "aa4b9ae2302f2ee77ad40983e4acd4737adcc3aa05181c5fc13f4a1cc61ba87a"
+    },
+    {
+      "path": "graph-upstream-run-1.txt",
+      "bytes": 7092,
+      "sha256": "448e0e75bb2ed3251ec9d24b39706de3a32392bd17b8027b2cb6c639787cb44a"
+    },
+    {
+      "path": "graph-upstream-run-2.txt",
+      "bytes": 7092,
+      "sha256": "b1e76542335e08d82df0d20e4813b8a3dfa9691c9d9a190bd4f4d21567a46eaa"
+    },
+    {
+      "path": "graph-upstream-run-3.txt",
+      "bytes": 7091,
+      "sha256": "83dc82172de1657230e10ad2acdf5efdd30be90885b6aab755d12f8615571a8e"
+    },
+    {
+      "path": "graph-upstream-run-4.txt",
+      "bytes": 7090,
+      "sha256": "9dbf59b86b0fb4da7c752579fe84340bf6f6a5e2ab556e2ed1f98cbea278d280"
+    },
+    {
+      "path": "graph-upstream-run-5.txt",
+      "bytes": 7092,
+      "sha256": "9eaa7edde3f3e74cd30337a3bf3393ffd5d74644854475012fed1b44a6fa54de"
+    },
+    {
+      "path": "graph-upstream-warmup.txt",
+      "bytes": 7091,
+      "sha256": "1dcf8aa1c57f703ee127595e16bebe45ee97626fed732d1d0a4e148a25e5845f"
+    },
+    {
+      "path": "lsqb-mindgraph-run-1.txt",
+      "bytes": 2797,
+      "sha256": "9796a2096a55f44e551977e1f11f371cc94b2e2fc00f6d17c85f8318c6fe7c8b"
+    },
+    {
+      "path": "lsqb-mindgraph-run-2.txt",
+      "bytes": 2800,
+      "sha256": "7eaea46bf03939a59d9241dd788439b294842bfe09de08421611ee840637323e"
+    },
+    {
+      "path": "lsqb-mindgraph-run-3.txt",
+      "bytes": 2800,
+      "sha256": "d999b0aced4c7d68a24aac92c432f5b601a24f9b33be912aa18dbbfa8f0e7136"
+    },
+    {
+      "path": "lsqb-mindgraph-run-4.txt",
+      "bytes": 2798,
+      "sha256": "4e150bbb8e5b6b824383f8acad86caef1c3c244228d47ba7dea2b810379897c2"
+    },
+    {
+      "path": "lsqb-mindgraph-run-5.txt",
+      "bytes": 2798,
+      "sha256": "dd8cd3030a061f40387692af0833e22f0da6a8b39aa15ae008f1cc4b6d8c7987"
+    },
+    {
+      "path": "lsqb-mindgraph-warmup.txt",
+      "bytes": 5668,
+      "sha256": "c237f45f9f0246105390bb48df6379c25b9218aa1ecc12dda2003bc34e4f89b4"
+    },
+    {
+      "path": "lsqb-upstream-run-1.txt",
+      "bytes": 2797,
+      "sha256": "e79b919b7309399766f0d26ca617b6ebb30a68f42293695199fb6db8057cb79f"
+    },
+    {
+      "path": "lsqb-upstream-run-2.txt",
+      "bytes": 2797,
+      "sha256": "bb2f1cb9053fae56a0d05734c4b876d371ac751f75d5050cb1b4873472be2ff9"
+    },
+    {
+      "path": "lsqb-upstream-run-3.txt",
+      "bytes": 2799,
+      "sha256": "67978d6363edf3b7adf71c0573a5a71cbba3f87d6d91b63774c6c93b3174c13b"
+    },
+    {
+      "path": "lsqb-upstream-run-4.txt",
+      "bytes": 2797,
+      "sha256": "0b92601bb924a85b9fa275bb565eab0c8d41282723bbe0fcd529de27009870fa"
+    },
+    {
+      "path": "lsqb-upstream-run-5.txt",
+      "bytes": 2798,
+      "sha256": "e34ffa45ff1bbd71a8445892527f6faccc9abf0d83e57c23efb359648c653d11"
+    },
+    {
+      "path": "lsqb-upstream-warmup.txt",
+      "bytes": 5669,
+      "sha256": "675fbc830136285590c698180416d505b352896b1e723b9fed867840d783fce5"
+    },
+    {
+      "path": "olap-mindgraph.txt",
+      "bytes": 8912,
+      "sha256": "44b53f3fda9957769d3808cd94a778181be3670203ef07f31b4b09c4e1e25efc"
+    },
+    {
+      "path": "olap-upstream.txt",
+      "bytes": 9092,
+      "sha256": "e3541ea26f6ee9aa6e4a89f039d1defd77b88204683895fb96657b25e0f8c27d"
+    }
+  ]
+}

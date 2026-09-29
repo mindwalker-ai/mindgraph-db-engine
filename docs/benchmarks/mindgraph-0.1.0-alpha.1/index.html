@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>MindGraph reproducible graph benchmark</title>
+  <style>
+    :root {
+      --ink-950: #07111f;
+      --ink-900: #0b1728;
+      --ink-850: #102036;
+      --ink-800: #162940;
+      --ink-700: #28405b;
+      --ink-400: #8ea5bd;
+      --ink-200: #cbd8e6;
+      --paper: #edf5fb;
+      --signal: #21d7c5;
+      --signal-strong: #05ae9f;
+      --amber: #f6b94a;
+      --danger: #f06a6a;
+      --radius: 12px;
+      --shadow: 0 24px 64px rgba(1, 9, 18, .32);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      min-height: 100dvh;
+      color: var(--paper);
+      background:
+        radial-gradient(circle at 88% -10%, rgba(33, 215, 197, .13), transparent 34rem),
+        radial-gradient(circle at -8% 30%, rgba(246, 185, 74, .08), transparent 30rem),
+        var(--ink-950);
+      font-family: "Avenir Next", Avenir, "Segoe UI", sans-serif;
+      line-height: 1.5;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: .16;
+      background-image: linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: linear-gradient(to bottom, black, transparent 72%);
+    }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    button:focus-visible, a:focus-visible { outline: 3px solid var(--amber); outline-offset: 3px; }
+    .shell { width: min(1280px, calc(100% - 48px)); margin: 0 auto; padding: 48px 0 96px; position: relative; }
+    .eyebrow, .mono { font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace; }
+    .eyebrow { color: var(--signal); font-size: 12px; letter-spacing: .16em; text-transform: uppercase; font-weight: 700; }
+    .hero { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(280px, .7fr); gap: 48px; align-items: end; padding: 48px 0 40px; }
+    h1 { font-size: clamp(42px, 7vw, 88px); line-height: .98; letter-spacing: -.055em; margin: 16px 0 24px; max-width: 900px; }
+    .lead { color: var(--ink-200); font-size: clamp(17px, 2vw, 21px); max-width: 760px; margin: 0; }
+    .release-card { background: linear-gradient(145deg, rgba(22, 41, 64, .92), rgba(11, 23, 40, .8)); border: 1px solid rgba(142, 165, 189, .2); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); }
+    .release-card dl { margin: 20px 0 0; display: grid; gap: 12px; }
+    .release-card div { display: grid; grid-template-columns: 96px 1fr; gap: 16px; }
+    dt { color: var(--ink-400); font-size: 12px; text-transform: uppercase; letter-spacing: .08em; }
+    dd { margin: 0; overflow-wrap: anywhere; }
+    .status { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; }
+    .status::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--signal); box-shadow: 0 0 18px var(--signal); }
+    .status.partial::before { background: var(--amber); box-shadow: 0 0 18px var(--amber); }
+    .status.failed::before { background: var(--danger); box-shadow: 0 0 18px var(--danger); }
+    .kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin: 8px 0 48px; }
+    .kpi { background: rgba(16, 32, 54, .68); border-top: 2px solid var(--signal); padding: 24px; min-height: 152px; }
+    .kpi:nth-child(3), .kpi:nth-child(4) { border-top-color: var(--amber); }
+    .kpi strong { display: block; font-size: clamp(28px, 4vw, 48px); line-height: 1; letter-spacing: -.04em; margin: 12px 0; }
+    .kpi span { color: var(--ink-400); font-size: 14px; }
+    .tabs { display: flex; gap: 8px; overflow-x: auto; padding: 8px 0 24px; scrollbar-width: thin; }
+    .tab { min-height: 44px; padding: 0 18px; border-radius: 999px; border: 1px solid var(--ink-700); background: transparent; color: var(--ink-200); font: inherit; font-weight: 650; cursor: pointer; white-space: nowrap; transition: background 160ms ease, color 160ms ease, border-color 160ms ease; }
+    .tab:hover { border-color: var(--signal); color: var(--paper); }
+    .tab:active { background: var(--ink-800); }
+    .tab[aria-selected="true"] { background: var(--signal); border-color: var(--signal); color: var(--ink-950); }
+    .suite { display: none; }
+    .suite.active { display: block; animation: reveal 220ms ease-out; }
+    @keyframes reveal { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .suite-head { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 24px; align-items: start; margin: 16px 0 24px; }
+    h2 { font-size: clamp(28px, 4vw, 44px); line-height: 1.1; letter-spacing: -.035em; margin: 0 0 12px; }
+    .suite-head p { color: var(--ink-400); max-width: 760px; margin: 0; }
+    .toggle { display: flex; background: var(--ink-900); border: 1px solid var(--ink-700); border-radius: 999px; padding: 4px; }
+    .toggle button { min-height: 40px; padding: 0 16px; border: 0; border-radius: 999px; background: transparent; color: var(--ink-400); cursor: pointer; font: inherit; font-size: 13px; font-weight: 700; }
+    .toggle button.active { color: var(--paper); background: var(--ink-700); }
+    .chart-card { background: rgba(11, 23, 40, .84); border: 1px solid rgba(142, 165, 189, .18); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); }
+    .legend { display: flex; flex-wrap: wrap; gap: 16px 24px; margin-bottom: 32px; }
+    .legend-item { display: inline-flex; align-items: center; gap: 8px; color: var(--ink-200); font-size: 13px; }
+    .legend-swatch { width: 22px; height: 8px; border-radius: 999px; background: var(--series-color); }
+    .legend-item.reference .legend-swatch { background: repeating-linear-gradient(90deg, var(--series-color) 0 5px, transparent 5px 8px); border: 1px solid var(--series-color); }
+    .metric-grid { display: grid; gap: 24px; }
+    .metric { display: grid; grid-template-columns: minmax(120px, 180px) minmax(0, 1fr); gap: 24px; align-items: center; }
+    .metric-name { font-weight: 700; }
+    .metric-id { color: var(--ink-400); font-size: 12px; display: block; margin-top: 4px; }
+    .bars { display: grid; gap: 8px; }
+    .bar-row { display: grid; grid-template-columns: minmax(0, 1fr) 96px; gap: 16px; align-items: center; min-height: 32px; }
+    .bar-track { height: 14px; background: rgba(142, 165, 189, .12); border-radius: 999px; overflow: hidden; }
+    .bar { height: 100%; width: max(3px, calc(var(--bar-size) * 1%)); border-radius: inherit; background: var(--series-color); transition: width 280ms ease; }
+    .bar.reference { background: repeating-linear-gradient(90deg, var(--series-color) 0 6px, transparent 6px 10px); border: 1px solid var(--series-color); }
+    .bar-value { font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace; font-variant-numeric: tabular-nums; text-align: right; color: var(--paper); font-size: 13px; }
+    .validation { margin: 24px 0 0; padding: 16px 20px; border-left: 3px solid var(--signal); background: rgba(33, 215, 197, .07); color: var(--ink-200); }
+    .validation.partial { border-left-color: var(--amber); background: rgba(246, 185, 74, .07); }
+    .table-wrap { overflow-x: auto; margin-top: 24px; border-radius: var(--radius); border: 1px solid rgba(142, 165, 189, .16); }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 720px; }
+    th { color: var(--ink-400); text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .08em; font-weight: 700; background: var(--ink-900); }
+    th, td { padding: 12px 16px; border-bottom: 1px solid rgba(142, 165, 189, .12); }
+    th:not(:first-child), td:not(:first-child) { text-align: right; font-variant-numeric: tabular-nums; }
+    .cell-detail { display: block; margin-top: 3px; color: var(--ink-400); font-size: 11px; white-space: nowrap; }
+    tbody tr:hover td { background: rgba(33, 215, 197, .04); }
+    .methodology { margin-top: 64px; display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(300px, .7fr); gap: 24px; }
+    .panel { background: rgba(16, 32, 54, .6); border-radius: var(--radius); padding: 24px; }
+    .panel h3 { margin: 0 0 16px; font-size: 20px; }
+    .panel ul { margin: 0; padding-left: 20px; color: var(--ink-200); }
+    .panel li + li { margin-top: 8px; }
+    .environment { display: grid; grid-template-columns: 120px 1fr; gap: 12px 16px; margin: 0; }
+    .artifact-list { display: grid; gap: 8px; margin-top: 16px; }
+    .artifact-list a { color: var(--signal); text-decoration: none; overflow-wrap: anywhere; }
+    .artifact-list a:hover { text-decoration: underline; }
+    footer { color: var(--ink-400); margin-top: 64px; padding-top: 24px; border-top: 1px solid rgba(142, 165, 189, .16); font-size: 13px; }
+    @media (max-width: 900px) {
+      .hero, .methodology { grid-template-columns: 1fr; }
+      .kpis { grid-template-columns: repeat(2, 1fr); }
+      .suite-head { grid-template-columns: 1fr; }
+      .toggle { width: max-content; }
+    }
+    @media (max-width: 620px) {
+      .shell { width: min(100% - 32px, 1280px); padding-top: 24px; }
+      .hero { gap: 32px; padding-top: 32px; }
+      .kpis { grid-template-columns: 1fr; }
+      .metric { grid-template-columns: 1fr; gap: 8px; }
+      .chart-card { padding: 16px; }
+      .bar-row { grid-template-columns: minmax(0, 1fr) 80px; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation: none !important; transition: none !important; } }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="hero">
+      <div>
+        <div class="eyebrow">Reproducible performance evidence</div>
+        <h1 id="page-title"></h1>
+        <p class="lead" id="page-subtitle"></p>
+      </div>
+      <aside class="release-card" aria-label="Benchmark release metadata">
+        <div class="status" id="status-label"></div>
+        <dl id="release-meta"></dl>
+      </aside>
+    </header>
+
+    <section class="kpis" id="kpis" aria-label="Benchmark summary"></section>
+    <nav class="tabs" id="tabs" aria-label="Benchmark suites" role="tablist"></nav>
+    <div id="suite-panels"></div>
+
+    <section class="methodology" id="methodology">
+      <article class="panel">
+        <div class="eyebrow">Methodology</div>
+        <h3>How to interpret this evidence</h3>
+        <ul id="method-list"></ul>
+      </article>
+      <aside class="panel">
+        <div class="eyebrow">Execution environment</div>
+        <h3>Host fingerprint</h3>
+        <dl class="environment" id="environment"></dl>
+        <div class="artifact-list" id="artifacts"></div>
+      </aside>
+    </section>
+    <footer id="footer"></footer>
+  </main>
+  <script id="benchmark-data" type="application/json">{"schemaVersion":1,"title":"MindGraph reproducible graph benchmark","subtitle":"MindGraph and its exact upstream control on one BytePlus host, with ArcadeDB's published numbers shown only as references.","generatedAt":"2026-09-29T18:30:10Z","status":"verified","release":{"version":"0.1.0-alpha.1","commit":"c7ffbdf3e1d154359c6b043b6f8bfdd325e50f55","harnessCommit":"02e1d824a2ff1bfc1574bbdda7cb9b3c2344bfff"},"environment":{"cpu":"Intel(R) Xeon(R) 6986P-C","cpuCount":8,"memoryGiB":31,"java":"openjdk version 21.0.12.1 2026-08-18","os":"Ubuntu 24.04 LTS","jvmHeapGiB":12},"methodology":{"summary":["MindGraph and the exact ArcadeDB upstream commit were built independently and executed sequentially on the same idle host.","The graph algorithm comparison uses the harness native load-once mode on datagen-7_5-fb; LSQB uses SF1 merged-FK; OLAP speedup uses 500K vertices and approximately 8M edges by default.","MindGraph and upstream graph outputs are fingerprinted outside the timed region and must match before the report is marked verified.","Graph algorithm timing reports the median of 5 measured runs after one full warm-up and data-load run.","LSQB reports the median of 5 measured query runs after one full warm-up and data-load run."],"disclosures":["ArcadeDB published references came from arcadedb.com/benchmarks.html and were not measured on this host; its graph chart names graph500-22, so those values are context rather than an apples-to-apples comparison with datagen-7_5-fb.","The graph algorithm section uses the public harness native load-once runner, not an official LDBC audited result or certification.","Embedded results describe engine execution without network overhead and are not application TPS or production sizing claims.","The inherited OLTP-to-OLAP benchmark uses randomized graph generation, so speedup is directional rather than a deterministic conformance value."]},"suites":[{"id":"graphalytics","title":"Graph algorithm execution","description":"Six Graphalytics algorithms on datagen-7_5-fb in the public harness's native load-once mode. Published graph500-22 values are contextual references, not a direct comparison.","unit":"seconds","lowerIsBetter":true,"metrics":[{"id":"PR","label":"PageRank"},{"id":"WCC","label":"Weakly connected components"},{"id":"BFS","label":"Breadth-first search"},{"id":"LCC","label":"Local clustering coefficient"},{"id":"SSSP","label":"Single-source shortest paths"},{"id":"CDLP","label":"Community detection label propagation"}],"series":[{"id":"mindgraph","label":"MindGraph measured","kind":"measured","values":{"PR":{"median":0.472,"min":0.458,"max":0.523,"mean":0.4806,"standardDeviation":0.02255304857441672,"coefficientOfVariationPercent":4.69268592892566,"runs":[0.482,0.458,0.523,0.472,0.468]},"WCC":{"median":0.267,"min":0.258,"max":0.34,"mean":0.2806,"standardDeviation":0.03021655175561898,"coefficientOfVariationPercent":10.76855016237312,"runs":[0.263,0.267,0.258,0.34,0.275]},"BFS":{"median":0.309,"min":0.226,"max":0.329,"mean":0.2874,"standardDeviation":0.041907517225433434,"coefficientOfVariationPercent":14.581599591312955,"runs":[0.329,0.324,0.309,0.226,0.249]},"LCC":{"median":6.285,"min":6.132,"max":6.356,"mean":6.254,"standardDeviation":0.0968648543074318,"coefficientOfVariationPercent":1.5488464072182893,"runs":[6.132,6.147,6.35,6.356,6.285]},"SSSP":{"median":2.188,"min":2.102,"max":2.195,"mean":2.1698,"standardDeviation":0.034706771673551,"coefficientOfVariationPercent":1.5995378225435983,"runs":[2.102,2.173,2.195,2.188,2.191]},"CDLP":{"median":3.883,"min":3.834,"max":3.986,"mean":3.9066,"standardDeviation":0.06053627011965646,"coefficientOfVariationPercent":1.5495896718286095,"runs":[3.97,3.986,3.834,3.883,3.86]}}},{"id":"upstream","label":"ArcadeDB upstream control","kind":"control","values":{"PR":{"median":0.46,"min":0.438,"max":0.479,"mean":0.45899999999999996,"standardDeviation":0.01443606594609486,"coefficientOfVariationPercent":3.1451124065566147,"runs":[0.46,0.479,0.469,0.438,0.449]},"WCC":{"median":0.292,"min":0.265,"max":0.313,"mean":0.2886,"standardDeviation":0.01723484841824841,"coefficientOfVariationPercent":5.971880948804022,"runs":[0.265,0.292,0.313,0.274,0.299]},"BFS":{"median":0.258,"min":0.223,"max":0.276,"mean":0.25620000000000004,"standardDeviation":0.01924993506482555,"coefficientOfVariationPercent":7.513635856684445,"runs":[0.223,0.274,0.276,0.25,0.258]},"LCC":{"median":6.368,"min":6.099,"max":6.501,"mean":6.3176000000000005,"standardDeviation":0.1713097778878953,"coefficientOfVariationPercent":2.7116274833464495,"runs":[6.487,6.368,6.501,6.099,6.133]},"SSSP":{"median":1.827,"min":1.811,"max":2.16,"mean":1.9522,"standardDeviation":0.16489681622153907,"coefficientOfVariationPercent":8.446717355882546,"runs":[2.148,2.16,1.811,1.815,1.827]},"CDLP":{"median":3.895,"min":3.866,"max":3.933,"mean":3.8944,"standardDeviation":0.022285421243494526,"coefficientOfVariationPercent":0.5722427394077271,"runs":[3.897,3.866,3.881,3.933,3.895]}}},{"id":"arcadedb-published","label":"ArcadeDB published reference · graph500-22 / different host","kind":"reference","values":{"PR":0.1,"WCC":0.08,"BFS":0.09,"LCC":2.35,"SSSP":0.92,"CDLP":1.11}}],"validation":{"passed":6,"total":6,"notes":["Output fingerprints matched across all measured runs for MindGraph measured, ArcadeDB upstream control.","This is reproducibility evidence, not official LDBC certification."]}},{"id":"lsqb","title":"LSQB SF1","description":"Nine Cypher pattern-matching queries on 3.95M vertices and 17.88M edges.","unit":"seconds","lowerIsBetter":true,"metrics":[{"id":"Q1","label":"Query 1"},{"id":"Q2","label":"Query 2"},{"id":"Q3","label":"Query 3"},{"id":"Q4","label":"Query 4"},{"id":"Q5","label":"Query 5"},{"id":"Q6","label":"Query 6"},{"id":"Q7","label":"Query 7"},{"id":"Q8","label":"Query 8"},{"id":"Q9","label":"Query 9"}],"series":[{"id":"mindgraph","label":"MindGraph measured","kind":"measured","values":{"Q1":{"median":0.666,"min":0.64,"max":0.729,"mean":0.6724,"standardDeviation":0.030571882506643243,"coefficientOfVariationPercent":4.546680920083766,"runs":[0.666,0.653,0.729,0.64,0.674]},"Q2":{"median":0.436,"min":0.433,"max":0.446,"mean":0.43760000000000004,"standardDeviation":0.004923413450036473,"coefficientOfVariationPercent":1.1250944812697605,"runs":[0.433,0.436,0.446,0.433,0.44]},"Q3":{"median":0.257,"min":0.245,"max":0.322,"mean":0.267,"standardDeviation":0.028474550040343046,"coefficientOfVariationPercent":10.664625483274548,"runs":[0.245,0.257,0.322,0.265,0.246]},"Q4":{"median":7.948,"min":7.667,"max":8.313,"mean":7.955800000000001,"standardDeviation":0.21208809490398114,"coefficientOfVariationPercent":2.665829896477804,"runs":[7.667,7.848,8.003,8.313,7.948]},"Q5":{"median":0.453,"min":0.422,"max":0.463,"mean":0.44580000000000003,"standardDeviation":0.015992498241363055,"coefficientOfVariationPercent":3.587370623903781,"runs":[0.432,0.453,0.459,0.422,0.463]},"Q6":{"median":0.465,"min":0.451,"max":0.472,"mean":0.46299999999999997,"standardDeviation":0.0073484692283495275,"coefficientOfVariationPercent":1.5871423819329433,"runs":[0.468,0.465,0.459,0.451,0.472]},"Q7":{"median":19.492,"min":18.942,"max":19.9,"mean":19.4184,"standardDeviation":0.3154917431566152,"coefficientOfVariationPercent":1.624705141291843,"runs":[19.9,19.502,18.942,19.256,19.492]},"Q8":{"median":0.19,"min":0.187,"max":0.195,"mean":0.191,"standardDeviation":0.0034058772731852833,"coefficientOfVariationPercent":1.7831818184216142,"runs":[0.187,0.188,0.195,0.195,0.19]},"Q9":{"median":2.275,"min":2.261,"max":2.405,"mean":2.3047999999999997,"standardDeviation":0.05366712215127612,"coefficientOfVariationPercent":2.3284936719574856,"runs":[2.405,2.267,2.275,2.316,2.261]}}},{"id":"upstream","label":"ArcadeDB upstream control","kind":"control","values":{"Q1":{"median":0.699,"min":0.644,"max":0.727,"mean":0.6954,"standardDeviation":0.027817979797246224,"coefficientOfVariationPercent":4.000284699057553,"runs":[0.727,0.644,0.697,0.699,0.71]},"Q2":{"median":0.439,"min":0.437,"max":0.458,"mean":0.44480000000000003,"standardDeviation":0.008908422980528043,"coefficientOfVariationPercent":2.0027929362697936,"runs":[0.437,0.453,0.437,0.458,0.439]},"Q3":{"median":0.251,"min":0.249,"max":0.272,"mean":0.25620000000000004,"standardDeviation":0.008657944328765352,"coefficientOfVariationPercent":3.379369371102791,"runs":[0.25,0.259,0.251,0.272,0.249]},"Q4":{"median":8.275,"min":7.6,"max":8.471,"mean":8.1628,"standardDeviation":0.3100538017828519,"coefficientOfVariationPercent":3.7983755792479528,"runs":[8.471,7.6,8.275,8.082,8.386]},"Q5":{"median":0.429,"min":0.347,"max":0.432,"mean":0.4074,"standardDeviation":0.03275728926513915,"coefficientOfVariationPercent":8.040571739111229,"runs":[0.398,0.429,0.431,0.432,0.347]},"Q6":{"median":0.463,"min":0.459,"max":0.474,"mean":0.46580000000000005,"standardDeviation":0.00643117407632539,"coefficientOfVariationPercent":1.3806728373390702,"runs":[0.473,0.459,0.463,0.46,0.474]},"Q7":{"median":18.874,"min":18.402,"max":20.198,"mean":19.1486,"standardDeviation":0.6348157527976128,"coefficientOfVariationPercent":3.3152071315793994,"runs":[18.76,20.198,18.874,19.509,18.402]},"Q8":{"median":0.196,"min":0.192,"max":0.22,"mean":0.1998,"standardDeviation":0.010244998779892557,"coefficientOfVariationPercent":5.127627016963242,"runs":[0.194,0.196,0.192,0.22,0.197]},"Q9":{"median":2.399,"min":2.303,"max":2.437,"mean":2.382,"standardDeviation":0.045475268003608245,"coefficientOfVariationPercent":1.9091212428047122,"runs":[2.405,2.303,2.437,2.366,2.399]}}},{"id":"arcadedb-published","label":"ArcadeDB published reference","kind":"reference","values":{"Q1":0.23,"Q2":0.18,"Q3":0.1,"Q4":0.03,"Q5":0.29,"Q6":0.11,"Q7":0.09,"Q8":0.19,"Q9":1.18}}],"validation":{"passed":9,"total":9,"notes":["Counts were checked against the official LSQB SF1 expected output."]}},{"id":"olap-speedup","title":"Graph analytical view speedup","description":"Same 500K-vertex, approximately 8M-edge graph queried through OLTP and CSR-backed analytical paths.","unit":"ratio","lowerIsBetter":false,"metrics":[{"id":"one-hop-count","label":"1-hop count"},{"id":"one-hop-ids","label":"1-hop IDs"},{"id":"two-hop","label":"2-hop traversal"},{"id":"three-hop","label":"3-hop traversal"},{"id":"four-hop","label":"4-hop traversal"},{"id":"five-hop","label":"5-hop traversal"},{"id":"shortest-path","label":"Shortest Path"},{"id":"connected-components","label":"Connected Components"},{"id":"label-propagation","label":"Label Propagation"},{"id":"pagerank-20","label":"PageRank (20 iter)"}],"series":[{"id":"mindgraph","label":"MindGraph measured","kind":"measured","values":{"one-hop-count":3.5,"one-hop-ids":6.4,"two-hop":9.4,"three-hop":15.6,"four-hop":19.6,"five-hop":39.3,"shortest-path":57.1,"pagerank-20":258.4,"connected-components":23.1,"label-propagation":55.0}},{"id":"upstream","label":"ArcadeDB upstream control","kind":"control","values":{"one-hop-count":3.6,"one-hop-ids":10.0,"two-hop":16.1,"three-hop":17.0,"four-hop":18.5,"five-hop":32.8,"shortest-path":61.4,"pagerank-20":261.7,"connected-components":21.6,"label-propagation":58.9}},{"id":"arcadedb-published","label":"ArcadeDB published reference","kind":"reference","values":{"one-hop-count":3.8,"one-hop-ids":5.1,"two-hop":9.4,"three-hop":11.9,"four-hop":15.6,"five-hop":33.5,"shortest-path":54.0,"connected-components":37.3,"label-propagation":235.6,"pagerank-20":462.3}}],"validation":{"passed":10,"total":10,"countsTowardTotal":false,"label":"10 of 10 speedup rows parsed.","notes":["Speedup is OLTP elapsed time divided by OLAP elapsed time on the same process.","The inherited workload is directional and does not provide conformance assertions for these rows."]}}],"artifacts":[{"label":"Normalized result JSON","path":"result.json"},{"label":"Run metadata","path":"metadata.json"},{"label":"Raw evidence manifest","path":"evidence/manifest.json"},{"label":"Dataset checksums","path":"evidence/dataset-sha256.txt"}]}</script>
+  <script>
+    (() => {
+      const data = JSON.parse(document.getElementById('benchmark-data').textContent);
+      const colors = ['#21d7c5', '#f6b94a', '#7aa8ff', '#f06a6a', '#a78bfa'];
+      const escapeHtml = (value) => String(value).replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+      const numeric = value => value && typeof value === 'object' ? Number(value.median) : Number(value);
+      const format = (value, unit) => {
+        if (value === null || value === undefined) return 'N/A';
+        const number = numeric(value);
+        if (unit === 'seconds') return `${number < 0.01 ? number.toFixed(3) : number < 1 ? number.toFixed(2) : number.toFixed(2)} s`;
+        if (unit === 'milliseconds') return `${number.toFixed(number < 10 ? 2 : 1)} ms`;
+        if (unit === 'ratio') return `${number.toFixed(1)}×`;
+        if (unit === 'megabytes') return `${number.toFixed(1)} MB`;
+        return `${number.toLocaleString()} ${unit}`;
+      };
+      const formatCell = (value, unit) => {
+        if (value === null || value === undefined) return 'N/A';
+        const primary = escapeHtml(format(value, unit));
+        if (!value || typeof value !== 'object' || value.min === undefined || value.max === undefined) return primary;
+        const detail = `${format(value.min, unit)}–${format(value.max, unit)} · CV ${Number(value.coefficientOfVariationPercent || 0).toFixed(1)}%`;
+        return `${primary}<span class="cell-detail">${escapeHtml(detail)}</span>`;
+      };
+      const validationTotals = data.suites.reduce((acc, suite) => {
+        if (suite.validation.countsTowardTotal !== false) { acc.passed += suite.validation.passed || 0; acc.total += suite.validation.total || 0; }
+        return acc;
+      }, {passed: 0, total: 0});
+      const measuredMetrics = data.suites.reduce((count, suite) => count + suite.metrics.length, 0);
+      document.getElementById('page-title').textContent = data.title;
+      document.getElementById('page-subtitle').textContent = data.subtitle || 'Measured results, public references, and raw evidence in one auditable report.';
+      const status = document.getElementById('status-label');
+      status.textContent = data.status;
+      status.classList.add(data.status);
+      const releaseRows = [
+        ['Version', data.release.version], ['Commit', data.release.commit], ['Measured', data.generatedAt], ['Harness', data.release.harnessCommit]
+      ];
+      document.getElementById('release-meta').innerHTML = releaseRows.map(([key, value]) => `<div><dt>${escapeHtml(key)}</dt><dd class="mono">${escapeHtml(value)}</dd></div>`).join('');
+      const kpis = [
+        ['Validated', `${validationTotals.passed}/${validationTotals.total}`, 'algorithm and query outputs'],
+        ['Coverage', measuredMetrics, 'reported benchmark metrics'],
+        ['Compute', data.environment.cpuCount, 'logical CPUs on the measured host'],
+        ['Memory', data.environment.memoryGiB + ' GiB', 'host RAM; JVM heap is disclosed below']
+      ];
+      document.getElementById('kpis').innerHTML = kpis.map(([label, value, note]) => `<article class="kpi"><div class="eyebrow">${escapeHtml(label)}</div><strong>${escapeHtml(value)}</strong><span>${escapeHtml(note)}</span></article>`).join('');
+
+      const tabs = document.getElementById('tabs');
+      const panels = document.getElementById('suite-panels');
+      const activate = id => {
+        document.querySelectorAll('.tab').forEach(tab => tab.setAttribute('aria-selected', tab.dataset.target === id ? 'true' : 'false'));
+        document.querySelectorAll('.suite').forEach(panel => panel.classList.toggle('active', panel.id === `suite-${id}`));
+      };
+
+      data.suites.forEach((suite, suiteIndex) => {
+        const tab = document.createElement('button');
+        tab.className = 'tab'; tab.type = 'button'; tab.role = 'tab'; tab.dataset.target = suite.id;
+        tab.setAttribute('aria-controls', `suite-${suite.id}`); tab.setAttribute('aria-selected', suiteIndex === 0 ? 'true' : 'false');
+        tab.textContent = suite.title; tab.addEventListener('click', () => activate(suite.id)); tabs.appendChild(tab);
+
+        const panel = document.createElement('section');
+        panel.className = `suite${suiteIndex === 0 ? ' active' : ''}`; panel.id = `suite-${suite.id}`; panel.role = 'tabpanel';
+        const toggle = suite.unit === 'ratio' ? '' : `<div class="toggle" aria-label="Chart scale"><button type="button" class="active" data-scale="linear">Linear</button><button type="button" data-scale="log">Log</button></div>`;
+        panel.innerHTML = `<div class="suite-head"><div><h2>${escapeHtml(suite.title)}</h2><p>${escapeHtml(suite.description)}</p></div>${toggle}</div><div class="chart-card"><div class="legend"></div><div class="metric-grid"></div><div class="validation${suite.validation.passed === suite.validation.total ? '' : ' partial'}"></div></div><div class="table-wrap"></div>`;
+        panels.appendChild(panel);
+        const legend = panel.querySelector('.legend');
+        suite.series.forEach((series, index) => {
+          const item = document.createElement('span'); item.className = `legend-item ${series.kind}`; item.style.setProperty('--series-color', colors[index % colors.length]);
+          item.innerHTML = `<span class="legend-swatch"></span><span>${escapeHtml(series.label)} · ${escapeHtml(series.kind)}</span>`; legend.appendChild(item);
+        });
+        const grid = panel.querySelector('.metric-grid');
+        const renderBars = scale => {
+          grid.innerHTML = '';
+          suite.metrics.forEach(metric => {
+            const values = suite.series.map(series => series.values[metric.id] == null ? null : numeric(series.values[metric.id]));
+            const positive = values.filter(value => value !== null && value > 0);
+            const max = positive.length ? Math.max(...positive) : 1;
+            const min = positive.length ? Math.min(...positive) : 1;
+            const size = value => {
+              if (value === null) return 0;
+              if (scale === 'log' && value > 0 && max > min) return 8 + 92 * (Math.log10(value) - Math.log10(min)) / (Math.log10(max) - Math.log10(min));
+              return max === 0 ? 0 : 100 * value / max;
+            };
+            const rows = suite.series.map((series, index) => {
+              const raw = series.values[metric.id]; const value = raw == null ? null : numeric(raw);
+              const range = raw && typeof raw === 'object' && raw.min !== undefined && raw.max !== undefined ? ` title="range ${escapeHtml(format(raw.min, suite.unit))}–${escapeHtml(format(raw.max, suite.unit))}"` : '';
+              return `<div class="bar-row"${range}><div class="bar-track"><div class="bar ${series.kind}" style="--bar-size:${size(value)};--series-color:${colors[index % colors.length]}"></div></div><div class="bar-value">${value === null ? 'N/A' : escapeHtml(format(raw, suite.unit))}</div></div>`;
+            }).join('');
+            const block = document.createElement('div'); block.className = 'metric';
+            block.innerHTML = `<div class="metric-name">${escapeHtml(metric.label)}<span class="metric-id mono">${escapeHtml(metric.id)}</span></div><div class="bars">${rows}</div>`; grid.appendChild(block);
+          });
+        };
+        renderBars('linear');
+        panel.querySelectorAll('[data-scale]').forEach(button => button.addEventListener('click', () => { panel.querySelectorAll('[data-scale]').forEach(item => item.classList.toggle('active', item === button)); renderBars(button.dataset.scale); }));
+        const validation = panel.querySelector('.validation');
+        const validationLabel = suite.validation.label || `${suite.validation.passed} of ${suite.validation.total} outputs validated.`;
+        validation.innerHTML = `<strong>${escapeHtml(validationLabel)}</strong> ${escapeHtml((suite.validation.notes || []).join(' '))}`;
+        const header = suite.series.map(series => `<th scope="col">${escapeHtml(series.label)}</th>`).join('');
+        const rows = suite.metrics.map(metric => `<tr><td>${escapeHtml(metric.label)}</td>${suite.series.map(series => `<td>${formatCell(series.values[metric.id], suite.unit)}</td>`).join('')}</tr>`).join('');
+        panel.querySelector('.table-wrap').innerHTML = `<table><thead><tr><th scope="col">Metric</th>${header}</tr></thead><tbody>${rows}</tbody></table>`;
+      });
+
+      const methodology = [...(data.methodology.summary || []), ...(data.methodology.disclosures || [])];
+      document.getElementById('method-list').innerHTML = methodology.map(item => `<li>${escapeHtml(item)}</li>`).join('');
+      document.getElementById('environment').innerHTML = Object.entries(data.environment).map(([key, value]) => `<dt>${escapeHtml(key.replace(/([A-Z])/g, ' $1'))}</dt><dd class="mono">${escapeHtml(value)}</dd>`).join('');
+      document.getElementById('artifacts').innerHTML = `<h3>Raw evidence</h3>` + data.artifacts.map(artifact => `<a href="${escapeHtml(artifact.path)}">${escapeHtml(artifact.label)}</a>`).join('');
+      document.getElementById('footer').textContent = `Generated from schema v${data.schemaVersion} evidence. Reference series are never presented as measurements from this host.`;
+    })();
+  </script>
+</body>
+</html>

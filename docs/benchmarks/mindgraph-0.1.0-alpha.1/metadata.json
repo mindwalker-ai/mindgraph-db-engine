@@ -1,0 +1,63 @@
+{
+  "title": "MindGraph reproducible graph benchmark",
+  "subtitle": "MindGraph and its exact upstream control on one BytePlus host, with ArcadeDB's published numbers shown only as references.",
+  "generatedAt": "2026-09-29T18:30:10Z",
+  "release": {
+    "version": "0.1.0-alpha.1",
+    "commit": "c7ffbdf3e1d154359c6b043b6f8bfdd325e50f55",
+    "harnessCommit": "02e1d824a2ff1bfc1574bbdda7cb9b3c2344bfff"
+  },
+  "environment": {
+    "cpu": "Intel(R) Xeon(R) 6986P-C",
+    "cpuCount": 8,
+    "memoryGiB": 31,
+    "java": "openjdk version 21.0.12.1 2026-08-18",
+    "os": "Ubuntu 24.04 LTS",
+    "jvmHeapGiB": 12
+  },
+  "systems": [
+    {
+      "id": "mindgraph",
+      "label": "MindGraph measured",
+      "kind": "measured"
+    },
+    {
+      "id": "upstream",
+      "label": "ArcadeDB upstream control",
+      "kind": "control"
+    }
+  ],
+  "methodology": {
+    "summary": [
+      "MindGraph and the exact ArcadeDB upstream commit were built independently and executed sequentially on the same idle host.",
+      "The graph algorithm comparison uses the harness native load-once mode on datagen-7_5-fb; LSQB uses SF1 merged-FK; OLAP speedup uses 500K vertices and approximately 8M edges by default.",
+      "MindGraph and upstream graph outputs are fingerprinted outside the timed region and must match before the report is marked verified.",
+      "Graph algorithm timing reports the median of 5 measured runs after one full warm-up and data-load run.",
+      "LSQB reports the median of 5 measured query runs after one full warm-up and data-load run."
+    ],
+    "disclosures": [
+      "ArcadeDB published references came from arcadedb.com/benchmarks.html and were not measured on this host; its graph chart names graph500-22, so those values are context rather than an apples-to-apples comparison with datagen-7_5-fb.",
+      "The graph algorithm section uses the public harness native load-once runner, not an official LDBC audited result or certification.",
+      "Embedded results describe engine execution without network overhead and are not application TPS or production sizing claims.",
+      "The inherited OLTP-to-OLAP benchmark uses randomized graph generation, so speedup is directional rather than a deterministic conformance value."
+    ]
+  },
+  "artifacts": [
+    {
+      "label": "Normalized result JSON",
+      "path": "result.json"
+    },
+    {
+      "label": "Run metadata",
+      "path": "metadata.json"
+    },
+    {
+      "label": "Raw evidence manifest",
+      "path": "evidence/manifest.json"
+    },
+    {
+      "label": "Dataset checksums",
+      "path": "evidence/dataset-sha256.txt"
+    }
+  ]
+}

@@ -1,0 +1,771 @@
+{
+  "schemaVersion": 1,
+  "title": "MindGraph reproducible graph benchmark",
+  "subtitle": "MindGraph and its exact upstream control on one BytePlus host, with ArcadeDB's published numbers shown only as references.",
+  "generatedAt": "2026-09-29T18:30:10Z",
+  "status": "verified",
+  "release": {
+    "version": "0.1.0-alpha.1",
+    "commit": "c7ffbdf3e1d154359c6b043b6f8bfdd325e50f55",
+    "harnessCommit": "02e1d824a2ff1bfc1574bbdda7cb9b3c2344bfff"
+  },
+  "environment": {
+    "cpu": "Intel(R) Xeon(R) 6986P-C",
+    "cpuCount": 8,
+    "memoryGiB": 31,
+    "java": "openjdk version 21.0.12.1 2026-08-18",
+    "os": "Ubuntu 24.04 LTS",
+    "jvmHeapGiB": 12
+  },
+  "methodology": {
+    "summary": [
+      "MindGraph and the exact ArcadeDB upstream commit were built independently and executed sequentially on the same idle host.",
+      "The graph algorithm comparison uses the harness native load-once mode on datagen-7_5-fb; LSQB uses SF1 merged-FK; OLAP speedup uses 500K vertices and approximately 8M edges by default.",
+      "MindGraph and upstream graph outputs are fingerprinted outside the timed region and must match before the report is marked verified.",
+      "Graph algorithm timing reports the median of 5 measured runs after one full warm-up and data-load run.",
+      "LSQB reports the median of 5 measured query runs after one full warm-up and data-load run."
+    ],
+    "disclosures": [
+      "ArcadeDB published references came from arcadedb.com/benchmarks.html and were not measured on this host; its graph chart names graph500-22, so those values are context rather than an apples-to-apples comparison with datagen-7_5-fb.",
+      "The graph algorithm section uses the public harness native load-once runner, not an official LDBC audited result or certification.",
+      "Embedded results describe engine execution without network overhead and are not application TPS or production sizing claims.",
+      "The inherited OLTP-to-OLAP benchmark uses randomized graph generation, so speedup is directional rather than a deterministic conformance value."
+    ]
+  },
+  "suites": [
+    {
+      "id": "graphalytics",
+      "title": "Graph algorithm execution",
+      "description": "Six Graphalytics algorithms on datagen-7_5-fb in the public harness's native load-once mode. Published graph500-22 values are contextual references, not a direct comparison.",
+      "unit": "seconds",
+      "lowerIsBetter": true,
+      "metrics": [
+        {
+          "id": "PR",
+          "label": "PageRank"
+        },
+        {
+          "id": "WCC",
+          "label": "Weakly connected components"
+        },
+        {
+          "id": "BFS",
+          "label": "Breadth-first search"
+        },
+        {
+          "id": "LCC",
+          "label": "Local clustering coefficient"
+        },
+        {
+          "id": "SSSP",
+          "label": "Single-source shortest paths"
+        },
+        {
+          "id": "CDLP",
+          "label": "Community detection label propagation"
+        }
+      ],
+      "series": [
+        {
+          "id": "mindgraph",
+          "label": "MindGraph measured",
+          "kind": "measured",
+          "values": {
+            "PR": {
+              "median": 0.472,
+              "min": 0.458,
+              "max": 0.523,
+              "mean": 0.4806,
+              "standardDeviation": 0.02255304857441672,
+              "coefficientOfVariationPercent": 4.69268592892566,
+              "runs": [
+                0.482,
+                0.458,
+                0.523,
+                0.472,
+                0.468
+              ]
+            },
+            "WCC": {
+              "median": 0.267,
+              "min": 0.258,
+              "max": 0.34,
+              "mean": 0.2806,
+              "standardDeviation": 0.03021655175561898,
+              "coefficientOfVariationPercent": 10.76855016237312,
+              "runs": [
+                0.263,
+                0.267,
+                0.258,
+                0.34,
+                0.275
+              ]
+            },
+            "BFS": {
+              "median": 0.309,
+              "min": 0.226,
+              "max": 0.329,
+              "mean": 0.2874,
+              "standardDeviation": 0.041907517225433434,
+              "coefficientOfVariationPercent": 14.581599591312955,
+              "runs": [
+                0.329,
+                0.324,
+                0.309,
+                0.226,
+                0.249
+              ]
+            },
+            "LCC": {
+              "median": 6.285,
+              "min": 6.132,
+              "max": 6.356,
+              "mean": 6.254,
+              "standardDeviation": 0.0968648543074318,
+              "coefficientOfVariationPercent": 1.5488464072182893,
+              "runs": [
+                6.132,
+                6.147,
+                6.35,
+                6.356,
+                6.285
+              ]
+            },
+            "SSSP": {
+              "median": 2.188,
+              "min": 2.102,
+              "max": 2.195,
+              "mean": 2.1698,
+              "standardDeviation": 0.034706771673551,
+              "coefficientOfVariationPercent": 1.5995378225435983,
+              "runs": [
+                2.102,
+                2.173,
+                2.195,
+                2.188,
+                2.191
+              ]
+            },
+            "CDLP": {
+              "median": 3.883,
+              "min": 3.834,
+              "max": 3.986,
+              "mean": 3.9066,
+              "standardDeviation": 0.06053627011965646,
+              "coefficientOfVariationPercent": 1.5495896718286095,
+              "runs": [
+                3.97,
+                3.986,
+                3.834,
+                3.883,
+                3.86
+              ]
+            }
+          }
+        },
+        {
+          "id": "upstream",
+          "label": "ArcadeDB upstream control",
+          "kind": "control",
+          "values": {
+            "PR": {
+              "median": 0.46,
+              "min": 0.438,
+              "max": 0.479,
+              "mean": 0.45899999999999996,
+              "standardDeviation": 0.01443606594609486,
+              "coefficientOfVariationPercent": 3.1451124065566147,
+              "runs": [
+                0.46,
+                0.479,
+                0.469,
+                0.438,
+                0.449
+              ]
+            },
+            "WCC": {
+              "median": 0.292,
+              "min": 0.265,
+              "max": 0.313,
+              "mean": 0.2886,
+              "standardDeviation": 0.01723484841824841,
+              "coefficientOfVariationPercent": 5.971880948804022,
+              "runs": [
+                0.265,
+                0.292,
+                0.313,
+                0.274,
+                0.299
+              ]
+            },
+            "BFS": {
+              "median": 0.258,
+              "min": 0.223,
+              "max": 0.276,
+              "mean": 0.25620000000000004,
+              "standardDeviation": 0.01924993506482555,
+              "coefficientOfVariationPercent": 7.513635856684445,
+              "runs": [
+                0.223,
+                0.274,
+                0.276,
+                0.25,
+                0.258
+              ]
+            },
+            "LCC": {
+              "median": 6.368,
+              "min": 6.099,
+              "max": 6.501,
+              "mean": 6.3176000000000005,
+              "standardDeviation": 0.1713097778878953,
+              "coefficientOfVariationPercent": 2.7116274833464495,
+              "runs": [
+                6.487,
+                6.368,
+                6.501,
+                6.099,
+                6.133
+              ]
+            },
+            "SSSP": {
+              "median": 1.827,
+              "min": 1.811,
+              "max": 2.16,
+              "mean": 1.9522,
+              "standardDeviation": 0.16489681622153907,
+              "coefficientOfVariationPercent": 8.446717355882546,
+              "runs": [
+                2.148,
+                2.16,
+                1.811,
+                1.815,
+                1.827
+              ]
+            },
+            "CDLP": {
+              "median": 3.895,
+              "min": 3.866,
+              "max": 3.933,
+              "mean": 3.8944,
+              "standardDeviation": 0.022285421243494526,
+              "coefficientOfVariationPercent": 0.5722427394077271,
+              "runs": [
+                3.897,
+                3.866,
+                3.881,
+                3.933,
+                3.895
+              ]
+            }
+          }
+        },
+        {
+          "id": "arcadedb-published",
+          "label": "ArcadeDB published reference \u00b7 graph500-22 / different host",
+          "kind": "reference",
+          "values": {
+            "PR": 0.1,
+            "WCC": 0.08,
+            "BFS": 0.09,
+            "LCC": 2.35,
+            "SSSP": 0.92,
+            "CDLP": 1.11
+          }
+        }
+      ],
+      "validation": {
+        "passed": 6,
+        "total": 6,
+        "notes": [
+          "Output fingerprints matched across all measured runs for MindGraph measured, ArcadeDB upstream control.",
+          "This is reproducibility evidence, not official LDBC certification."
+        ]
+      }
+    },
+    {
+      "id": "lsqb",
+      "title": "LSQB SF1",
+      "description": "Nine Cypher pattern-matching queries on 3.95M vertices and 17.88M edges.",
+      "unit": "seconds",
+      "lowerIsBetter": true,
+      "metrics": [
+        {
+          "id": "Q1",
+          "label": "Query 1"
+        },
+        {
+          "id": "Q2",
+          "label": "Query 2"
+        },
+        {
+          "id": "Q3",
+          "label": "Query 3"
+        },
+        {
+          "id": "Q4",
+          "label": "Query 4"
+        },
+        {
+          "id": "Q5",
+          "label": "Query 5"
+        },
+        {
+          "id": "Q6",
+          "label": "Query 6"
+        },
+        {
+          "id": "Q7",
+          "label": "Query 7"
+        },
+        {
+          "id": "Q8",
+          "label": "Query 8"
+        },
+        {
+          "id": "Q9",
+          "label": "Query 9"
+        }
+      ],
+      "series": [
+        {
+          "id": "mindgraph",
+          "label": "MindGraph measured",
+          "kind": "measured",
+          "values": {
+            "Q1": {
+              "median": 0.666,
+              "min": 0.64,
+              "max": 0.729,
+              "mean": 0.6724,
+              "standardDeviation": 0.030571882506643243,
+              "coefficientOfVariationPercent": 4.546680920083766,
+              "runs": [
+                0.666,
+                0.653,
+                0.729,
+                0.64,
+                0.674
+              ]
+            },
+            "Q2": {
+              "median": 0.436,
+              "min": 0.433,
+              "max": 0.446,
+              "mean": 0.43760000000000004,
+              "standardDeviation": 0.004923413450036473,
+              "coefficientOfVariationPercent": 1.1250944812697605,
+              "runs": [
+                0.433,
+                0.436,
+                0.446,
+                0.433,
+                0.44
+              ]
+            },
+            "Q3": {
+              "median": 0.257,
+              "min": 0.245,
+              "max": 0.322,
+              "mean": 0.267,
+              "standardDeviation": 0.028474550040343046,
+              "coefficientOfVariationPercent": 10.664625483274548,
+              "runs": [
+                0.245,
+                0.257,
+                0.322,
+                0.265,
+                0.246
+              ]
+            },
+            "Q4": {
+              "median": 7.948,
+              "min": 7.667,
+              "max": 8.313,
+              "mean": 7.955800000000001,
+              "standardDeviation": 0.21208809490398114,
+              "coefficientOfVariationPercent": 2.665829896477804,
+              "runs": [
+                7.667,
+                7.848,
+                8.003,
+                8.313,
+                7.948
+              ]
+            },
+            "Q5": {
+              "median": 0.453,
+              "min": 0.422,
+              "max": 0.463,
+              "mean": 0.44580000000000003,
+              "standardDeviation": 0.015992498241363055,
+              "coefficientOfVariationPercent": 3.587370623903781,
+              "runs": [
+                0.432,
+                0.453,
+                0.459,
+                0.422,
+                0.463
+              ]
+            },
+            "Q6": {
+              "median": 0.465,
+              "min": 0.451,
+              "max": 0.472,
+              "mean": 0.46299999999999997,
+              "standardDeviation": 0.0073484692283495275,
+              "coefficientOfVariationPercent": 1.5871423819329433,
+              "runs": [
+                0.468,
+                0.465,
+                0.459,
+                0.451,
+                0.472
+              ]
+            },
+            "Q7": {
+              "median": 19.492,
+              "min": 18.942,
+              "max": 19.9,
+              "mean": 19.4184,
+              "standardDeviation": 0.3154917431566152,
+              "coefficientOfVariationPercent": 1.624705141291843,
+              "runs": [
+                19.9,
+                19.502,
+                18.942,
+                19.256,
+                19.492
+              ]
+            },
+            "Q8": {
+              "median": 0.19,
+              "min": 0.187,
+              "max": 0.195,
+              "mean": 0.191,
+              "standardDeviation": 0.0034058772731852833,
+              "coefficientOfVariationPercent": 1.7831818184216142,
+              "runs": [
+                0.187,
+                0.188,
+                0.195,
+                0.195,
+                0.19
+              ]
+            },
+            "Q9": {
+              "median": 2.275,
+              "min": 2.261,
+              "max": 2.405,
+              "mean": 2.3047999999999997,
+              "standardDeviation": 0.05366712215127612,
+              "coefficientOfVariationPercent": 2.3284936719574856,
+              "runs": [
+                2.405,
+                2.267,
+                2.275,
+                2.316,
+                2.261
+              ]
+            }
+          }
+        },
+        {
+          "id": "upstream",
+          "label": "ArcadeDB upstream control",
+          "kind": "control",
+          "values": {
+            "Q1": {
+              "median": 0.699,
+              "min": 0.644,
+              "max": 0.727,
+              "mean": 0.6954,
+              "standardDeviation": 0.027817979797246224,
+              "coefficientOfVariationPercent": 4.000284699057553,
+              "runs": [
+                0.727,
+                0.644,
+                0.697,
+                0.699,
+                0.71
+              ]
+            },
+            "Q2": {
+              "median": 0.439,
+              "min": 0.437,
+              "max": 0.458,
+              "mean": 0.44480000000000003,
+              "standardDeviation": 0.008908422980528043,
+              "coefficientOfVariationPercent": 2.0027929362697936,
+              "runs": [
+                0.437,
+                0.453,
+                0.437,
+                0.458,
+                0.439
+              ]
+            },
+            "Q3": {
+              "median": 0.251,
+              "min": 0.249,
+              "max": 0.272,
+              "mean": 0.25620000000000004,
+              "standardDeviation": 0.008657944328765352,
+              "coefficientOfVariationPercent": 3.379369371102791,
+              "runs": [
+                0.25,
+                0.259,
+                0.251,
+                0.272,
+                0.249
+              ]
+            },
+            "Q4": {
+              "median": 8.275,
+              "min": 7.6,
+              "max": 8.471,
+              "mean": 8.1628,
+              "standardDeviation": 0.3100538017828519,
+              "coefficientOfVariationPercent": 3.7983755792479528,
+              "runs": [
+                8.471,
+                7.6,
+                8.275,
+                8.082,
+                8.386
+              ]
+            },
+            "Q5": {
+              "median": 0.429,
+              "min": 0.347,
+              "max": 0.432,
+              "mean": 0.4074,
+              "standardDeviation": 0.03275728926513915,
+              "coefficientOfVariationPercent": 8.040571739111229,
+              "runs": [
+                0.398,
+                0.429,
+                0.431,
+                0.432,
+                0.347
+              ]
+            },
+            "Q6": {
+              "median": 0.463,
+              "min": 0.459,
+              "max": 0.474,
+              "mean": 0.46580000000000005,
+              "standardDeviation": 0.00643117407632539,
+              "coefficientOfVariationPercent": 1.3806728373390702,
+              "runs": [
+                0.473,
+                0.459,
+                0.463,
+                0.46,
+                0.474
+              ]
+            },
+            "Q7": {
+              "median": 18.874,
+              "min": 18.402,
+              "max": 20.198,
+              "mean": 19.1486,
+              "standardDeviation": 0.6348157527976128,
+              "coefficientOfVariationPercent": 3.3152071315793994,
+              "runs": [
+                18.76,
+                20.198,
+                18.874,
+                19.509,
+                18.402
+              ]
+            },
+            "Q8": {
+              "median": 0.196,
+              "min": 0.192,
+              "max": 0.22,
+              "mean": 0.1998,
+              "standardDeviation": 0.010244998779892557,
+              "coefficientOfVariationPercent": 5.127627016963242,
+              "runs": [
+                0.194,
+                0.196,
+                0.192,
+                0.22,
+                0.197
+              ]
+            },
+            "Q9": {
+              "median": 2.399,
+              "min": 2.303,
+              "max": 2.437,
+              "mean": 2.382,
+              "standardDeviation": 0.045475268003608245,
+              "coefficientOfVariationPercent": 1.9091212428047122,
+              "runs": [
+                2.405,
+                2.303,
+                2.437,
+                2.366,
+                2.399
+              ]
+            }
+          }
+        },
+        {
+          "id": "arcadedb-published",
+          "label": "ArcadeDB published reference",
+          "kind": "reference",
+          "values": {
+            "Q1": 0.23,
+            "Q2": 0.18,
+            "Q3": 0.1,
+            "Q4": 0.03,
+            "Q5": 0.29,
+            "Q6": 0.11,
+            "Q7": 0.09,
+            "Q8": 0.19,
+            "Q9": 1.18
+          }
+        }
+      ],
+      "validation": {
+        "passed": 9,
+        "total": 9,
+        "notes": [
+          "Counts were checked against the official LSQB SF1 expected output."
+        ]
+      }
+    },
+    {
+      "id": "olap-speedup",
+      "title": "Graph analytical view speedup",
+      "description": "Same 500K-vertex, approximately 8M-edge graph queried through OLTP and CSR-backed analytical paths.",
+      "unit": "ratio",
+      "lowerIsBetter": false,
+      "metrics": [
+        {
+          "id": "one-hop-count",
+          "label": "1-hop count"
+        },
+        {
+          "id": "one-hop-ids",
+          "label": "1-hop IDs"
+        },
+        {
+          "id": "two-hop",
+          "label": "2-hop traversal"
+        },
+        {
+          "id": "three-hop",
+          "label": "3-hop traversal"
+        },
+        {
+          "id": "four-hop",
+          "label": "4-hop traversal"
+        },
+        {
+          "id": "five-hop",
+          "label": "5-hop traversal"
+        },
+        {
+          "id": "shortest-path",
+          "label": "Shortest Path"
+        },
+        {
+          "id": "connected-components",
+          "label": "Connected Components"
+        },
+        {
+          "id": "label-propagation",
+          "label": "Label Propagation"
+        },
+        {
+          "id": "pagerank-20",
+          "label": "PageRank (20 iter)"
+        }
+      ],
+      "series": [
+        {
+          "id": "mindgraph",
+          "label": "MindGraph measured",
+          "kind": "measured",
+          "values": {
+            "one-hop-count": 3.5,
+            "one-hop-ids": 6.4,
+            "two-hop": 9.4,
+            "three-hop": 15.6,
+            "four-hop": 19.6,
+            "five-hop": 39.3,
+            "shortest-path": 57.1,
+            "pagerank-20": 258.4,
+            "connected-components": 23.1,
+            "label-propagation": 55.0
+          }
+        },
+        {
+          "id": "upstream",
+          "label": "ArcadeDB upstream control",
+          "kind": "control",
+          "values": {
+            "one-hop-count": 3.6,
+            "one-hop-ids": 10.0,
+            "two-hop": 16.1,
+            "three-hop": 17.0,
+            "four-hop": 18.5,
+            "five-hop": 32.8,
+            "shortest-path": 61.4,
+            "pagerank-20": 261.7,
+            "connected-components": 21.6,
+            "label-propagation": 58.9
+          }
+        },
+        {
+          "id": "arcadedb-published",
+          "label": "ArcadeDB published reference",
+          "kind": "reference",
+          "values": {
+            "one-hop-count": 3.8,
+            "one-hop-ids": 5.1,
+            "two-hop": 9.4,
+            "three-hop": 11.9,
+            "four-hop": 15.6,
+            "five-hop": 33.5,
+            "shortest-path": 54.0,
+            "connected-components": 37.3,
+            "label-propagation": 235.6,
+            "pagerank-20": 462.3
+          }
+        }
+      ],
+      "validation": {
+        "passed": 10,
+        "total": 10,
+        "countsTowardTotal": false,
+        "label": "10 of 10 speedup rows parsed.",
+        "notes": [
+          "Speedup is OLTP elapsed time divided by OLAP elapsed time on the same process.",
+          "The inherited workload is directional and does not provide conformance assertions for these rows."
+        ]
+      }
+    }
+  ],
+  "artifacts": [
+    {
+      "label": "Normalized result JSON",
+      "path": "result.json"
+    },
+    {
+      "label": "Run metadata",
+      "path": "metadata.json"
+    },
+    {
+      "label": "Raw evidence manifest",
+      "path": "evidence/manifest.json"
+    },
+    {
+      "label": "Dataset checksums",
+      "path": "evidence/dataset-sha256.txt"
+    }
+  ]
+}
