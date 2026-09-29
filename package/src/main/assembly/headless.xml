@@ -99,6 +99,18 @@
             <source>${basedir}/../ATTRIBUTIONS.md</source>
             <fileMode>666</fileMode>
         </file>
+        <file>
+            <source>${basedir}/../THIRD_PARTY_NOTICES.md</source>
+            <fileMode>666</fileMode>
+        </file>
+        <file>
+            <source>${basedir}/../UPSTREAM.md</source>
+            <fileMode>666</fileMode>
+        </file>
+        <file>
+            <source>${basedir}/../MINDGRAPH_VERSION</source>
+            <fileMode>666</fileMode>
+        </file>
     </files>
     <!--
      | all artifacts in a /lib dir, except plugins which go to /lib/plugins

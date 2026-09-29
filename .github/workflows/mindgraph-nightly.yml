@@ -1,0 +1,86 @@
+name: MindGraph Integration and Baseline
+
+on:
+  schedule:
+    - cron: "0 18 * * *"
+  workflow_dispatch:
+    inputs:
+      suite:
+        description: Suite to run
+        type: choice
+        required: true
+        default: all
+        options:
+          - all
+          - integration
+          - benchmark
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mindgraph-nightly-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  integration:
+    name: Integration tests
+    if: github.event_name == 'schedule' || inputs.suite == 'all' || inputs.suite == 'integration'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 150
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+
+      - name: Run integration suite
+        run: ./mvnw -B -ntp verify -Pintegration -pl '!e2e,!load-tests,!e2e-ha'
+
+      - name: Publish integration reports
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: mindgraph-integration-test-reports
+          path: |
+            **/target/surefire-reports/**
+            **/target/failsafe-reports/**
+          if-no-files-found: warn
+          retention-days: 30
+
+  benchmark:
+    name: Reproducible baseline benchmark
+    if: github.event_name == 'schedule' || inputs.suite == 'all' || inputs.suite == 'benchmark'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+
+      - name: Run baseline benchmark suite
+        run: ./scripts/mindgraph/run-baseline-suite.sh
+
+      - name: Publish benchmark evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: mindgraph-baseline-${{ github.sha }}
+          path: artifacts/benchmarks/**
+          if-no-files-found: error
+          retention-days: 90

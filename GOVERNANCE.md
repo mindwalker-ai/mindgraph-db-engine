@@ -1,25 +1,48 @@
-# Project Governance & License Guarantee
+# MindGraph DB Engine governance
 
-## Open Source Forever
+MindGraph DB Engine is maintained by Mindwalker as a controlled Apache 2.0 fork of ArcadeDB.
 
-ArcadeDB is committed to remaining **Open Source Forever**. This is not just a slogan — it is a structural guarantee built into the project's legal and organizational framework.
+## Principles
 
-### 1. License Guarantee
+- Preserve upstream provenance, attribution, and patent notices.
+- Keep upstream synchronization possible and reviewable.
+- Prefer extensions over invasive engine changes.
+- Require evidence for compatibility, performance, durability, and security claims.
+- Never describe roadmap items as released capabilities.
+- Treat database format, protocol, and security changes as architecture decisions.
 
-ArcadeDB is and will always be licensed under the **[Apache License 2.0](LICENSE)**. We will never adopt a non-OSI-approved license (such as BSL, SSPL, ELv2, or any "Source Available" license).
+## Decision ownership
 
-Even if this guarantee were ever violated, the Apache License 2.0 is irrevocable: every version released under Apache 2.0 remains freely available, usable, and forkable under Apache 2.0 in perpetuity.
+Mindwalker maintainers approve repository policy, releases, compatibility guarantees, and
+MindGraph-specific product direction. Changes to storage, WAL, replication, authentication,
+authorization, encryption, public protocols, or database format require at least one documented
+architecture decision and an explicit rollback or migration strategy.
 
-### 2. Fragmented Copyright
+Contributors may propose changes through pull requests. Security-sensitive decisions are discussed
+privately until a coordinated disclosure is ready.
 
-We deliberately do not require a Contributor License Agreement (CLA). Under [Section 5 of the Apache License 2.0](LICENSE), every contribution submitted to the project is automatically licensed under Apache 2.0. Contributors retain full ownership of their copyright — they simply grant a permanent, irrevocable license (including patent rights under Section 3) to the project and its users.
+## Upstream relationship
 
-This distributed copyright structure means that no single entity — not even the project's founders or any future acquirer — can unilaterally change the license. Doing so would require the explicit consent of every contributor who has ever submitted code to the project.
+ArcadeDB remains an independent upstream project. Mindwalker does not speak for Arcade Data Ltd or
+the ArcadeDB community. Upstream imports follow [UPSTREAM.md](UPSTREAM.md), and inherited defects
+should be coordinated upstream when responsible disclosure permits.
 
-### 3. Sustainability over Lock-in
+## Release governance
 
-Our business model is based on value-added services and support, not on restricting access to the core database technology. We believe that a truly open database earns adoption and trust, and that locking users in through license restrictions is a short-sighted strategy that ultimately harms both the project and its community.
+A MindGraph release must:
 
-### Why This Matters
+1. identify its exact upstream source commit;
+2. pass the required CI, integration, license, and baseline checks;
+3. include LICENSE, NOTICE, attribution, third-party notices, and an SBOM;
+4. publish checksums and verifiable build provenance;
+5. publish a signed OCI image under the Mindwalker namespace; and
+6. document known incompatibilities, security limitations, and migration requirements.
 
-Too many open source database companies have used the "bait-and-switch" approach: build a community under a permissive license, then change to a restrictive one once they have market traction. ArcadeDB is architecturally designed — both technically and legally — so that this cannot happen here.
+Release tags are immutable. Alpha releases do not carry production support or compatibility
+guarantees unless a separate commercial agreement states otherwise.
+
+## Licensing boundary
+
+Code already published in this repository remains under its applicable open-source license.
+Mindwalker-authored modules may use separately documented terms in the future, but those terms must
+not remove rights granted for upstream or previously published open-source code.
