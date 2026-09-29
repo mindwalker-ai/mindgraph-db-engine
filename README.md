@@ -1,396 +1,205 @@
-# ![ArcadeDB](https://arcadedb.com/assets/images/arcadedb-logo.png)
-
-<h2 align="center">Multi Model DBMS Built for Extreme Performance</h2>
+# MindGraph DB Engine
 
 <p align="center">
-  <a href="https://github.com/ArcadeData/arcadedb/releases"><img src="https://img.shields.io/github/v/release/arcadedata/arcadedb?color=%23ff00a0&include_prereleases&label=version&sort=semver"></a>
-  &nbsp;
-  <a href="https://github.com/sponsors/ArcadeData"><img src="https://img.shields.io/badge/Sponsor-%E2%9D%A4-e25555.svg"></a>
-  &nbsp;
-  <a href="https://opensource.org/licenses/Apache-2.0"><img src="https://img.shields.io/badge/License-Apache%202.0-green.svg"></a>
-  &nbsp;
-  <a href="https://docs.oracle.org/en/java/21/"><img src="https://img.shields.io/badge/Java-%3D21-green.svg"></a>
-  &nbsp;
-  <a href="https://docs.oracle.org/en/java/17/"><img src="https://img.shields.io/badge/Java-%3D17-green.svg"></a>
-  &nbsp;
-  <a href="https://api.reuse.software/info/github.com/ArcadeData/arcadedb"><img src="https://api.reuse.software/badge/github.com/ArcadeData/arcadedb"></a>
-  &nbsp;
-  <a href="https://hub.docker.com/repository/docker/arcadedata/arcadedb/general"><img src="https://img.shields.io/docker/pulls/arcadedata/arcadedb"></a>
-  &nbsp;
-  <a href="https://deepwiki.com/ArcadeData/arcadedb"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a>
-  &nbsp;
-  <a href="bolt/conformance/COMPATIBILITY.md"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/ArcadeData/arcadedb/main/bolt/conformance/badge.json" alt="Bolt drivers"></a>
-  &nbsp;
-  <a href="https://github.com/ArcadeData/arcadedb/actions/workflows/mvn-deploy.yml">
-    <img src="https://github.com/ArcadeData/arcadedb/actions/workflows/mvn-deploy.yml/badge.svg">
-  </a>
-
- <a href="https://github.com/ArcadeData/arcadedb/actions/workflows/ha-resilience-tests.yml">
-      <img src="https://github.com/ArcadeData/arcadedb/actions/workflows/ha-resilience-tests.yml/badge.svg">
-    </a>
- <a href="https://github.com/ArcadeData/arcadedb/actions/workflows/load-tests.yml">
-      <img src="https://github.com/ArcadeData/arcadedb/actions/workflows/load-tests.yml/badge.svg">
-    </a>
- <a href="https://github.com/ArcadeData/arcadedb/actions/workflows/native-image.yml">
-      <img src="https://github.com/ArcadeData/arcadedb/actions/workflows/native-image.yml/badge.svg">
-    </a>
-
-  <a href="https://codecov.io/github/ArcadeData/arcadedb">
-   <img src="https://codecov.io/github/ArcadeData/arcadedb/graph/badge.svg?token=0690JAJHIO"/>
-  </a>
-  &nbsp;
-  <a href="https://www.codacy.com/gh/ArcadeData/arcadedb/dashboard?utm_source=github.com&utm_medium=referral&utm_content=ArcadeData/arcadedb&utm_campaign=Badge_Coverage">
-    <img src="https://app.codacy.com/project/badge/Coverage/1f971260db1e46638bd3fd91e3ebf668">
-  </a>
-  &nbsp;
-  <a href="https://app.codacy.com/gh/ArcadeData/arcadedb?utm_source=github.com&utm_medium=referral&utm_content=ArcadeData/arcadedb&utm_campaign=Badge_Grade_Settings">
-    <img src="https://api.codacy.com/project/badge/Grade/d40cc721f39b49eb81408307960f145b">
-  </a>
-  &nbsp;
-  <a href="https://www.meterian.io/report/gh/ArcadeData/arcadedb">
-    <img src="https://www.meterian.io/badge/gh/ArcadeData/arcadedb/security?branch=main">
-  </a>
-  &nbsp;
-  <a href="https://www.meterian.io/report/gh/ArcadeData/arcadedb">
-    <img src="https://www.meterian.io/badge/gh/ArcadeData/arcadedb/stability?branch=main">
-  </a>
+  <strong>A high-performance, transactional multi-model database engine maintained by Mindwalker.</strong>
 </p>
 
 <p align="center">
-  <a href="https://discord.gg/w2Npx2B7hZ"><img width="208" height="97" src="https://arcadedb.com/assets/images/discord_button.png" alt="Join Discord"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache%202.0-green.svg" alt="Apache License 2.0"></a>
+  <a href="https://docs.oracle.com/en/java/javase/21/"><img src="https://img.shields.io/badge/Java-21-007396.svg" alt="Java 21"></a>
+  <a href="https://github.com/mindwalker-ai/mindgraph-db-engine"><img src="https://img.shields.io/badge/maintained%20by-Mindwalker-3155F5.svg" alt="Maintained by Mindwalker"></a>
+  <a href="https://github.com/ArcadeData/arcadedb"><img src="https://img.shields.io/badge/upstream-ArcadeDB-FF00A0.svg" alt="Upstream ArcadeDB"></a>
 </p>
 
-<p align="center">
-	<a href="https://github.com/arcadedata/arcadedb"><img height="25" src="studio/src/main/resources/static/images/social/github.svg" alt="Github"></a>
-	&nbsp;
-  <a href="https://www.linkedin.com/company/arcadedb/"><img height="25" src="studio/src/main/resources/static/images/social/linkedin.svg" alt="LinkedIn"></a>
-  &nbsp;
-  <a href="https://bsky.app/profile/arcadedb.bsky.social"><img height="25" src="studio/src/main/resources/static/images/social/bluesky.svg" alt="Bluesky"></a>
-  &nbsp;
-  <a href="https://twitter.com/arcade_db"><img height="25" src="studio/src/main/resources/static/images/social/twitter.svg" alt="Twitter"></a>
-  &nbsp;
-  <a href="https://www.youtube.com/@ArcadeDB"><img height="25" src="studio/src/main/resources/static/images/social/youtube.svg" alt="Youtube"></a>
-  &nbsp;
-  <a href="https://discord.gg/w2Npx2B7hZ"><img height="25" src="studio/src/main/resources/static/images/social/discord.svg" alt="Discord"></a>
-  &nbsp;
-  <a href="https://stackoverflow.com/questions/tagged/arcadedb"><img height="25" src="studio/src/main/resources/static/images/social/stack-overflow.svg" alt="StackOverflow"></a>
-	&nbsp;
-	<a href="https://arcadedb.com/blog/"><img height="25" src="studio/src/main/resources/static/images/social/blog.svg" alt="Blog"></a>
-</p>
+MindGraph DB Engine is Mindwalker's distribution of
+[ArcadeDB](https://github.com/ArcadeData/arcadedb), maintained as a controlled fork under the
+[Apache License 2.0](LICENSE). It preserves ArcadeDB's multi-model database capabilities while
+providing the engine foundation for Mindwalker's graph intelligence products.
 
+The project is currently at the **upstream-compatible baseline** stage. The repository retains
+upstream APIs, artifact coordinates, configuration keys, wire protocols, and file formats while
+Mindwalker establishes its own release, compatibility, security, and product-extension policies.
 
+> **Current status:** no standalone MindGraph DB Engine release or container image has been
+> published yet. Until the first MindGraph release is available, build this repository from
+> source. References to `ArcadeDB`, `com.arcadedb`, and `ARCADEDB_*` in the codebase are retained
+> intentionally for upstream compatibility; they are not evidence of an incomplete repository
+> migration.
 
-ArcadeDB is a Multi-Model DBMS created by Luca Garulli, the same founder
-of [OrientDB](https://github.com/orientechnologies/orientdb),
-after SAP's acquisition. Written from scratch with a brand-new engine made of Alien Technology, ArcadeDB is able to crunch millions
-of records per second on common hardware with minimal resource usage. ArcadeDB reuses OrientDB's SQL engine (heavily modified) and
-some utility classes. It's written in LLJ: Low Level Java - still Java21+ but only using low level APIs to leverage advanced
-mechanical sympathy techniques and reduce Garbage Collector pressure. Highly optimized for extreme performance, it runs
-from a Raspberry Pi to multiple servers on the cloud.
+## Why MindGraph DB Engine
 
-ArcadeDB is fully transactional DBMS with support for ACID transactions, structured and unstructured data, native graph engine (no
-joins but links between records), full-text indexing, geospatial querying, and advanced security.
+MindGraph DB Engine is intended to provide a stable, high-performance data plane for graph-centric
+and AI-assisted workloads, especially in regulated enterprise environments. Mindwalker-specific
+capabilities will be developed as isolated, versioned modules so that upstream fixes can continue
+to be integrated safely.
 
-ArcadeDB supports the following models:
+The initial product direction includes:
 
-- [Graph Database](https://docs.arcadedb.com#graph-model) (compatible with Neo4j Cypher, Apache Tinkerpop Gremlin and OrientDB SQL)
-- [Document Database](https://docs.arcadedb.com#document-model) (compatible with the MongoDB driver + MongoDB queries and OrientDB
-  SQL)
-- [Key/Value](https://docs.arcadedb.com#keyvalue-model) (compatible with the Redis driver)
-- [Search Engine](https://docs.arcadedb.com/#searchengine-model)
-- [Time Series](https://docs.arcadedb.com/#timeseries-model) (with InfluxDB Line Protocol, Prometheus remote_write/read, and PromQL
-  support)
-- [Vector Embedding](https://docs.arcadedb.com/#vector-model)
-- [Geospatial](https://docs.arcadedb.com/#geospatial-model)
+- enterprise identity, authorization, and audit controls;
+- governed ingestion, ontology, lineage, and entity resolution;
+- temporal graph analytics and explainable scoring;
+- permission-aware GraphRAG and AI tooling;
+- operational tooling for private cloud, on-premise, and air-gapped environments; and
+- domain packs for financial services and other regulated industries.
 
-ArcadeDB understands multiple languages:
+These items describe the product direction. They should not be treated as shipped functionality
+until they appear in a tagged MindGraph release.
 
-- [SQL](https://docs.arcadedb.com#sql) (from OrientDB SQL)
-- Neo4j [Cypher (Open Cypher)](https://docs.arcadedb.com#cypher)
-- [Apache Gremlin (Apache Tinkerpop v3.7.x)](https://docs.arcadedb.com#gremlin-api)
-- [GraphQL Language](https://docs.arcadedb.com#graphql)
-- [MongoDB Query Language](https://docs.arcadedb.com#mongodb-query-language)
+## Capabilities inherited from the upstream engine
 
-ArcadeDB key capabilities:
+MindGraph DB Engine starts with the complete upstream capability set rather than reimplementing a
+database kernel. The baseline includes:
 
-- **70+ Built-in Graph Algorithms** — Pathfinding, centrality, community detection, link prediction, graph embeddings, and more —
-  all available out of the box
-- **Parallel Query Execution** — SQL queries leverage multiple CPU cores for faster execution on large datasets
-- **Materialized Views** — Pre-computed query results stored and automatically maintained
-- **MCP Server** — Built-in [Model Context Protocol](https://docs.arcadedb.com/#mcp-server) server for AI assistant and LLM
-  integration
-- **AI Assistant** — Integrated AI assistant in Studio (Beta) for query help and database management
-- **Geospatial Indexing** — Native spatial queries and proximity searches with `geo.*` SQL functions
-- **TimeSeries** — Columnar storage with Gorilla/Delta-of-Delta compression, InfluxDB/Prometheus ingestion, PromQL queries, Grafana
-  integration
-- **Hash Indexes** — Extendible hashing for faster exact-match lookups alongside LSM-Tree indexes
+- ACID transactions, write-ahead logging, schema, indexes, and native graph relationships;
+- graph, document, key/value, search, time-series, vector, and geospatial models;
+- SQL, openCypher-compatible queries, Gremlin, GraphQL, and MongoDB query support;
+- HTTP/JSON, PostgreSQL, Redis, MongoDB, Bolt, gRPC, and MCP interfaces;
+- graph algorithms, full-text and vector search, materialized views, and parallel queries;
+- embedded and client/server deployment modes;
+- high availability based on Raft, backup/restore, metrics, and tracing; and
+- Studio, console, Kubernetes, container, native-image, and client integration modules.
 
-ArcadeDB can be used as:
+Some compatibility protocols intentionally implement only a subset of their upstream protocol.
+Consult the [ArcadeDB documentation](https://docs.arcadedb.com/) for the behavior of the current
+baseline. MindGraph-specific documentation will be published as its public interfaces diverge.
 
-- Embedded from any language on top of the Java Virtual Machine
-- Embedded from Python via bindings: [arcadedb-embedded-python](https://github.com/humemai/arcadedb-embedded-python)
-- Remotely by using [HTTP/JSON](https://docs.arcadedb.com#http-json-api)
-- Remotely by using a [Postgres driver](https://docs.arcadedb.com#postgres-driver) (ArcadeDB implements Postgres Wire protocol)
-- Remotely by using a [Redis driver](https://docs.arcadedb.com#redis-query-language) (only a subset of the operations are
-  implemented)
-- Remotely by using a [MongoDB driver](https://docs.arcadedb.com#mongodb-query-language) (only a subset of the operations are
-  implemented)
-- By AI assistants via the built-in [MCP Server](https://docs.arcadedb.com/#mcp-server) (Model Context Protocol)
+## Repository layout
 
-For more information, see the [documentation](https://docs.arcadedb.com).
+The main modules include:
 
-### Use Cases
+| Area | Modules |
+| --- | --- |
+| Core database | `engine`, `network`, `server`, `ha-raft` |
+| Query and protocol adapters | `graphql`, `gremlin`, `postgresw`, `mongodbw`, `redisw`, `bolt`, `grpc` |
+| Operations | `console`, `studio`, `metrics`, `tracing`, `k8s`, `package` |
+| Integrations | `mcp`, `bindings/python`, `e2e-*` |
+| Verification | unit, integration, end-to-end, load, and HA resilience suites |
 
-Explore real-world examples in the [arcadedb-usecases](https://github.com/ArcadeData/arcadedb-usecases) repository — self-contained
-projects with Docker Compose, SQL schemas, and runnable demos covering:
+## Build from source
 
-- **Recommendation Engine** — graph traversal + vector similarity + time-series
-- **Knowledge Graphs** — co-authorship and citation networks with full-text search
-- **Graph RAG** — retrieval-augmented generation with LangChain4j and Neo4j Bolt
-- **Fraud Detection** — graph, vector, and time-series signals with Cypher
-- **Real-time Analytics** — IoT and service monitoring with time-series
-- **Social Network Analytics** — materialized view dashboards with polyglot queries
-- **Supply Chain** — multi-tier visibility with PostgreSQL protocol and JavaScript
+### Prerequisites
 
-### Getting started in 5 minutes
+- Git
+- JDK 21
+- Docker or Podman for container-based integration and end-to-end tests
 
-Start ArcadeDB Server with Docker:
+The Maven Wrapper is included, so a separate Maven installation is not required.
 
-```
-docker run --rm -p 2480:2480 \
-           -e ARCADEDB_SETTINGS="-Darcadedb.server.rootPassword=playwithdata -Darcadedb.server.defaultDatabases=Imported[root]{import:https://github.com/ArcadeData/arcadedb-datasets/raw/main/orientdb/OpenBeer.gz}" \
-           arcadedata/arcadedb:latest
-```
-
-Pass database settings in `ARCADEDB_SETTINGS` and any extra JVM flags in `JAVA_OPTS`: Docker replaces
-an environment variable rather than appending to it, so keeping the two apart leaves the image's own
-garbage collector and heap sizing (`ARCADEDB_OPTS_GC` and `ARCADEDB_OPTS_MEMORY`) intact. The heap is
-sized as a percentage of the container memory limit, so `docker run -m 512m` and a multi-GB
-production container both work without further tuning.
-On Java 25 and later `server.sh` also enables compact object headers (`-XX:+UseCompactObjectHeaders`), after
-checking that the JVM accepts the flag; set `ARCADEDB_OPTS_HEADERS` to override it, or to an empty value to opt out.
-
-Now open your browser on http://localhost:2480 and play with [ArcadeDB Studio](https://docs.arcadedb.com/#studio) and the
-imported `OpenBeer` database to find your favorite beer.
-
-![ArcadeDB Studio](https://arcadedb.com/assets/images/openbeer-demo-graph.png)
-
-ArcadeDB is cloud-ready with [Docker](https://docs.arcadedb.com/arcadedb/how-to/operations/install-docker) and [Kubernetes](https://docs.arcadedb.com/arcadedb/how-to/operations/kubernetes)
-support.
-
-You can also [download the latest release](https://github.com/ArcadeData/arcadedb/releases), unpack it on your local hard drive and
-start the server with `bin/server.sh` or `bin/server.bat` for Windows.
-
-### Releases
-
-There are four variants of (about monthly) releases:
-
-- `full` - this is the complete package including all modules
-- `minimal` - this package excludes the `gremlin`, `redisw`, `mongodbw`, `graphql` modules
-- `headless` - this package excludes the `gremlin`, `redisw`, `mongodbw`, `graphql`, `studio` modules
-- `base` - core engine, server, and network only — excludes all optional modules (`console`, `gremlin`, `studio`, `redisw`,
-  `mongodbw`, `postgresw`, `grpcw`, `graphql`, `metrics`)
-
-The nightly builds of the repository head can be
-found [here](https://central.sonatype.com/service/rest/repository/browse/maven-snapshots/com/arcadedb/arcadedb-package/).
-
-You can also build a **custom distribution** with only the modules you need using
-the [Custom Package Builder](https://docs.arcadedb.com/#custom-package-builder):
+Build all modules without running tests:
 
 ```bash
-curl -fsSL https://github.com/ArcadeData/arcadedb/releases/download/26.3.1/arcadedb-builder.sh | \
-  bash -s -- --version=26.3.1 --modules=gremlin,studio
+./mvnw clean install -DskipTests
 ```
 
-Available optional modules: `console`, `gremlin`, `studio`, `redisw`, `mongodbw`, `postgresw`, `grpcw`, `graphql`, `metrics`. The
-builder supports interactive mode, Docker image generation, and offline builds from local Maven repositories.
-
-An experimental GraalVM **native-image** build (fast startup, low RAM, no JVM required) is also available - see
-[docs/native-image.md](docs/native-image.md) for prerequisites, the build/target matrix, and Docker usage.
-
-### Java Versions
-
-Starting from ArcadeDB 24.4.1 code is compatible with Java 21.
-
-Java 21 packages are available on [Maven central](https://repo.maven.apache.org/maven2/com/arcadedb/) and docker images
-on [Docker Hub](https://hub.docker.com/r/arcadedata/arcadedb).
-
-We also support Java 17 on a separate branch `java17` for those who cannot upgrade to Java 21 yet through GitHub packages.
-
-To use Java 17 inside your project, add the repository to your `pom.xml` and reference dependencies as follows:
-
-```xml
-
-<repositories>
-    <repository>
-        <name>github</name>
-        <id>github</id>
-        <url>https://maven.pkg.github.com/ArcadeData/arcadedb</url>
-    </repository>
-</repositories>
-<dependencies>
-<dependency>
-    <groupId>com.arcadedb</groupId>
-    <artifactId>arcadedb-engine</artifactId>
-    <version>26.3.1-java17</version>
-</dependency>
-</dependencies>
-```
-
-Docker images are available on ghcr.io too:
-
-```shell
-docker pull ghcr.io/arcadedata/arcadedb:26.3.1-java17
-```
-
-### Embedding Gremlin alongside the engine
-
-Always use the `shaded` classifier for gremlin when embedding it, whether alongside
-`arcadedb-engine` or on its own. Its ANTLR runtime is relocated into a private package, so it
-never collides with the engine's ANTLR 4.13.2 on a shared classpath.
-
-The plain `arcadedb-gremlin` jar resolves ANTLR to the engine's 4.13.2 (pulled transitively via
-`arcadedb-engine`), which the engine's SQL/Cypher parsers require. TinkerPop's Gremlin
-string-query parser ships a precompiled ANTLR 4.9.1 parser that only deserializes against the
-relocated runtime inside the `shaded` jar, so the plain jar alone will not run Gremlin string
-queries - use the `shaded` classifier.
-
-```xml
-<dependency>
-    <groupId>com.arcadedb</groupId>
-    <artifactId>arcadedb-engine</artifactId>
-    <version>26.8.1</version>
-</dependency>
-<dependency>
-    <groupId>com.arcadedb</groupId>
-    <artifactId>arcadedb-gremlin</artifactId>
-    <version>26.8.1</version>
-    <classifier>shaded</classifier>
-</dependency>
-```
-
-### Building and Testing
-
-Build the entire project (skipping tests):
+Build the container distribution:
 
 ```bash
-mvn clean install -DskipTests
+./mvnw clean install -DskipTests -Pdocker
 ```
 
-Build the Docker image (skipping tests):
+The first MindGraph artifact coordinates, image names, and release procedure will be documented
+before the first tagged distribution. Until then, downstream applications should not depend on
+snapshot coordinates from this fork.
+
+## Testing
+
+Run the unit test suite:
 
 ```bash
-mvn clean install -DskipTests -Pdocker
+./mvnw test
 ```
 
-#### Running Unit Tests:
-
-Run the full unit test suite:
+Run the faster unit-test subset:
 
 ```bash
-mvn test
+./mvnw test -DexcludedGroups="slow,benchmark"
 ```
 
-Some tests are tagged to indicate their cost:
-
-- `slow` - functional tests that take noticeably long (large batches, multi-second elapsed time, big payloads)
-- `benchmark` - microbenchmarks not intended for regular CI runs; excluded by default (see below)
-
-`benchmark`-tagged tests are excluded by default, so a plain `mvn test` already skips them. To also skip
-`slow` tests and run only the fast ones:
+Run integration tests, which require Docker or a compatible container runtime:
 
 ```bash
-mvn test -DexcludedGroups="slow,benchmark"
+./mvnw verify -Pintegration
 ```
 
-To run only a specific tag (e.g. benchmark tests in isolation), clear the default exclusion or it
-cancels out the selection and nothing runs:
+Run only the black-box, load, and HA suites:
 
 ```bash
-mvn test -Dgroups="benchmark" -DexcludedGroups=
+./mvnw verify -Pintegration -pl e2e,load-tests,e2e-ha
 ```
 
-#### Running Integration Tests:
+| Suite | Scope |
+| --- | --- |
+| Unit | Storage, WAL, indexes, serialization, queries, schema, graph operations, and security |
+| Integration | Server APIs, wire protocols, cross-module behavior, and embedded clustering |
+| End-to-end | Black-box client behavior against a real containerized server |
+| Load | Throughput, concurrency, stability, and data-integrity scenarios |
+| HA | Failover, restart, network fault, replication, and cluster operation scenarios |
 
-Run all the integration tests (requires Docker):
+## Fork maintenance model
+
+The repository uses two Git remotes during development:
+
+```text
+origin    https://github.com/mindwalker-ai/mindgraph-db-engine.git
+upstream  https://github.com/ArcadeData/arcadedb.git
+```
+
+Confirm the remotes after cloning:
 
 ```bash
-mvn verify -Pintegration
+git remote -v
 ```
 
-Run integration tests excluding the end-to-end, load, and HA tests:
+If `upstream` is missing, add it once:
 
 ```bash
-mvn verify -Pintegration -pl !e2e,!load-tests,!e2e-ha
+git remote add upstream https://github.com/ArcadeData/arcadedb.git
 ```
 
-#### Running End-to-End Tests:
+Upstream changes are imported deliberately and must pass the MindGraph compatibility, security,
+license, and regression checks before release. Avoid broad internal package renames or unrelated
+formatting changes because they make upstream security updates harder to review and merge.
 
-All end-to-end tests (requires Docker):
+General-purpose engine fixes should remain suitable for contribution to ArcadeDB whenever
+possible. Mindwalker product differentiation should live in clearly separated MindGraph modules.
 
-```bash
-mvn verify -Pintegration -pl e2e,load-tests,e2e-ha
-```
+## Contributing
 
-#### Test Suites at a Glance
+Open a pull request in this repository for MindGraph-specific work. The public issue-management
+policy will be documented before the first supported release. Changes inherited from or intended
+for ArcadeDB should also follow the upstream
+[contribution guide](https://github.com/ArcadeData/arcadedb/blob/main/CONTRIBUTING.md).
 
-The codebase is covered by several complementary test suites, each with a distinct scope:
+Before submitting a change:
 
-| Suite | How it runs | Scope |
-|-------|-------------|-------|
-| **Unit tests** | `mvn test` (`*Test`) | Fast, in-process tests of a single component in isolation: engine internals (storage, pages, WAL, indexes, serialization), query parsing and execution (SQL, Cypher, Gremlin, GraphQL), schema, graph traversals, and security. The bulk of coverage; no external services required. Tagged `slow`/`benchmark` tests can be excluded. |
-| **Integration tests** | `mvn verify -Pintegration` (`*IT`) | Tests spanning multiple components or a running server within the same JVM/module: HTTP/REST API, wire protocols (Postgres, MongoDB, Redis, Bolt, gRPC), cross-module behavior, and embedded multi-server clustering. Some require Docker. |
-| **End-to-end (`e2e`)** | `mvn verify -Pintegration -pl e2e` | Black-box tests against a real ArcadeDB server in a Docker container (Testcontainers), exercising it the way external clients do: JDBC/Postgres queries, the remote Java API, server-side JavaScript functions, and the Bolt and gRPC drivers. |
-| **Load tests (`load-tests`)** | `mvn verify -Pintegration -pl load-tests` | Throughput and stability under sustained concurrent workloads against single-server and three-node clusters in containers, including high-volume document and time-series ingestion. Verifies no data loss or corruption under contention. |
-| **HA end-to-end (`e2e-ha`)** | `mvn verify -Pintegration -pl e2e-ha` | Resilience and correctness of the high-availability (Raft) cluster under failure: leader failover, rolling restarts, split-brain, network partitions/delay/packet loss, replication convergence, and cluster-wide operations (backup/restore, import, drop database, user management). Uses Testcontainers and fault injection (Toxiproxy). |
-| **Python client (`e2e-python`)** | `cd e2e-python && pytest tests/` | Verifies the Postgres wire protocol against real Python clients (`psycopg2`, `asyncpg`) and the SQLAlchemy ORM, running against a server in a Docker container (Testcontainers). |
-| **JavaScript client (`e2e-js`)** | `cd e2e-js && npm install && npm test` | Verifies Node.js client compatibility over the Bolt (`neo4j-driver`) and Postgres (`pg`) protocols, running against a server in a Docker container (Jest + Testcontainers). |
-| **C# client (`e2e-csharp`)** | `cd e2e-csharp/ArcadeDB.E2ETests && dotnet test` | Verifies the Postgres wire protocol against a .NET client (`Npgsql`), running against a server in a Docker container (xUnit + Testcontainers). |
+1. keep upstream-derived and Mindwalker-owned changes easy to distinguish;
+2. add tests for behavior changes;
+3. preserve compatibility unless the pull request documents an intentional break; and
+4. retain applicable license headers, notices, and third-party attribution.
 
+## Security
 
-### Community
+Do not report security vulnerabilities in a public issue. Use
+[GitHub private vulnerability reporting](https://github.com/mindwalker-ai/mindgraph-db-engine/security/advisories/new)
+for vulnerabilities affecting this distribution. Issues confirmed to originate upstream will be
+coordinated responsibly with the ArcadeDB maintainers.
 
-Join our growing community around the world, for ideas, discussions and help regarding ArcadeDB.
+## License and upstream attribution
 
-- Chat live with us on [Discord](https://discord.gg/w2Npx2B7hZ)
-- Follow us on [Twitter](https://twitter.com/arcade_db)
-- or on [Bluesky](https://bsky.app/profile/arcadedb.bsky.social)
-- Connect with us on [LinkedIn](https://www.linkedin.com/products/arcadedb)
-- or on [Facebook](https://www.facebook.com/arcadedb)
-- Questions tagged `#arcadedb` on [Stack Overflow](https://stackoverflow.com/questions/tagged/arcadedb)
-- View our official [Blog](https://arcadedb.com/blog/)
+The source currently contained in this repository is licensed under the
+[Apache License 2.0](LICENSE). MindGraph DB Engine is derived from ArcadeDB and retains the
+upstream copyright, license, patent, trademark, and third-party notices required by that license.
 
-### Security
+- [LICENSE](LICENSE) — Apache License 2.0
+- [NOTICE](NOTICE) — required upstream and third-party notices
+- [ATTRIBUTIONS.md](ATTRIBUTIONS.md) — detailed third-party acknowledgements
+- [LICENSES](LICENSES) — component license texts
+- [ArcadeDB upstream repository](https://github.com/ArcadeData/arcadedb)
 
-For security issues kindly email us at support@arcadedb.com instead of posting a public issue on GitHub.
+Mindwalker-authored modules may receive separately documented commercial terms in the future.
+Nothing in this README changes the license of source already published in this repository.
 
-### License and Attribution
+---
 
-ArcadeDB is Free for any usage and licensed under the liberal [Open Source Apache 2 license](LICENSE). We are committed to remaining
-**Open Source Forever** — see our [Governance](GOVERNANCE.md) for the structural guarantees that make this more than a promise. If
-you need commercial support, or you need to have an issue fixed ASAP, check our [pricing page](https://arcadedb.com/pricing.html).
-
-For third-party attributions and copyright notices, see:
-
-- [NOTICE](NOTICE) - Required legal attributions
-- [ATTRIBUTIONS.md](ATTRIBUTIONS.md) - Detailed third-party acknowledgments
-- [LICENSE](LICENSE) - Full license text
-- [GOVERNANCE.md](GOVERNANCE.md) - License guarantee and project governance
-
-### Thanks To
-
-<a href="https://www.yourkit.com"><img src="https://www.yourkit.com/images/yklogo.png"></a> for providing YourKit Profiler to our
-committers.
-
-### Contributing
-
-We would love for you to get involved with ArcadeDB project.
-If you wish to help, you can learn more about how you can contribute to this project in the [contribution guide](CONTRIBUTING.md).
-
-Have fun with data!
-
-The ArcadeDB Team
-
-## Stargazers over time
-
-[![Stargazers over time](https://starchart.cc/ArcadeData/arcadedb.svg?variant=adaptive)](https://starchart.cc/ArcadeData/arcadedb)
+Maintained by [Mindwalker](https://mindwalker.ai/). Powered by the open-source ArcadeDB engine and
+its contributor community.
