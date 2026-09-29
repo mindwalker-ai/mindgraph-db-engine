@@ -16,6 +16,8 @@
  * SPDX-FileCopyrightText: 2021-present Arcade Data Ltd (info@arcadedata.com)
  * SPDX-License-Identifier: Apache-2.0
  */
+// Modifications Copyright © 2026 Mindwalker
+// Mindwalker modification: isolate the regression test from mutable global configuration.
 package com.arcadedb;
 
 import org.junit.jupiter.api.AfterEach;
@@ -172,6 +174,9 @@ class Issue7222StrictBooleanFromConfigurationSourceTest {
   void aWriteThatWasRolledBackIsNotRecordedAsAChoice() {
     final GlobalConfiguration withAllowedValues = GlobalConfiguration.BUCKET_REUSE_SPACE_MODE;
     try {
+      // The engine suite shares GlobalConfiguration across test classes. Start from this setting's
+      // documented default so a previous test cannot make this assertion order-dependent.
+      withAllowedValues.reset();
       assertThat(withAllowedValues.isChanged()).isFalse();
 
       assertThatThrownBy(() -> withAllowedValues.setValue("not-an-allowed-value")).isInstanceOf(

@@ -1,0 +1,131 @@
+{
+  "schemaVersion": 1,
+  "benchmark": "mindgraph-baseline-suite",
+  "measuredRuns": 5,
+  "dataset": {
+    "vertices": 100000,
+    "edges": 400000,
+    "seed": 42
+  },
+  "measurement": {
+    "lookupWarmupOperations": 2000,
+    "lookupMeasuredOperations": 20000,
+    "traversalWarmupOperations": 1000,
+    "traversalMeasuredOperations": 10000
+  },
+  "environment": {
+    "javaVersion": "21.0.12.1",
+    "javaVendor": "Ubuntu",
+    "osName": "Linux",
+    "osVersion": "6.8.0-55-generic",
+    "architecture": "amd64",
+    "availableProcessors": 8,
+    "maxHeapBytes": 8283750400
+  },
+  "metrics": {
+    "loadSeconds": {
+      "min": 5.363163,
+      "median": 5.412467,
+      "max": 5.538661,
+      "mean": 5.4246146,
+      "standardDeviation": 0.0599571495873512,
+      "coefficientOfVariationPercent": 1.1052794347335053
+    },
+    "recordsPerSecond": {
+      "min": 90274.524,
+      "median": 92379.322,
+      "max": 93228.572,
+      "mean": 92183.571,
+      "standardDeviation": 1006.4107023858587,
+      "coefficientOfVariationPercent": 1.0917462748170808
+    },
+    "reopenMillis": {
+      "min": 9.876197,
+      "median": 9.933350,
+      "max": 11.425692,
+      "mean": 10.2300734,
+      "standardDeviation": 0.6000692186188523,
+      "coefficientOfVariationPercent": 5.86573717661549
+    },
+    "databaseBytes": {
+      "min": 23660626,
+      "median": 23660626,
+      "max": 23660628,
+      "mean": 23660626.8,
+      "standardDeviation": 0.9797958971132713,
+      "coefficientOfVariationPercent": 4.141039480464107e-06
+    },
+    "indexedLookupThroughputOpsPerSecond": {
+      "min": 98511.201,
+      "median": 109219.666,
+      "max": 128568.764,
+      "mean": 111969.3866,
+      "standardDeviation": 10845.313906730085,
+      "coefficientOfVariationPercent": 9.685963490604749
+    },
+    "indexedLookupP50Millis": {
+      "min": 0.006728,
+      "median": 0.008100,
+      "max": 0.009213,
+      "mean": 0.0079644,
+      "standardDeviation": 0.0009643647857527774,
+      "coefficientOfVariationPercent": 12.108442390547655
+    },
+    "indexedLookupP95Millis": {
+      "min": 0.010270,
+      "median": 0.012845,
+      "max": 0.013089,
+      "mean": 0.0123164,
+      "standardDeviation": 0.001040792121415223,
+      "coefficientOfVariationPercent": 8.450457287967449
+    },
+    "indexedLookupP99Millis": {
+      "min": 0.021480,
+      "median": 0.025996,
+      "max": 0.028764,
+      "mean": 0.025497,
+      "standardDeviation": 0.002392324559920748,
+      "coefficientOfVariationPercent": 9.382768796018153
+    },
+    "oneHopTraversalThroughputOpsPerSecond": {
+      "min": 106273.066,
+      "median": 121134.899,
+      "max": 128031.232,
+      "mean": 119455.726,
+      "standardDeviation": 7242.109563688717,
+      "coefficientOfVariationPercent": 6.0625888822514185
+    },
+    "oneHopTraversalP50Millis": {
+      "min": 0.007209,
+      "median": 0.007689,
+      "max": 0.008350,
+      "mean": 0.0077058000000000005,
+      "standardDeviation": 0.0003677300096538219,
+      "coefficientOfVariationPercent": 4.77211982732256
+    },
+    "oneHopTraversalP95Millis": {
+      "min": 0.009816,
+      "median": 0.010078,
+      "max": 0.012659,
+      "mean": 0.010757800000000001,
+      "standardDeviation": 0.001070062315942394,
+      "coefficientOfVariationPercent": 9.94685080539138
+    },
+    "oneHopTraversalP99Millis": {
+      "min": 0.017907,
+      "median": 0.019423,
+      "max": 0.020165,
+      "mean": 0.0193314,
+      "standardDeviation": 0.0008297176869273067,
+      "coefficientOfVariationPercent": 4.292072415486238
+    },
+    "usedHeapBytes": {
+      "min": 91478776,
+      "median": 110832520,
+      "max": 150778096,
+      "mean": 118562214.4,
+      "standardDeviation": 21800767.277104,
+      "coefficientOfVariationPercent": 18.387618169439317
+    }
+  }
+}

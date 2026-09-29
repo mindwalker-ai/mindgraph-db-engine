@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-09-29T13:53:46.679689295Z",
+  "benchmark": "mindgraph-baseline",
+  "dataset": {
+    "vertices": 100000,
+    "edges": 400000,
+    "seed": 42
+  },
+  "measurement": {
+    "lookupWarmupOperations": 2000,
+    "lookupMeasuredOperations": 20000,
+    "traversalWarmupOperations": 1000,
+    "traversalMeasuredOperations": 10000
+  },
+  "environment": {
+    "javaVersion": "21.0.12.1",
+    "javaVendor": "Ubuntu",
+    "osName": "Linux",
+    "osVersion": "6.8.0-55-generic",
+    "architecture": "amd64",
+    "availableProcessors": 8,
+    "systemLoadAverage": 1.5898,
+    "maxHeapBytes": 8283750400,
+    "usedHeapBytes": 136320952
+  },
+  "storage": {
+    "loadSeconds": 5.538661,
+    "recordsPerSecond": 90274.524,
+    "reopenMillis": 10.025075,
+    "databaseBytes": 23660626
+  },
+  "indexedLookup": {
+    "operations": 20000,
+    "results": 20000,
+    "throughputOpsPerSecond": 128568.764,
+    "p50Millis": 0.006728,
+    "p95Millis": 0.010270,
+    "p99Millis": 0.021480
+  },
+  "oneHopTraversal": {
+    "operations": 10000,
+    "results": 39628,
+    "throughputOpsPerSecond": 128031.232,
+    "p50Millis": 0.007209,
+    "p95Millis": 0.009816,
+    "p99Millis": 0.019040
+  }
+}

@@ -20,11 +20,15 @@ The project is currently at the **upstream-compatible baseline** stage. The repo
 upstream APIs, artifact coordinates, configuration keys, wire protocols, and file formats while
 Mindwalker establishes its own release, compatibility, security, and product-extension policies.
 
-> **Current status:** no standalone MindGraph DB Engine release or container image has been
-> published yet. Until the first MindGraph release is available, build this repository from
-> source. References to `ArcadeDB`, `com.arcadedb`, and `ARCADEDB_*` in the codebase are retained
-> intentionally for upstream compatibility; they are not evidence of an incomplete repository
-> migration.
+> **Current status:** `0.1.0-alpha.1` is the first defined MindGraph baseline. It remains a release
+> candidate until its tag pipeline publishes the archives, SBOM, provenance, signature, and OCI
+> image. References to `ArcadeDB`, `com.arcadedb`, and `ARCADEDB_*` are retained intentionally for
+> upstream compatibility; they are not evidence of an incomplete repository migration.
+
+The reproducible performance envelope for this candidate is documented in
+[docs/mindgraph-baseline-0.1.0-alpha.1.md](docs/mindgraph-baseline-0.1.0-alpha.1.md).
+
+The exact upstream source and stable-release anchor are documented in [UPSTREAM.md](UPSTREAM.md).
 
 ## Why MindGraph DB Engine
 
@@ -91,15 +95,21 @@ Build all modules without running tests:
 ./mvnw clean install -DskipTests
 ```
 
-Build the container distribution:
+Verify the MindGraph baseline metadata, notices, workflow policy, and Maven structure:
 
 ```bash
-./mvnw clean install -DskipTests -Pdocker
+./scripts/mindgraph/verify-baseline.sh
 ```
 
-The first MindGraph artifact coordinates, image names, and release procedure will be documented
-before the first tagged distribution. Until then, downstream applications should not depend on
-snapshot coordinates from this fork.
+Stage the release archives, CycloneDX SBOM, legal notices, build manifest, and checksums:
+
+```bash
+./scripts/mindgraph/stage-release.sh
+```
+
+Tagged releases publish the OCI image as
+`ghcr.io/mindwalker-ai/mindgraph-db-engine:<mindgraph-version>`. Downstream applications should not
+depend on the inherited `26.10.1-SNAPSHOT` Maven coordinates.
 
 ## Testing
 
@@ -126,6 +136,15 @@ Run only the black-box, load, and HA suites:
 ```bash
 ./mvnw verify -Pintegration -pl e2e,load-tests,e2e-ha
 ```
+
+Run the deterministic MindGraph baseline benchmark:
+
+```bash
+./scripts/mindgraph/run-baseline-suite.sh
+```
+
+The default suite performs one warm-up and five measured runs. Environment variables documented by
+the scripts can scale the dataset or select an isolated output directory.
 
 | Suite | Scope |
 | --- | --- |
@@ -193,6 +212,8 @@ upstream copyright, license, patent, trademark, and third-party notices required
 - [LICENSE](LICENSE) — Apache License 2.0
 - [NOTICE](NOTICE) — required upstream and third-party notices
 - [ATTRIBUTIONS.md](ATTRIBUTIONS.md) — detailed third-party acknowledgements
+- [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) — MindGraph distribution notice index
+- [UPSTREAM.md](UPSTREAM.md) — exact upstream provenance and synchronization policy
 - [LICENSES](LICENSES) — component license texts
 - [ArcadeDB upstream repository](https://github.com/ArcadeData/arcadedb)
 

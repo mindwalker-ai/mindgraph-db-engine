@@ -13,10 +13,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+# Modifications Copyright © 2026 Mindwalker
+# Mindwalker modifications: product metadata and release provenance labels.
 
 FROM eclipse-temurin:21-alpine@sha256:6ea5548706b60ac0a602eaf48af74792cbab012d90e811ca8db6184b16b5c3d6
 
-LABEL maintainer="Arcade Data LTD (info@arcadedb.com)"
+ARG MINDGRAPH_VERSION=development
+ARG MINDGRAPH_SOURCE_COMMIT=unknown
+ARG UPSTREAM_COMMIT=unknown
+
+LABEL maintainer="Mindwalker"
+LABEL org.opencontainers.image.title="MindGraph DB Engine"
+LABEL org.opencontainers.image.description="Mindwalker's controlled distribution of the ArcadeDB multi-model database engine"
+LABEL org.opencontainers.image.vendor="Mindwalker"
+LABEL org.opencontainers.image.source="https://github.com/mindwalker-ai/mindgraph-db-engine"
+LABEL org.opencontainers.image.licenses="Apache-2.0"
+LABEL org.opencontainers.image.version="${MINDGRAPH_VERSION}"
+LABEL org.opencontainers.image.revision="${MINDGRAPH_SOURCE_COMMIT}"
+LABEL com.mindwalker.mindgraph.upstream.name="ArcadeDB"
+LABEL com.mindwalker.mindgraph.upstream.commit="${UPSTREAM_COMMIT}"
 LABEL io.modelcontextprotocol.server.name="com.arcadedb/mcp-server"
 
 # GC selection lives in its own variable, NOT in JAVA_OPTS: quickstarts and orchestrators routinely
