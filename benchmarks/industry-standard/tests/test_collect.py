@@ -77,6 +77,53 @@ class CollectTest(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "output fingerprints"):
                 collect.parse_graph_workload([path])
 
+    def test_parses_semantic_graph_runs(self):
+        timing_labels = {
+            "PR": "PageRank",
+            "WCC": "WCC",
+            "BFS": "BFS",
+            "LCC": "LCC",
+            "SSSP": "SSSP",
+            "CDLP": "CDLP",
+        }
+        with tempfile.TemporaryDirectory() as directory:
+            paths = []
+            for run in range(1, 3):
+                lines = []
+                for index, (metric, _) in enumerate(collect.GRAPHALYTICS_METRICS, start=1):
+                    lines.append(f"  {timing_labels[metric]} time: {index + run / 10}s")
+                    lines.append(f"  SEMANTIC_VALIDATION {metric}: PASS rows=633432")
+                path = Path(directory) / f"run-{run}.log"
+                path.write_text("\n".join(lines), encoding="utf-8")
+                paths.append(path)
+            parsed, validations = collect.parse_semantic_graph_workload(paths)
+        self.assertEqual(1.15, parsed["PR"]["median"])
+        self.assertTrue(all(validations.values()))
+
+    def test_semantic_graph_validation_requires_every_run_to_pass(self):
+        timing_labels = {
+            "PR": "PageRank",
+            "WCC": "WCC",
+            "BFS": "BFS",
+            "LCC": "LCC",
+            "SSSP": "SSSP",
+            "CDLP": "CDLP",
+        }
+        with tempfile.TemporaryDirectory() as directory:
+            paths = []
+            for run in range(1, 3):
+                lines = []
+                for metric, _ in collect.GRAPHALYTICS_METRICS:
+                    state = "FAIL" if run == 2 and metric == "BFS" else "PASS"
+                    lines.append(f"  {timing_labels[metric]} time: 0.1s")
+                    lines.append(f"  SEMANTIC_VALIDATION {metric}: {state} rows=633432")
+                path = Path(directory) / f"run-{run}.log"
+                path.write_text("\n".join(lines), encoding="utf-8")
+                paths.append(path)
+            _, validations = collect.parse_semantic_graph_workload(paths)
+        self.assertFalse(validations["BFS"])
+        self.assertTrue(validations["PR"])
+
     def test_parses_and_validates_lsqb_logs(self):
         lines = []
         for query, expected in collect.LSQB_EXPECTED_COUNTS.items():

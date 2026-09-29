@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "title": "MindGraph reproducible graph benchmark",
-  "subtitle": "MindGraph and its exact upstream control on one BytePlus host, with ArcadeDB's published numbers shown only as references.",
-  "generatedAt": "2026-09-29T18:30:10Z",
+  "subtitle": "MindGraph, its exact ArcadeDB upstream control, and Neo4j Community measured on one BytePlus host; ArcadeDB website numbers remain contextual references.",
+  "generatedAt": "2026-09-29T20:06:18Z",
   "status": "verified",
   "release": {
     "version": "0.1.0-alpha.1",
@@ -15,20 +15,27 @@
     "memoryGiB": 31,
     "java": "openjdk version 21.0.12.1 2026-08-18",
     "os": "Ubuntu 24.04 LTS",
-    "jvmHeapGiB": 12
+    "jvmHeapGiB": 12,
+    "neo4jImage": "neo4j@sha256:91fb0bf237c41b7b3dcbe84703aa0b82e0d7d067b16e1c8ab21f03fc679edf4e",
+    "neo4jVersion": "2026.09.0",
+    "neo4jGdsVersion": "2026.09.0",
+    "neo4jGdsConcurrency": 4
   },
   "methodology": {
     "summary": [
-      "MindGraph and the exact ArcadeDB upstream commit were built independently and executed sequentially on the same idle host.",
-      "The graph algorithm comparison uses the harness native load-once mode on datagen-7_5-fb; LSQB uses SF1 merged-FK; OLAP speedup uses 500K vertices and approximately 8M edges by default.",
+      "MindGraph, the exact ArcadeDB upstream commit, and Neo4j were executed sequentially on the same otherwise-idle host.",
+      "The graph comparison uses datagen-7_5-fb with 633,432 vertices and 34,185,747 edges; LSQB uses the same SF1 merged-FK source and exact Cypher queries from the pinned public harness.",
       "MindGraph and upstream graph outputs are fingerprinted outside the timed region and must match before the report is marked verified.",
-      "Graph algorithm timing reports the median of 5 measured runs after one full warm-up and data-load run.",
-      "LSQB reports the median of 5 measured query runs after one full warm-up and data-load run."
+      "Neo4j graph results are checked through complete-result semantic invariants for every algorithm and every run; all LSQB systems are checked against the nine official expected counts.",
+      "Graph algorithm timing reports five measured runs after one full warm-up. MindGraph and upstream LSQB report five measured runs; Neo4j LSQB reports three because each complete pass is substantially longer.",
+      "Data loading and Neo4j GDS projection construction are excluded from the timed query and algorithm regions."
     ],
     "disclosures": [
       "ArcadeDB published references came from arcadedb.com/benchmarks.html and were not measured on this host; its graph chart names graph500-22, so those values are context rather than an apples-to-apples comparison with datagen-7_5-fb.",
       "The graph algorithm section uses the public harness native load-once runner, not an official LDBC audited result or certification.",
-      "Embedded results describe engine execution without network overhead and are not application TPS or production sizing claims.",
+      "MindGraph and upstream are embedded JVM measurements; Neo4j is a Docker server measured over Bolt and GDS Community is explicitly limited to four concurrent workers. The dashboard therefore labels Neo4j as a same-host competitor series, not a perfectly symmetric engine microbenchmark.",
+      "Neo4j LSQB Q9 exceeded 300 seconds. It is retained as a completed, count-validated result rather than censored or replaced by a timeout value.",
+      "These results are not application TPS, production sizing, or a claim that one system is universally faster.",
       "The inherited OLTP-to-OLAP benchmark uses randomized graph generation, so speedup is directional rather than a deterministic conformance value."
     ]
   },
@@ -36,7 +43,7 @@
     {
       "id": "graphalytics",
       "title": "Graph algorithm execution",
-      "description": "Six Graphalytics algorithms on datagen-7_5-fb in the public harness's native load-once mode. Published graph500-22 values are contextual references, not a direct comparison.",
+      "description": "Six algorithms on datagen-7_5-fb. MindGraph and upstream use the public harness's native load-once runner; Neo4j uses a prebuilt GDS projection. Published graph500-22 values are contextual references.",
       "unit": "seconds",
       "lowerIsBetter": true,
       "metrics": [
@@ -261,6 +268,103 @@
           }
         },
         {
+          "id": "neo4j",
+          "label": "Neo4j Community + GDS Community",
+          "kind": "competitor",
+          "values": {
+            "PR": {
+              "median": 4.253,
+              "min": 4.247,
+              "max": 4.264,
+              "mean": 4.2543999999999995,
+              "standardDeviation": 0.006019966777317063,
+              "coefficientOfVariationPercent": 0.14149978322012655,
+              "runs": [
+                4.264,
+                4.253,
+                4.247,
+                4.25,
+                4.258
+              ]
+            },
+            "WCC": {
+              "median": 0.125,
+              "min": 0.121,
+              "max": 0.181,
+              "mean": 0.1356,
+              "standardDeviation": 0.022764885240211512,
+              "coefficientOfVariationPercent": 16.788263451483417,
+              "runs": [
+                0.181,
+                0.126,
+                0.125,
+                0.125,
+                0.121
+              ]
+            },
+            "BFS": {
+              "median": 0.847,
+              "min": 0.843,
+              "max": 0.86,
+              "mean": 0.8486,
+              "standardDeviation": 0.006280127387243038,
+              "coefficientOfVariationPercent": 0.7400574342732781,
+              "runs": [
+                0.86,
+                0.85,
+                0.847,
+                0.843,
+                0.843
+              ]
+            },
+            "LCC": {
+              "median": 28.472,
+              "min": 28.236,
+              "max": 28.585,
+              "mean": 28.412200000000002,
+              "standardDeviation": 0.12912846316749857,
+              "coefficientOfVariationPercent": 0.454482451790071,
+              "runs": [
+                28.472,
+                28.585,
+                28.236,
+                28.477,
+                28.291
+              ]
+            },
+            "SSSP": {
+              "median": 0.967,
+              "min": 0.95,
+              "max": 1.004,
+              "mean": 0.9730000000000001,
+              "standardDeviation": 0.017765134392961977,
+              "coefficientOfVariationPercent": 1.8258103178789287,
+              "runs": [
+                0.977,
+                1.004,
+                0.967,
+                0.95,
+                0.967
+              ]
+            },
+            "CDLP": {
+              "median": 2.402,
+              "min": 2.399,
+              "max": 2.968,
+              "mean": 2.571,
+              "standardDeviation": 0.2272531627942722,
+              "coefficientOfVariationPercent": 8.839096180251738,
+              "runs": [
+                2.399,
+                2.4,
+                2.402,
+                2.686,
+                2.968
+              ]
+            }
+          }
+        },
+        {
           "id": "arcadedb-published",
           "label": "ArcadeDB published reference \u00b7 graph500-22 / different host",
           "kind": "reference",
@@ -279,6 +383,7 @@
         "total": 6,
         "notes": [
           "Output fingerprints matched across all measured runs for MindGraph measured, ArcadeDB upstream control.",
+          "Complete-result semantic invariants passed in every measured run for Neo4j Community + GDS Community.",
           "This is reproducibility evidence, not official LDBC certification."
         ]
       }
@@ -286,7 +391,7 @@
     {
       "id": "lsqb",
       "title": "LSQB SF1",
-      "description": "Nine Cypher pattern-matching queries on 3.95M vertices and 17.88M edges.",
+      "description": "The same nine Cypher pattern-matching queries on LSQB SF1: 3.95M vertices and 17.88M edges.",
       "unit": "seconds",
       "lowerIsBetter": true,
       "metrics": [
@@ -613,6 +718,130 @@
           }
         },
         {
+          "id": "neo4j",
+          "label": "Neo4j Community + GDS Community",
+          "kind": "competitor",
+          "values": {
+            "Q1": {
+              "median": 9.426,
+              "min": 9.196,
+              "max": 10.025,
+              "mean": 9.549,
+              "standardDeviation": 0.3494347817070688,
+              "coefficientOfVariationPercent": 3.6593861316061247,
+              "runs": [
+                10.025,
+                9.426,
+                9.196
+              ]
+            },
+            "Q2": {
+              "median": 2.714,
+              "min": 2.711,
+              "max": 2.856,
+              "mean": 2.760333333333333,
+              "standardDeviation": 0.06765763486522089,
+              "coefficientOfVariationPercent": 2.451067559421117,
+              "runs": [
+                2.856,
+                2.711,
+                2.714
+              ]
+            },
+            "Q3": {
+              "median": 18.448,
+              "min": 18.396,
+              "max": 18.686,
+              "mean": 18.51,
+              "standardDeviation": 0.126248432333501,
+              "coefficientOfVariationPercent": 0.682055280029719,
+              "runs": [
+                18.686,
+                18.448,
+                18.396
+              ]
+            },
+            "Q4": {
+              "median": 10.053,
+              "min": 9.986,
+              "max": 10.057,
+              "mean": 10.032000000000002,
+              "standardDeviation": 0.032567877834864596,
+              "coefficientOfVariationPercent": 0.3246399305708193,
+              "runs": [
+                10.057,
+                10.053,
+                9.986
+              ]
+            },
+            "Q5": {
+              "median": 9.756,
+              "min": 9.705,
+              "max": 9.774,
+              "mean": 9.745,
+              "standardDeviation": 0.029223278392404625,
+              "coefficientOfVariationPercent": 0.29987971669989355,
+              "runs": [
+                9.774,
+                9.756,
+                9.705
+              ]
+            },
+            "Q6": {
+              "median": 50.086,
+              "min": 49.959,
+              "max": 51.264,
+              "mean": 50.43633333333333,
+              "standardDeviation": 0.5875408260046472,
+              "coefficientOfVariationPercent": 1.1649158199538308,
+              "runs": [
+                51.264,
+                49.959,
+                50.086
+              ]
+            },
+            "Q7": {
+              "median": 13.833,
+              "min": 13.819,
+              "max": 13.971,
+              "mean": 13.874333333333334,
+              "standardDeviation": 0.06859219262342368,
+              "coefficientOfVariationPercent": 0.4943818991189271,
+              "runs": [
+                13.971,
+                13.833,
+                13.819
+              ]
+            },
+            "Q8": {
+              "median": 25.63,
+              "min": 25.624,
+              "max": 25.648,
+              "mean": 25.634,
+              "standardDeviation": 0.010198039027185956,
+              "coefficientOfVariationPercent": 0.039783252817297166,
+              "runs": [
+                25.63,
+                25.648,
+                25.624
+              ]
+            },
+            "Q9": {
+              "median": 474.131,
+              "min": 471.22,
+              "max": 480.357,
+              "mean": 475.23600000000005,
+              "standardDeviation": 3.811120657584421,
+              "coefficientOfVariationPercent": 0.8019427521451281,
+              "runs": [
+                474.131,
+                471.22,
+                480.357
+              ]
+            }
+          }
+        },
+        {
           "id": "arcadedb-published",
           "label": "ArcadeDB published reference",
           "kind": "reference",
@@ -766,6 +995,18 @@
     {
       "label": "Dataset checksums",
       "path": "evidence/dataset-sha256.txt"
+    },
+    {
+      "label": "Neo4j runtime fingerprint",
+      "path": "evidence/neo4j-runtime.txt"
+    },
+    {
+      "label": "Neo4j graph import",
+      "path": "evidence/neo4j-graph-import.txt"
+    },
+    {
+      "label": "Neo4j LSQB load and warm-up",
+      "path": "evidence/neo4j-lsqb-load-and-warmup.txt"
     }
   ]
 }

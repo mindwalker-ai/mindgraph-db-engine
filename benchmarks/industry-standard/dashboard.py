@@ -85,8 +85,10 @@ def validate(data: dict[str, Any]) -> None:
             for field in ("id", "label", "kind", "values"):
                 if field not in series:
                     raise ValueError(f"{series_path}.{field} is required")
-            if series["kind"] not in {"measured", "control", "reference"}:
-                raise ValueError(f"{series_path}.kind must be measured, control, or reference")
+            if series["kind"] not in {"measured", "control", "competitor", "reference"}:
+                raise ValueError(
+                    f"{series_path}.kind must be measured, control, competitor, or reference"
+                )
             for metric_id in metric_ids:
                 if metric_id not in series["values"]:
                     raise ValueError(f"{series_path}.values.{metric_id} is required")
@@ -296,7 +298,8 @@ def render(data: dict[str, Any]) -> str:
         if (value === null || value === undefined) return 'N/A';
         const primary = escapeHtml(format(value, unit));
         if (!value || typeof value !== 'object' || value.min === undefined || value.max === undefined) return primary;
-        const detail = `${{format(value.min, unit)}}–${{format(value.max, unit)}} · CV ${{Number(value.coefficientOfVariationPercent || 0).toFixed(1)}}%`;
+        const sample = Array.isArray(value.runs) ? `n=${{value.runs.length}} · ` : '';
+        const detail = `${{sample}}${{format(value.min, unit)}}–${{format(value.max, unit)}} · CV ${{Number(value.coefficientOfVariationPercent || 0).toFixed(1)}}%`;
         return `${{primary}}<span class="cell-detail">${{escapeHtml(detail)}}</span>`;
       }};
       const validationTotals = data.suites.reduce((acc, suite) => {{

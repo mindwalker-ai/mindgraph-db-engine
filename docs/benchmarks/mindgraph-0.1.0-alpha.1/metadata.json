@@ -1,7 +1,7 @@
 {
   "title": "MindGraph reproducible graph benchmark",
-  "subtitle": "MindGraph and its exact upstream control on one BytePlus host, with ArcadeDB's published numbers shown only as references.",
-  "generatedAt": "2026-09-29T18:30:10Z",
+  "subtitle": "MindGraph, its exact ArcadeDB upstream control, and Neo4j Community measured on one BytePlus host; ArcadeDB website numbers remain contextual references.",
+  "generatedAt": "2026-09-29T20:06:18Z",
   "release": {
     "version": "0.1.0-alpha.1",
     "commit": "c7ffbdf3e1d154359c6b043b6f8bfdd325e50f55",
@@ -13,7 +13,11 @@
     "memoryGiB": 31,
     "java": "openjdk version 21.0.12.1 2026-08-18",
     "os": "Ubuntu 24.04 LTS",
-    "jvmHeapGiB": 12
+    "jvmHeapGiB": 12,
+    "neo4jImage": "neo4j@sha256:91fb0bf237c41b7b3dcbe84703aa0b82e0d7d067b16e1c8ab21f03fc679edf4e",
+    "neo4jVersion": "2026.09.0",
+    "neo4jGdsVersion": "2026.09.0",
+    "neo4jGdsConcurrency": 4
   },
   "systems": [
     {
@@ -25,20 +29,33 @@
       "id": "upstream",
       "label": "ArcadeDB upstream control",
       "kind": "control"
+    },
+    {
+      "id": "neo4j",
+      "label": "Neo4j Community + GDS Community",
+      "kind": "competitor",
+      "supports": [
+        "graphalytics",
+        "lsqb"
+      ],
+      "validationMode": "semantic"
     }
   ],
   "methodology": {
     "summary": [
-      "MindGraph and the exact ArcadeDB upstream commit were built independently and executed sequentially on the same idle host.",
-      "The graph algorithm comparison uses the harness native load-once mode on datagen-7_5-fb; LSQB uses SF1 merged-FK; OLAP speedup uses 500K vertices and approximately 8M edges by default.",
+      "MindGraph, the exact ArcadeDB upstream commit, and Neo4j were executed sequentially on the same otherwise-idle host.",
+      "The graph comparison uses datagen-7_5-fb with 633,432 vertices and 34,185,747 edges; LSQB uses the same SF1 merged-FK source and exact Cypher queries from the pinned public harness.",
       "MindGraph and upstream graph outputs are fingerprinted outside the timed region and must match before the report is marked verified.",
-      "Graph algorithm timing reports the median of 5 measured runs after one full warm-up and data-load run.",
-      "LSQB reports the median of 5 measured query runs after one full warm-up and data-load run."
+      "Neo4j graph results are checked through complete-result semantic invariants for every algorithm and every run; all LSQB systems are checked against the nine official expected counts.",
+      "Graph algorithm timing reports five measured runs after one full warm-up. MindGraph and upstream LSQB report five measured runs; Neo4j LSQB reports three because each complete pass is substantially longer.",
+      "Data loading and Neo4j GDS projection construction are excluded from the timed query and algorithm regions."
     ],
     "disclosures": [
       "ArcadeDB published references came from arcadedb.com/benchmarks.html and were not measured on this host; its graph chart names graph500-22, so those values are context rather than an apples-to-apples comparison with datagen-7_5-fb.",
       "The graph algorithm section uses the public harness native load-once runner, not an official LDBC audited result or certification.",
-      "Embedded results describe engine execution without network overhead and are not application TPS or production sizing claims.",
+      "MindGraph and upstream are embedded JVM measurements; Neo4j is a Docker server measured over Bolt and GDS Community is explicitly limited to four concurrent workers. The dashboard therefore labels Neo4j as a same-host competitor series, not a perfectly symmetric engine microbenchmark.",
+      "Neo4j LSQB Q9 exceeded 300 seconds. It is retained as a completed, count-validated result rather than censored or replaced by a timeout value.",
+      "These results are not application TPS, production sizing, or a claim that one system is universally faster.",
       "The inherited OLTP-to-OLAP benchmark uses randomized graph generation, so speedup is directional rather than a deterministic conformance value."
     ]
   },
@@ -58,6 +75,18 @@
     {
       "label": "Dataset checksums",
       "path": "evidence/dataset-sha256.txt"
+    },
+    {
+      "label": "Neo4j runtime fingerprint",
+      "path": "evidence/neo4j-runtime.txt"
+    },
+    {
+      "label": "Neo4j graph import",
+      "path": "evidence/neo4j-graph-import.txt"
+    },
+    {
+      "label": "Neo4j LSQB load and warm-up",
+      "path": "evidence/neo4j-lsqb-load-and-warmup.txt"
     }
   ]
 }

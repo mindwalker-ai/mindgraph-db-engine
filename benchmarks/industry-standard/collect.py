@@ -92,6 +92,9 @@ GRAPH_TIMING_PATTERNS = {
     "CDLP": re.compile(r"\bCDLP time:\s*([0-9.]+)s"),
 }
 GRAPH_FINGERPRINT_PATTERN = re.compile(r"\bVALIDATION\s+(PR|WCC|BFS|LCC|SSSP|CDLP):\s*(-?[0-9]+)")
+GRAPH_SEMANTIC_PATTERN = re.compile(
+    r"\bSEMANTIC_VALIDATION\s+(PR|WCC|BFS|LCC|SSSP|CDLP):\s+(PASS|FAIL)\b"
+)
 
 
 def parse_graph_workload(paths: list[Path]) -> tuple[dict[str, dict[str, Any]], dict[str, set[str]]]:
@@ -116,6 +119,32 @@ def parse_graph_workload(paths: list[Path]) -> tuple[dict[str, dict[str, Any]], 
     if missing:
         raise ValueError(f"graph workload logs have no timing for: {', '.join(missing)}")
     return ({metric: stats(entries) for metric, entries in timings.items()}, fingerprints)
+
+
+def parse_semantic_graph_workload(
+    paths: list[Path],
+) -> tuple[dict[str, dict[str, Any]], dict[str, bool]]:
+    timings: dict[str, list[float]] = {metric: [] for metric, _ in GRAPHALYTICS_METRICS}
+    validations: dict[str, list[bool]] = {metric: [] for metric, _ in GRAPHALYTICS_METRICS}
+    for path in paths:
+        text = path.read_text(encoding="utf-8", errors="replace")
+        for metric, pattern in GRAPH_TIMING_PATTERNS.items():
+            matches = pattern.findall(text)
+            if len(matches) != 1:
+                raise ValueError(f"{path} has {len(matches)} timings for {metric}; expected exactly one")
+            timings[metric].append(float(matches[0]))
+        run_validations = GRAPH_SEMANTIC_PATTERN.findall(text)
+        if len(run_validations) != len(GRAPHALYTICS_METRICS):
+            raise ValueError(
+                f"{path} has {len(run_validations)} semantic validations; "
+                f"expected {len(GRAPHALYTICS_METRICS)}"
+            )
+        for metric, state in run_validations:
+            validations[metric].append(state == "PASS")
+    return (
+        {metric: stats(entries) for metric, entries in timings.items()},
+        {metric: bool(entries) and all(entries) for metric, entries in validations.items()},
+    )
 
 
 LSQB_PATTERN = re.compile(r"\b(Q[1-9]) time:\s*([0-9.]+)s\s*\(count=(-?[0-9]+)\)")
@@ -175,7 +204,7 @@ def _series_from_systems(
     parser,
 ) -> list[dict[str, Any]]:
     output = []
-    for system in metadata["systems"]:
+    for system in _systems_for_suite(metadata, suite):
         system_id = system["id"]
         if suite == "graphalytics":
             values = parser(evidence / suite / system_id / "results.json")
@@ -193,15 +222,29 @@ def _series_from_systems(
     return output
 
 
+def _systems_for_suite(metadata: dict[str, Any], suite: str) -> list[dict[str, Any]]:
+    return [
+        system
+        for system in metadata["systems"]
+        if suite in system.get("supports", ["graphalytics", "lsqb", "olap"])
+    ]
+
+
 def collect(evidence: Path) -> dict[str, Any]:
     metadata = json.loads((evidence / "metadata.json").read_text(encoding="utf-8"))
     reference = json.loads(REFERENCE_PATH.read_text(encoding="utf-8"))
     graphalytics_series = []
     graph_fingerprints: list[dict[str, set[str]]] = []
-    for system in metadata["systems"]:
+    semantic_validations: list[dict[str, bool]] = []
+    graph_systems = _systems_for_suite(metadata, "graphalytics")
+    for system in graph_systems:
         logs = sorted((evidence / "graphalytics" / system["id"]).glob("run-*.log"))
-        values, fingerprints = parse_graph_workload(logs)
-        graph_fingerprints.append(fingerprints)
+        if system.get("validationMode", "fingerprint") == "semantic":
+            values, semantic = parse_semantic_graph_workload(logs)
+            semantic_validations.append(semantic)
+        else:
+            values, fingerprints = parse_graph_workload(logs)
+            graph_fingerprints.append(fingerprints)
         graphalytics_series.append({
             "id": system["id"],
             "label": system["label"],
@@ -212,14 +255,20 @@ def collect(evidence: Path) -> dict[str, Any]:
     olap_series = _series_from_systems(evidence, metadata, "olap", parse_olap)
 
     lsqb_validation = []
-    for system in metadata["systems"]:
+    for system in _systems_for_suite(metadata, "lsqb"):
         _, passed = parse_lsqb(sorted((evidence / "lsqb" / system["id"]).glob("run-*.log")))
         lsqb_validation.append(passed)
 
     graph_validation = 0
     for metric, _ in GRAPHALYTICS_METRICS:
         fingerprints = [system[metric] for system in graph_fingerprints]
-        if all(len(values) == 1 for values in fingerprints) and len(set.union(*fingerprints)) == 1:
+        fingerprints_match = (
+            bool(fingerprints)
+            and all(len(values) == 1 for values in fingerprints)
+            and len(set.union(*fingerprints)) == 1
+        )
+        semantics_pass = all(system[metric] for system in semantic_validations)
+        if fingerprints_match and semantics_pass:
             graph_validation += 1
 
     graphalytics_series.append({
@@ -242,7 +291,16 @@ def collect(evidence: Path) -> dict[str, Any]:
     })
 
     generated_at = metadata.get("generatedAt") or datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-    systems_label = ", ".join(system["label"] for system in metadata["systems"])
+    fingerprint_labels = ", ".join(
+        system["label"]
+        for system in graph_systems
+        if system.get("validationMode", "fingerprint") == "fingerprint"
+    )
+    semantic_labels = ", ".join(
+        system["label"]
+        for system in graph_systems
+        if system.get("validationMode") == "semantic"
+    )
     return {
         "schemaVersion": 1,
         "title": metadata.get("title", "MindGraph reproducible graph benchmark"),
@@ -259,7 +317,7 @@ def collect(evidence: Path) -> dict[str, Any]:
             {
                 "id": "graphalytics",
                 "title": "Graph algorithm execution",
-                "description": "Six Graphalytics algorithms on datagen-7_5-fb in the public harness's native load-once mode. Published graph500-22 values are contextual references, not a direct comparison.",
+                "description": "Six algorithms on datagen-7_5-fb. MindGraph and upstream use the public harness's native load-once runner; Neo4j uses a prebuilt GDS projection. Published graph500-22 values are contextual references.",
                 "unit": "seconds",
                 "lowerIsBetter": True,
                 "metrics": [{"id": metric, "label": label} for metric, label in GRAPHALYTICS_METRICS],
@@ -268,7 +326,12 @@ def collect(evidence: Path) -> dict[str, Any]:
                     "passed": graph_validation,
                     "total": 6,
                     "notes": [
-                        f"Output fingerprints matched across all measured runs for {systems_label}.",
+                        f"Output fingerprints matched across all measured runs for {fingerprint_labels}.",
+                        *(
+                            [f"Complete-result semantic invariants passed in every measured run for {semantic_labels}."]
+                            if semantic_labels
+                            else []
+                        ),
                         "This is reproducibility evidence, not official LDBC certification.",
                     ],
                 },
@@ -276,7 +339,7 @@ def collect(evidence: Path) -> dict[str, Any]:
             {
                 "id": "lsqb",
                 "title": "LSQB SF1",
-                "description": "Nine Cypher pattern-matching queries on 3.95M vertices and 17.88M edges.",
+                "description": "The same nine Cypher pattern-matching queries on LSQB SF1: 3.95M vertices and 17.88M edges.",
                 "unit": "seconds",
                 "lowerIsBetter": True,
                 "metrics": [{"id": metric, "label": label} for metric, label in LSQB_METRICS],

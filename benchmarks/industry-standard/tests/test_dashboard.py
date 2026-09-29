@@ -74,6 +74,7 @@ class DashboardTest(unittest.TestCase):
         self.assertIn("MindGraph benchmark", output)
         self.assertIn("ArcadeDB published", output)
         self.assertIn("application/json", output)
+        self.assertIn("n=${value.runs.length}", output)
         self.assertNotIn("https://cdn", output)
 
     def test_escapes_script_termination_in_data(self):
@@ -89,6 +90,17 @@ class DashboardTest(unittest.TestCase):
         data["suites"][0]["series"][0]["values"] = {}
         with self.assertRaisesRegex(ValueError, "values.PR is required"):
             dashboard.validate(data)
+
+    def test_accepts_measured_competitor_series(self):
+        data = fixture()
+        data["suites"][0]["series"].append({
+            "id": "neo4j",
+            "label": "Neo4j measured",
+            "kind": "competitor",
+            "values": {"PR": 0.2},
+        })
+        dashboard.validate(data)
+        self.assertIn("Neo4j measured", dashboard.render(data))
 
     def test_cli_writes_html(self):
         with tempfile.TemporaryDirectory() as directory:

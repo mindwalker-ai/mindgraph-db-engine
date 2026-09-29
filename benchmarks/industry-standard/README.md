@@ -2,7 +2,9 @@
 
 This directory turns raw benchmark evidence into a self-contained HTML report. It uses the public
 ArcadeDB benchmark harness's native graph-algorithm and LSQB workloads while keeping host
-measurements separate from published reference values.
+measurements separate from published reference values. The release report also includes a
+same-host Neo4j Community + Graph Data Science Community comparison as a distinct competitor
+series.
 
 The dashboard is presentation only. JSON evidence remains the source of truth.
 Values transcribed from ArcadeDB's public page are pinned with their source date under
@@ -24,6 +26,8 @@ or read the [methodology and findings report](../../docs/benchmarks/mindgraph-0.
 - Label values copied from a vendor page as `reference`; never merge them with values measured on
   the benchmark host.
 - Keep embedded and container/server comparisons in separate series.
+- Record each system's deployment surface, edition, image digest, concurrency ceiling, and sample
+  count. A same-host result is not automatically an identical execution-mode result.
 - Treat LSQB as a pattern-matching microbenchmark, not a production capacity estimate.
 
 ## Generate the report
@@ -61,6 +65,34 @@ The default full-size OLAP workload creates 500,000 vertices and approximately 8
 For a smoke test only, lower `MINDGRAPH_OLAP_VERTICES`; never publish smoke-test numbers as the
 full benchmark.
 
+## Neo4j comparison lane
+
+`neo4j_benchmark.py` runs the same six graph algorithms through Neo4j Graph Data Science and the
+same nine LSQB Cypher queries imported from the pinned public harness. It expects the graph and
+LSQB databases to have already been bulk-loaded from the same pinned datasets. Install the pinned
+driver in an isolated environment and provide the benchmark-only connection values at runtime:
+
+```bash
+python3 -m venv artifacts/industry-standard/neo4j-venv
+artifacts/industry-standard/neo4j-venv/bin/pip install neo4j==6.2.0
+
+NEO4J_URI=bolt://127.0.0.1:7688 \
+NEO4J_USERNAME=neo4j \
+NEO4J_PASSWORD='<benchmark-only password>' \
+  artifacts/industry-standard/neo4j-venv/bin/python \
+  benchmarks/industry-standard/neo4j_benchmark.py graph
+```
+
+Run `lsqb --harness-root <pinned harness checkout>` against the separately loaded LSQB database.
+`--query-timeout-seconds` is optional and uses Neo4j's server-enforced transaction timeout. The
+published comparison deliberately omitted this limit because all completed query results were
+required; the report discloses that Neo4j Q9 exceeded 300 seconds.
+
+The Neo4j lane is useful competitor evidence, but not a perfectly symmetric engine microbenchmark:
+MindGraph and upstream run embedded in the JVM, while Neo4j runs as a server over Bolt and the GDS
+Community algorithms are capped at four concurrent workers. Import and GDS projection time are
+excluded from the timed algorithm region, matching the load-once policy used by the other systems.
+
 ## Test the report generator
 
 ```bash
@@ -72,6 +104,9 @@ python3 -m unittest discover -s benchmarks/industry-standard/tests -p 'test_*.py
 - ArcadeDB harness: `https://github.com/ArcadeData/ldbc_graphalytics_platforms_arcadedb`
 - Graph algorithm dataset: `datagen-7_5-fb`, using the harness's native load-once runner
 - LSQB dataset: `lsqb-sf1`, merged-FK representation
+- Neo4j container: official `neo4j` image pinned by digest in the release metadata
+- Neo4j GDS compatibility and Community concurrency limit:
+  `https://neo4j.com/docs/graph-data-science/current/installation/`
 - MindGraph source: the exact release commit under test
 - Upstream control: the exact ArcadeDB commit recorded in `UPSTREAM.md`
 
