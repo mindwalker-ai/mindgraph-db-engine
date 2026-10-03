@@ -1,0 +1,55 @@
+
+======================================================================
+NEO4J LSQB BENCHMARK
+======================================================================
+
+[Neo4j] Loading LSQB data...
+  Loading nodes...
+  Loading edges from FKs...
+  Loading edge tables...
+  Load time: 438.17s
+
+[Neo4j] Running Q1...
+  Q1 time: 9.53s  (count=221636419)
+
+[Neo4j] Running Q2...
+  Q2 time: 2.81s  (count=1085627)
+
+[Neo4j] Running Q3...
+  Q3 time: 18.58s  (count=753570)
+
+[Neo4j] Running Q4...
+  Q4 time: 10.11s  (count=14836038)
+
+[Neo4j] Running Q5...
+  Q5 time: 9.77s  (count=13824510)
+
+[Neo4j] Running Q6...
+  Q6 time: 61.01s  (count=1668134320)
+
+[Neo4j] Running Q7...
+  Q7 time: 14.36s  (count=26190133)
+
+[Neo4j] Running Q8...
+  Q8 time: 18.12s  (count=6907213)
+
+[Neo4j] Running Q9...
+  Q9 time: 293.48s  (count=1596153418)
+  Cleanup: removed Docker containers neo4j-lsqb
+
+======================================================================
+BENCHMARK SUMMARY  -  LSQB SF1 (subgraph pattern matching)
+======================================================================
+Metric                   Neo4j
+------------------------------
+LOAD                   438.17s
+Q1                       9.53s
+Q2                       2.81s
+Q3                      18.58s
+Q4                      10.11s
+Q5                       9.77s
+Q6                      61.01s
+Q7                      14.36s
+Q8                      18.12s
+Q9                     293.48s
+

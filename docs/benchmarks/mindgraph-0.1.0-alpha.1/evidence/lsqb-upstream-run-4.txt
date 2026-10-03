@@ -1,0 +1,65 @@
+WARNING: Using incubator modules: jdk.incubator.vector
+======================================================================
+ArcadeDB LSQB BENCHMARK (embedded, Cypher)
+======================================================================
+
+[ArcadeDB] Reusing existing database at /opt/mindgraph-benchmark/industry-runs/0.1.0-alpha.1/raw/upstream-lsqb-database
+
+2026-09-30 02:18:14.305 INFO  [GraphAnalyticalViewPersistence] Restoring GraphAnalyticalView 'lsqb' (async)
+2026-09-30 02:18:14.308 INFO  [GraphAnalyticalViewPersistence] Restoring 1 Graph Analytical View(s) asynchronously on database open
+[ArcadeDB] Preparing Graph Analytical View...
+
+2026-09-30 02:18:14.684 INFO  [GraphOlapVectorOpsProvider] Graph-OLAP SIMD vector ops enabled
+2026-09-30 02:18:14.985 INFO  [GraphAnalyticalView] GraphAnalyticalView 'lsqb': restored CSR from disk (asOfTransactionId=777), skipping full rebuild  GAV ready: 0.677s  (nodes=3947829)
+
+[ArcadeDB] Running Q1...
+[To redirect Truffle log output to a file use one of the following options:
+* '--log.file=<path>' if the option is passed using a guest language launcher.
+* '-Dpolyglot.log.file=<path>' if the option is passed using the host Java launcher.
+* Configure logging using the polyglot embedding API.]
+[engine] WARNING: The polyglot engine uses a fallback runtime that does not support runtime compilation to native code.
+Execution without runtime compilation will negatively impact the guest application performance.
+The following cause was found: JVMCI is not enabled for this JVM. Enable JVMCI using -XX:+EnableJVMCI.
+For more information see: https://www.graalvm.org/latest/reference-manual/embed-languages/#runtime-optimization-support.
+To disable this warning use the '--engine.WarnInterpreterOnly=false' option or the '-Dpolyglot.engine.WarnInterpreterOnly=false' system property.
+  Q1 time: 0.699s  (count=221636419)
+
+[ArcadeDB] Running Q2...
+  Q2 time: 0.458s  (count=1085627)
+
+[ArcadeDB] Running Q3...
+  Q3 time: 0.272s  (count=753570)
+
+[ArcadeDB] Running Q4...
+  Q4 time: 8.082s  (count=14836038)
+
+[ArcadeDB] Running Q5...
+  Q5 time: 0.432s  (count=13824510)
+
+[ArcadeDB] Running Q6...
+  Q6 time: 0.46s  (count=1668134320)
+
+[ArcadeDB] Running Q7...
+  Q7 time: 19.509s  (count=26190133)
+
+[ArcadeDB] Running Q8...
+  Q8 time: 0.22s  (count=6907213)
+
+[ArcadeDB] Running Q9...
+  Q9 time: 2.366s  (count=1596153418)
+
+======================================================================
+SUMMARY  -  LSQB SF1
+======================================================================
+Query        ArcadeDB
+----------------------
+LOAD            0.00s
+Q1              0.70s
+Q2              0.46s
+Q3              0.27s
+Q4              8.08s
+Q5              0.43s
+Q6              0.46s
+Q7             19.51s
+Q8              0.22s
+Q9              2.37s
