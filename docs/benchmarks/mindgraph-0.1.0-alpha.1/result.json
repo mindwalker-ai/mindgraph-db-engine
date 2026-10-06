@@ -14,15 +14,15 @@
     ]
   },
   "audienceSummary": {
-    "intro": "",
+    "intro": "Benchmark ini mengukur kecocokan setiap pola workload, bukan memilih pemenang dari jumlah query.",
     "highlights": [
       {
         "title": "8 dari 9 LSQB",
         "detail": "MindGraphDB lebih cepat."
       },
       {
-        "title": "2 vs 3 query banking",
-        "detail": "Pemenang bergantung pada pola query."
+        "title": "5 pola banking tervalidasi",
+        "detail": "Aliran dana, siklus, shared device, fan-in, dan centrality."
       },
       {
         "title": "20/20 valid",
@@ -1046,7 +1046,7 @@
       "title": "Query perbankan sintetis",
       "description": "Five measured Cypher queries on the same deterministic synthetic graph: 50,000 accounts, 10,000 devices, 500,000 transfers, and 50,000 device links.",
       "plainDescription": "5 query pada 50 ribu rekening dan 500 ribu transaksi sintetis.",
-      "takeaway": "MindGraphDB unggul pada 2 query; Neo4j unggul pada 3 query.",
+      "takeaway": "MindGraphDB unggul pada traversal aliran dana dan shared-device. Agregasi global menjadi area optimasi.",
       "unit": "seconds",
       "lowerIsBetter": true,
       "metrics": [

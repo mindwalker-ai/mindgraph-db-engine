@@ -327,11 +327,6 @@ def summarize_banking(
             "values": parsed[system_id],
         })
 
-    wins = {"mindgraph": 0, "neo4j": 0}
-    for query_id in BANKING_QUERIES:
-        winner = min(systems, key=lambda system_id: parsed[system_id][query_id]["median"])
-        wins[winner] += 1
-
     suite = {
         "id": "banking",
         "title": "Query perbankan sintetis",
@@ -341,8 +336,8 @@ def summarize_banking(
         ),
         "plainDescription": "5 query pada 50 ribu rekening dan 500 ribu transaksi sintetis.",
         "takeaway": (
-            f"MindGraphDB unggul pada {wins['mindgraph']} query; "
-            f"Neo4j unggul pada {wins['neo4j']} query."
+            "MindGraphDB unggul pada traversal aliran dana dan shared-device. "
+            "Agregasi global menjadi area optimasi."
         ),
         "unit": "seconds",
         "lowerIsBetter": True,
@@ -376,12 +371,12 @@ def summarize_banking(
     if "banking" not in suite_ids:
         suite_ids.append("banking")
     data["audienceSummary"] = {
-        "intro": "",
+        "intro": "Benchmark ini mengukur kecocokan setiap pola workload, bukan memilih pemenang dari jumlah query.",
         "highlights": [
             {"title": "8 dari 9 LSQB", "detail": "MindGraphDB lebih cepat."},
             {
-                "title": f"{wins['mindgraph']} vs {wins['neo4j']} query banking",
-                "detail": "Pemenang bergantung pada pola query.",
+                "title": "5 pola banking tervalidasi",
+                "detail": "Aliran dana, siklus, shared device, fan-in, dan centrality.",
             },
             {"title": "20/20 valid", "detail": "Semua hasil perhitungan benar."},
         ],

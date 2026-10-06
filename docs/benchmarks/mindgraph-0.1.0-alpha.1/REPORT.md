@@ -38,9 +38,10 @@ CDLP, and slower for PageRank, BFS, and LCC. On LSQB it is faster for Q7 but slo
 eight queries in this specific dataset, query shape, edition, and configuration. These are measured
 workload results, not a universal database ranking.
 
-The synthetic banking lane reinforces that conclusion. MindGraphDB was faster on fund-flow
-traversal and shared-device matching; Neo4j was faster on cycle detection and the two global
-aggregation patterns. The results are shown as measured rather than mapped from LSQB.
+The synthetic banking lane reinforces that conclusion. The dashboard treats each pattern on its
+own rather than turning five microbenchmarks into a product score. MindGraphDB was faster on
+fund-flow traversal and shared-device matching; Neo4j was faster on cycle detection and the two
+global aggregation patterns. The results are shown as measured rather than mapped from LSQB.
 
 ### Graph algorithm execution
 
