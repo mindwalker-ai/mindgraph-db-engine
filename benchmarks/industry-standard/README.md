@@ -29,6 +29,8 @@ or read the [methodology and findings report](../../docs/benchmarks/mindgraph-0.
 - Record each system's deployment surface, edition, image digest, concurrency ceiling, and sample
   count. A same-host result is not automatically an identical execution-mode result.
 - Treat LSQB as a pattern-matching microbenchmark, not a production capacity estimate.
+- Label domain-specific banking examples as illustrative until that exact workload is executed; do
+  not attach LSQB timing values to queries that were not measured.
 
 ## Generate the report
 

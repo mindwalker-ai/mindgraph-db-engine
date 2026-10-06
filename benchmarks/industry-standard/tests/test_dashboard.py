@@ -138,6 +138,36 @@ class DashboardTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "query must be a non-empty string"):
             dashboard.render(data)
 
+    def test_renders_banking_examples_without_claiming_measurement(self):
+        data = fixture()
+        data["suites"][0]["metrics"][0]["query"] = "MATCH (n) RETURN count(n)"
+        data["bankingQueryExamples"] = [{
+            "id": "B1",
+            "title": "Trace funds",
+            "question": "Where did the funds go?",
+            "pattern": "1-3 hop traversal",
+            "query": "MATCH path = (:Account)-[:TRANSFERRED_TO*1..3]->(:Account) RETURN path",
+        }]
+
+        output = dashboard.render(data)
+
+        self.assertIn("Contoh query perbankan · belum diuji", output)
+        self.assertIn("Query berikut tidak menghasilkan angka pada grafik benchmark ini", output)
+        self.assertIn("TRANSFERRED_TO*1..3", output)
+
+    def test_rejects_blank_banking_example_query(self):
+        data = fixture()
+        data["bankingQueryExamples"] = [{
+            "id": "B1",
+            "title": "Trace funds",
+            "question": "Where did the funds go?",
+            "pattern": "Traversal",
+            "query": " ",
+        }]
+
+        with self.assertRaisesRegex(ValueError, r"bankingQueryExamples\[0\].query"):
+            dashboard.render(data)
+
     def test_presentation_limits_customer_view_to_selected_products_and_suites(self):
         data = fixture()
         data["presentation"] = {
