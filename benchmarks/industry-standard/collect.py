@@ -21,6 +21,44 @@ GRAPHALYTICS_METRICS = [
     ("CDLP", "Community detection label propagation"),
 ]
 LSQB_METRICS = [(f"Q{index}", f"Query {index}") for index in range(1, 10)]
+LSQB_QUERY_DETAILS = {
+    "Q1": {
+        "purpose": "Rantai lokasi, forum, post, komentar, dan tag.",
+        "query": "MATCH (co:Country)<-[:IS_PART_OF]-(ci:City)<-[:IS_LOCATED_IN]-(p:Person)<-[:HAS_MEMBER]-(f:Forum)-[:CONTAINER_OF]->(po:Post)<-[:REPLY_OF]-(cm:Comment)-[:HAS_TAG]->(t:Tag)-[:HAS_TYPE]->(tc:TagClass) RETURN count(*) AS count",
+    },
+    "Q2": {
+        "purpose": "Teman yang membalas post milik temannya.",
+        "query": "MATCH (p1:Person)-[:KNOWS]-(p2:Person), (p1)<-[:HAS_CREATOR]-(c:Comment)-[:REPLY_OF]->(po:Post)-[:HAS_CREATOR]->(p2) RETURN count(*) AS count",
+    },
+    "Q3": {
+        "purpose": "Segitiga pertemanan dalam negara yang sama.",
+        "query": "MATCH (co:Country) MATCH (p1:Person)-[:IS_LOCATED_IN]->(c1:City)-[:IS_PART_OF]->(co) MATCH (p2:Person)-[:IS_LOCATED_IN]->(c2:City)-[:IS_PART_OF]->(co) MATCH (p3:Person)-[:IS_LOCATED_IN]->(c3:City)-[:IS_PART_OF]->(co) MATCH (p1)-[:KNOWS]-(p2)-[:KNOWS]-(p3)-[:KNOWS]-(p1) RETURN count(*) AS count",
+    },
+    "Q4": {
+        "purpose": "Pesan bertag yang mendapat like dan balasan.",
+        "query": "MATCH (tg:Tag)<-[:HAS_TAG]-(m:Message)-[:HAS_CREATOR]->(cr:Person), (m)<-[:LIKES]-(lk:Person), (m)<-[:REPLY_OF]-(rp:Comment) RETURN count(*) AS count",
+    },
+    "Q5": {
+        "purpose": "Tag berbeda antara pesan dan komentarnya.",
+        "query": "MATCH (t1:Tag)<-[:HAS_TAG]-(m:Message)<-[:REPLY_OF]-(c:Comment)-[:HAS_TAG]->(t2:Tag) WHERE t1 <> t2 RETURN count(*) AS count",
+    },
+    "Q6": {
+        "purpose": "Minat pada jaringan pertemanan dua tingkat.",
+        "query": "MATCH (p1:Person)-[:KNOWS]-(p2:Person)-[:KNOWS]-(p3:Person)-[:HAS_INTEREST]->(t:Tag) WHERE p1 <> p3 RETURN count(*) AS count",
+    },
+    "Q7": {
+        "purpose": "Pesan bertag beserta like dan balasan opsional.",
+        "query": "MATCH (tg:Tag)<-[:HAS_TAG]-(m:Message)-[:HAS_CREATOR]->(cr:Person) OPTIONAL MATCH (m)<-[:LIKES]-(lk:Person) OPTIONAL MATCH (m)<-[:REPLY_OF]-(rp:Comment) RETURN count(*) AS count",
+    },
+    "Q8": {
+        "purpose": "Tag baru pada komentar yang tidak ada di pesan.",
+        "query": "MATCH (t1:Tag)<-[:HAS_TAG]-(m:Message)<-[:REPLY_OF]-(c:Comment)-[:HAS_TAG]->(t2:Tag) WHERE NOT (c)-[:HAS_TAG]->(t1) AND t1 <> t2 RETURN count(*) AS count",
+    },
+    "Q9": {
+        "purpose": "Teman dari teman yang belum terhubung langsung.",
+        "query": "MATCH (p1:Person)-[:KNOWS]-(p2:Person)-[:KNOWS]-(p3:Person)-[:HAS_INTEREST]->(t:Tag) WHERE NOT (p1)-[:KNOWS]-(p3) AND p1 <> p3 RETURN count(*) AS count",
+    },
+}
 OLAP_METRICS = [
     ("one-hop-count", "1-hop count"),
     ("one-hop-ids", "1-hop IDs"),
@@ -342,7 +380,10 @@ def collect(evidence: Path) -> dict[str, Any]:
                 "description": "The same nine Cypher pattern-matching queries on LSQB SF1: 3.95M vertices and 17.88M edges.",
                 "unit": "seconds",
                 "lowerIsBetter": True,
-                "metrics": [{"id": metric, "label": label} for metric, label in LSQB_METRICS],
+                "metrics": [
+                    {"id": metric, "label": label, **LSQB_QUERY_DETAILS[metric]}
+                    for metric, label in LSQB_METRICS
+                ],
                 "series": lsqb_series,
                 "validation": {
                     "passed": min(lsqb_validation),

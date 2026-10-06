@@ -77,6 +77,13 @@ def validate(data: dict[str, Any]) -> None:
             for field in ("id", "label"):
                 if field not in metric:
                     raise ValueError(f"{path}.metrics[{metric_index}].{field} is required")
+            for optional_text in ("purpose", "query"):
+                if optional_text in metric and (
+                    not isinstance(metric[optional_text], str) or not metric[optional_text].strip()
+                ):
+                    raise ValueError(
+                        f"{path}.metrics[{metric_index}].{optional_text} must be a non-empty string"
+                    )
             metric_ids.append(metric["id"])
         if len(metric_ids) != len(set(metric_ids)):
             raise ValueError(f"{path}.metrics contains duplicate ids")
@@ -263,6 +270,12 @@ def render(data: dict[str, Any]) -> str:
     .validation.partial {{ border-left-color: var(--amber); background: rgba(246, 185, 74, .07); }}
     .takeaway {{ margin: 0 0 20px; padding: 18px 20px; border-radius: var(--radius); background: rgba(246, 185, 74, .08); border: 1px solid rgba(246, 185, 74, .2); color: var(--ink-200); }}
     .takeaway strong {{ color: var(--amber); display: block; margin-bottom: 4px; }}
+    .query-catalog {{ margin: 0 0 20px; }}
+    .query-list {{ display: grid; gap: 12px; }}
+    .query-item {{ padding: 16px; border: 1px solid rgba(142, 165, 189, .14); border-radius: 10px; background: rgba(7, 17, 31, .5); }}
+    .query-item h4 {{ margin: 0; font-size: 15px; }}
+    .query-item p {{ margin: 4px 0 12px; color: var(--ink-400); font-size: 13px; }}
+    .query-item pre {{ margin: 0; padding: 14px; overflow-x: auto; white-space: pre-wrap; overflow-wrap: anywhere; border-radius: 8px; color: var(--ink-200); background: var(--ink-950); font: 12px/1.55 "IBM Plex Mono", "SFMono-Regular", Consolas, monospace; }}
     details.technical {{ margin-top: 20px; border: 1px solid rgba(142, 165, 189, .16); border-radius: var(--radius); background: rgba(11, 23, 40, .58); }}
     details.panel.technical {{ padding: 0; }}
     details.technical > summary {{ cursor: pointer; min-height: 52px; padding: 15px 20px; color: var(--paper); font-weight: 700; list-style-position: inside; }}
@@ -414,7 +427,9 @@ def render(data: dict[str, Any]) -> str:
         const toggle = suite.unit === 'ratio' ? '' : `<div class="toggle" aria-label="Skala grafik"><button type="button" class="active" data-scale="linear">Normal</button><button type="button" data-scale="log">Log</button></div>`;
         const direction = suite.lowerIsBetter ? 'Lebih kecil = lebih cepat' : 'Lebih besar = percepatan lebih tinggi';
         const takeaway = suite.takeaway ? `<div class="takeaway"><strong>Hasil</strong>${{escapeHtml(suite.takeaway)}}</div>` : '';
-        panel.innerHTML = `<div class="suite-head"><div><h2>${{escapeHtml(suite.title)}}</h2><p>${{escapeHtml(suite.plainDescription || suite.description)}}</p><span class="direction">${{direction}}</span></div>${{toggle}}</div>${{takeaway}}<div class="chart-card"><div class="legend"></div><div class="metric-grid"></div><div class="validation${{suite.validation.passed === suite.validation.total ? '' : ' partial'}}"></div></div><details class="technical"><summary>Detail angka</summary><div class="technical-body"><div class="table-wrap"></div><p class="glossary">Median = nilai tengah. n = jumlah pengulangan. Rentang = tercepat–terlambat. CV = variasi hasil.</p></div></details>`;
+        const queryMetrics = suite.metrics.filter(metric => metric.query);
+        const queryCatalog = queryMetrics.length ? `<details class="technical query-catalog"><summary>Lihat ${{queryMetrics.length}} query Cypher</summary><div class="technical-body query-list">${{queryMetrics.map(metric => `<article class="query-item"><h4>${{escapeHtml(metric.id)}} · ${{escapeHtml(metric.purpose || metric.label)}}</h4><pre><code>${{escapeHtml(metric.query)}}</code></pre></article>`).join('')}}</div></details>` : '';
+        panel.innerHTML = `<div class="suite-head"><div><h2>${{escapeHtml(suite.title)}}</h2><p>${{escapeHtml(suite.plainDescription || suite.description)}}</p><span class="direction">${{direction}}</span></div>${{toggle}}</div>${{takeaway}}${{queryCatalog}}<div class="chart-card"><div class="legend"></div><div class="metric-grid"></div><div class="validation${{suite.validation.passed === suite.validation.total ? '' : ' partial'}}"></div></div><details class="technical"><summary>Detail angka</summary><div class="technical-body"><div class="table-wrap"></div><p class="glossary">Median = nilai tengah. n = jumlah pengulangan. Rentang = tercepat–terlambat. CV = variasi hasil.</p></div></details>`;
         panels.appendChild(panel);
         const legend = panel.querySelector('.legend');
         suite.series.forEach((series, index) => {{

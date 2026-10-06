@@ -115,6 +115,8 @@ class DashboardTest(unittest.TestCase):
         data["suites"][0]["plainDescription"] = "A simple explanation of the workload."
         data["suites"][0]["takeaway"] = "The winner depends on the workload."
         data["suites"][0]["metrics"][0]["explanation"] = "Ranks connected nodes."
+        data["suites"][0]["metrics"][0]["purpose"] = "Rank connected nodes."
+        data["suites"][0]["metrics"][0]["query"] = "MATCH (n) RETURN count(n)"
         data["suites"][0]["validation"]["plainLabel"] = "1 of 1 result is correct."
         data["suites"][0]["validation"]["plainNote"] = "Checked on every run."
 
@@ -124,8 +126,17 @@ class DashboardTest(unittest.TestCase):
         self.assertIn("This test checks correctness and speed.", output)
         self.assertIn("The winner depends on the workload.", output)
         self.assertIn("Ranks connected nodes.", output)
+        self.assertIn('class="technical query-catalog"', output)
+        self.assertIn("MATCH (n) RETURN count(n)", output)
         self.assertIn("Detail angka", output)
         self.assertIn("Metode pengujian", output)
+
+    def test_rejects_empty_query_text(self):
+        data = fixture()
+        data["suites"][0]["metrics"][0]["query"] = "  "
+
+        with self.assertRaisesRegex(ValueError, "query must be a non-empty string"):
+            dashboard.render(data)
 
     def test_presentation_limits_customer_view_to_selected_products_and_suites(self):
         data = fixture()
