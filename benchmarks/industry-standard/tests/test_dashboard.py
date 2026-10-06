@@ -102,6 +102,31 @@ class DashboardTest(unittest.TestCase):
         dashboard.validate(data)
         self.assertIn("Neo4j measured", dashboard.render(data))
 
+    def test_renders_plain_language_summary_and_keeps_technical_details_optional(self):
+        data = fixture()
+        data["audienceSummary"] = {
+            "intro": "This test checks correctness and speed.",
+            "highlights": [
+                {"title": "Correct results", "detail": "Every expected output matched."},
+                {"title": "Same machine", "detail": "Measured products used one host."},
+            ],
+            "readingGuide": "Lower time is faster.",
+        }
+        data["suites"][0]["plainDescription"] = "A simple explanation of the workload."
+        data["suites"][0]["takeaway"] = "The winner depends on the workload."
+        data["suites"][0]["metrics"][0]["explanation"] = "Ranks connected nodes."
+        data["suites"][0]["validation"]["plainLabel"] = "1 of 1 result is correct."
+        data["suites"][0]["validation"]["plainNote"] = "Checked on every run."
+
+        output = dashboard.render(data)
+
+        self.assertIn("Apa arti hasil benchmark ini?", output)
+        self.assertIn("This test checks correctness and speed.", output)
+        self.assertIn("The winner depends on the workload.", output)
+        self.assertIn("Ranks connected nodes.", output)
+        self.assertIn("Lihat angka rinci dan istilah statistik", output)
+        self.assertIn("Bagaimana pengujian dilakukan", output)
+
     def test_cli_writes_html(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

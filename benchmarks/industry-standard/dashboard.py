@@ -180,6 +180,16 @@ def render(data: dict[str, Any]) -> str:
     .kpi:nth-child(3), .kpi:nth-child(4) {{ border-top-color: var(--amber); }}
     .kpi strong {{ display: block; font-size: clamp(28px, 4vw, 48px); line-height: 1; letter-spacing: -.04em; margin: 12px 0; }}
     .kpi span {{ color: var(--ink-400); font-size: 14px; }}
+    .executive {{ margin: 8px 0 32px; padding: clamp(24px, 4vw, 40px); border: 1px solid rgba(33, 215, 197, .22); border-radius: var(--radius); background: linear-gradient(135deg, rgba(33, 215, 197, .10), rgba(16, 32, 54, .72) 62%); box-shadow: var(--shadow); }}
+    .executive h2 {{ max-width: 820px; margin-top: 10px; }}
+    .executive-intro {{ color: var(--ink-200); max-width: 900px; font-size: 18px; margin: 0 0 28px; }}
+    .insight-grid {{ display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }}
+    .insight {{ min-height: 170px; padding: 22px; border: 1px solid rgba(142, 165, 189, .18); border-radius: 10px; background: rgba(7, 17, 31, .48); }}
+    .insight strong {{ display: block; font-size: 19px; line-height: 1.25; margin-bottom: 10px; }}
+    .insight p {{ color: var(--ink-200); margin: 0; font-size: 14px; }}
+    .insight-number {{ display: inline-grid; place-items: center; min-width: 30px; height: 30px; margin-bottom: 20px; padding: 0 8px; border-radius: 999px; color: var(--ink-950); background: var(--signal); font-weight: 800; }}
+    .reading-guide {{ display: flex; gap: 12px; align-items: flex-start; margin-top: 20px; padding: 16px 18px; color: var(--ink-200); background: rgba(7, 17, 31, .46); border-radius: 10px; }}
+    .reading-guide strong {{ color: var(--paper); white-space: nowrap; }}
     .tabs {{ display: flex; gap: 8px; overflow-x: auto; padding: 8px 0 24px; scrollbar-width: thin; }}
     .tab {{ min-height: 44px; padding: 0 18px; border-radius: 999px; border: 1px solid var(--ink-700); background: transparent; color: var(--ink-200); font: inherit; font-weight: 650; cursor: pointer; white-space: nowrap; transition: background 160ms ease, color 160ms ease, border-color 160ms ease; }}
     .tab:hover {{ border-color: var(--signal); color: var(--paper); }}
@@ -191,6 +201,7 @@ def render(data: dict[str, Any]) -> str:
     .suite-head {{ display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 24px; align-items: start; margin: 16px 0 24px; }}
     h2 {{ font-size: clamp(28px, 4vw, 44px); line-height: 1.1; letter-spacing: -.035em; margin: 0 0 12px; }}
     .suite-head p {{ color: var(--ink-400); max-width: 760px; margin: 0; }}
+    .direction {{ display: inline-flex; margin-top: 14px; padding: 6px 10px; border-radius: 999px; color: var(--paper); background: var(--ink-800); font-size: 12px; font-weight: 700; }}
     .toggle {{ display: flex; background: var(--ink-900); border: 1px solid var(--ink-700); border-radius: 999px; padding: 4px; }}
     .toggle button {{ min-height: 40px; padding: 0 16px; border: 0; border-radius: 999px; background: transparent; color: var(--ink-400); cursor: pointer; font: inherit; font-size: 13px; font-weight: 700; }}
     .toggle button.active {{ color: var(--paper); background: var(--ink-700); }}
@@ -203,6 +214,7 @@ def render(data: dict[str, Any]) -> str:
     .metric {{ display: grid; grid-template-columns: minmax(120px, 180px) minmax(0, 1fr); gap: 24px; align-items: center; }}
     .metric-name {{ font-weight: 700; }}
     .metric-id {{ color: var(--ink-400); font-size: 12px; display: block; margin-top: 4px; }}
+    .metric-help {{ color: var(--ink-400); font-size: 12px; display: block; margin-top: 6px; font-weight: 400; line-height: 1.4; }}
     .bars {{ display: grid; gap: 8px; }}
     .bar-row {{ display: grid; grid-template-columns: minmax(0, 1fr) 96px; gap: 16px; align-items: center; min-height: 32px; }}
     .bar-track {{ height: 14px; background: rgba(142, 165, 189, .12); border-radius: 999px; overflow: hidden; }}
@@ -211,6 +223,14 @@ def render(data: dict[str, Any]) -> str:
     .bar-value {{ font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace; font-variant-numeric: tabular-nums; text-align: right; color: var(--paper); font-size: 13px; }}
     .validation {{ margin: 24px 0 0; padding: 16px 20px; border-left: 3px solid var(--signal); background: rgba(33, 215, 197, .07); color: var(--ink-200); }}
     .validation.partial {{ border-left-color: var(--amber); background: rgba(246, 185, 74, .07); }}
+    .takeaway {{ margin: 0 0 20px; padding: 18px 20px; border-radius: var(--radius); background: rgba(246, 185, 74, .08); border: 1px solid rgba(246, 185, 74, .2); color: var(--ink-200); }}
+    .takeaway strong {{ color: var(--amber); display: block; margin-bottom: 4px; }}
+    details.technical {{ margin-top: 20px; border: 1px solid rgba(142, 165, 189, .16); border-radius: var(--radius); background: rgba(11, 23, 40, .58); }}
+    details.panel.technical {{ padding: 0; }}
+    details.technical > summary {{ cursor: pointer; min-height: 52px; padding: 15px 20px; color: var(--paper); font-weight: 700; list-style-position: inside; }}
+    details.technical[open] > summary {{ border-bottom: 1px solid rgba(142, 165, 189, .16); }}
+    .technical-body {{ padding: 20px; }}
+    .glossary {{ color: var(--ink-400); font-size: 12px; margin: 14px 4px 0; }}
     .table-wrap {{ overflow-x: auto; margin-top: 24px; border-radius: var(--radius); border: 1px solid rgba(142, 165, 189, .16); }}
     table {{ width: 100%; border-collapse: collapse; font-size: 14px; min-width: 720px; }}
     th {{ color: var(--ink-400); text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .08em; font-weight: 700; background: var(--ink-900); }}
@@ -231,6 +251,7 @@ def render(data: dict[str, Any]) -> str:
     @media (max-width: 900px) {{
       .hero, .methodology {{ grid-template-columns: 1fr; }}
       .kpis {{ grid-template-columns: repeat(2, 1fr); }}
+      .insight-grid {{ grid-template-columns: 1fr; }}
       .suite-head {{ grid-template-columns: 1fr; }}
       .toggle {{ width: max-content; }}
     }}
@@ -241,6 +262,7 @@ def render(data: dict[str, Any]) -> str:
       .metric {{ grid-template-columns: 1fr; gap: 8px; }}
       .chart-card {{ padding: 16px; }}
       .bar-row {{ grid-template-columns: minmax(0, 1fr) 80px; }}
+      .reading-guide {{ display: grid; }}
     }}
     @media (prefers-reduced-motion: reduce) {{ *, *::before, *::after {{ scroll-behavior: auto !important; animation: none !important; transition: none !important; }} }}
   </style>
@@ -249,32 +271,42 @@ def render(data: dict[str, Any]) -> str:
   <main class="shell">
     <header class="hero">
       <div>
-        <div class="eyebrow">Reproducible performance evidence</div>
+        <div class="eyebrow">Bukti performa yang dapat diperiksa</div>
         <h1 id="page-title"></h1>
         <p class="lead" id="page-subtitle"></p>
       </div>
-      <aside class="release-card" aria-label="Benchmark release metadata">
+      <aside class="release-card" aria-label="Informasi versi benchmark">
         <div class="status" id="status-label"></div>
         <dl id="release-meta"></dl>
       </aside>
     </header>
 
+    <section class="executive" aria-labelledby="summary-title">
+      <div class="eyebrow">Jawaban singkat</div>
+      <h2 id="summary-title">Apa arti hasil benchmark ini?</h2>
+      <p class="executive-intro" id="summary-intro"></p>
+      <div class="insight-grid" id="insights"></div>
+      <div class="reading-guide"><strong>Cara membaca:</strong><span id="reading-guide"></span></div>
+    </section>
+
     <section class="kpis" id="kpis" aria-label="Benchmark summary"></section>
     <nav class="tabs" id="tabs" aria-label="Benchmark suites" role="tablist"></nav>
     <div id="suite-panels"></div>
 
-    <section class="methodology" id="methodology">
-      <article class="panel">
-        <div class="eyebrow">Methodology</div>
-        <h3>How to interpret this evidence</h3>
-        <ul id="method-list"></ul>
-      </article>
-      <aside class="panel">
-        <div class="eyebrow">Execution environment</div>
-        <h3>Host fingerprint</h3>
-        <dl class="environment" id="environment"></dl>
-        <div class="artifact-list" id="artifacts"></div>
-      </aside>
+    <section class="methodology" id="methodology" aria-label="Detail teknis benchmark">
+      <details class="panel technical">
+        <summary>Bagaimana pengujian dilakukan</summary>
+        <div class="technical-body">
+          <ul id="method-list"></ul>
+        </div>
+      </details>
+      <details class="panel technical">
+        <summary>Spesifikasi mesin dan bukti mentah</summary>
+        <div class="technical-body">
+          <dl class="environment" id="environment"></dl>
+          <div class="artifact-list" id="artifacts"></div>
+        </div>
+      </details>
     </section>
     <footer id="footer"></footer>
   </main>
@@ -308,19 +340,28 @@ def render(data: dict[str, Any]) -> str:
       }}, {{passed: 0, total: 0}});
       const measuredMetrics = data.suites.reduce((count, suite) => count + suite.metrics.length, 0);
       document.getElementById('page-title').textContent = data.title;
-      document.getElementById('page-subtitle').textContent = data.subtitle || 'Measured results, public references, and raw evidence in one auditable report.';
+      document.getElementById('page-subtitle').textContent = data.subtitle || 'Hasil pengujian, pembanding, dan bukti mentah dalam satu laporan yang dapat diaudit.';
       const status = document.getElementById('status-label');
-      status.textContent = data.status;
+      status.textContent = ({{verified: 'Hasil terverifikasi', partial: 'Verifikasi sebagian', failed: 'Verifikasi gagal'}})[data.status] || data.status;
       status.classList.add(data.status);
       const releaseRows = [
-        ['Version', data.release.version], ['Commit', data.release.commit], ['Measured', data.generatedAt], ['Harness', data.release.harnessCommit]
+        ['Versi', data.release.version], ['Kode sumber', data.release.commit], ['Diuji pada', data.generatedAt], ['Alat uji', data.release.harnessCommit]
       ];
       document.getElementById('release-meta').innerHTML = releaseRows.map(([key, value]) => `<div><dt>${{escapeHtml(key)}}</dt><dd class="mono">${{escapeHtml(value)}}</dd></div>`).join('');
+      const audience = data.audienceSummary || {{}};
+      document.getElementById('summary-intro').textContent = audience.intro || 'Benchmark ini memeriksa dua hal: apakah jawaban database benar dan seberapa cepat pekerjaan graph diselesaikan.';
+      const highlights = audience.highlights || [
+        {{title: 'Hasilnya benar', detail: `${{validationTotals.passed}} dari ${{validationTotals.total}} pemeriksaan memberikan keluaran yang diharapkan.`}},
+        {{title: 'Diuji dengan cara yang setara', detail: 'Semua hasil yang berlabel diukur dijalankan pada mesin yang sama.'}},
+        {{title: 'Tidak ada pemenang mutlak', detail: 'Hasil bergantung pada jenis algoritma dan bentuk query yang dijalankan.'}}
+      ];
+      document.getElementById('insights').innerHTML = highlights.map((item, index) => `<article class="insight"><span class="insight-number">${{index + 1}}</span><strong>${{escapeHtml(item.title)}}</strong><p>${{escapeHtml(item.detail)}}</p></article>`).join('');
+      document.getElementById('reading-guide').textContent = audience.readingGuide || 'Untuk waktu dalam detik, angka lebih kecil berarti lebih cepat. Untuk nilai percepatan (×), angka lebih besar berarti jalur analitik memberi peningkatan lebih tinggi.';
       const kpis = [
-        ['Validated', `${{validationTotals.passed}}/${{validationTotals.total}}`, 'algorithm and query outputs'],
-        ['Coverage', measuredMetrics, 'reported benchmark metrics'],
-        ['Compute', data.environment.cpuCount, 'logical CPUs on the measured host'],
-        ['Memory', data.environment.memoryGiB + ' GiB', 'host RAM; JVM heap is disclosed below']
+        ['Kebenaran hasil', `${{validationTotals.passed}}/${{validationTotals.total}}`, 'hasil algoritma dan query sesuai harapan'],
+        ['Cakupan uji', measuredMetrics, 'skenario performa yang dilaporkan'],
+        ['Lingkungan', '1 server', 'produk yang diukur memakai mesin yang sama'],
+        ['Pengulangan', '3–5×', 'setiap skenario diulang untuk mengurangi kebetulan']
       ];
       document.getElementById('kpis').innerHTML = kpis.map(([label, value, note]) => `<article class="kpi"><div class="eyebrow">${{escapeHtml(label)}}</div><strong>${{escapeHtml(value)}}</strong><span>${{escapeHtml(note)}}</span></article>`).join('');
 
@@ -339,13 +380,16 @@ def render(data: dict[str, Any]) -> str:
 
         const panel = document.createElement('section');
         panel.className = `suite${{suiteIndex === 0 ? ' active' : ''}}`; panel.id = `suite-${{suite.id}}`; panel.role = 'tabpanel';
-        const toggle = suite.unit === 'ratio' ? '' : `<div class="toggle" aria-label="Chart scale"><button type="button" class="active" data-scale="linear">Linear</button><button type="button" data-scale="log">Log</button></div>`;
-        panel.innerHTML = `<div class="suite-head"><div><h2>${{escapeHtml(suite.title)}}</h2><p>${{escapeHtml(suite.description)}}</p></div>${{toggle}}</div><div class="chart-card"><div class="legend"></div><div class="metric-grid"></div><div class="validation${{suite.validation.passed === suite.validation.total ? '' : ' partial'}}"></div></div><div class="table-wrap"></div>`;
+        const toggle = suite.unit === 'ratio' ? '' : `<div class="toggle" aria-label="Skala grafik"><button type="button" class="active" data-scale="linear">Normal</button><button type="button" data-scale="log">Log</button></div>`;
+        const direction = suite.lowerIsBetter ? 'Semakin kecil waktunya, semakin cepat' : 'Semakin besar nilainya, semakin tinggi percepatannya';
+        const takeaway = suite.takeaway ? `<div class="takeaway"><strong>Kesimpulan sederhana</strong>${{escapeHtml(suite.takeaway)}}</div>` : '';
+        panel.innerHTML = `<div class="suite-head"><div><h2>${{escapeHtml(suite.title)}}</h2><p>${{escapeHtml(suite.plainDescription || suite.description)}}</p><span class="direction">${{direction}}</span></div>${{toggle}}</div>${{takeaway}}<div class="chart-card"><div class="legend"></div><div class="metric-grid"></div><div class="validation${{suite.validation.passed === suite.validation.total ? '' : ' partial'}}"></div></div><details class="technical"><summary>Lihat angka rinci dan istilah statistik</summary><div class="technical-body"><div class="table-wrap"></div><p class="glossary">Median = nilai tengah dari beberapa pengulangan. n = jumlah pengulangan. Rentang = hasil tercepat hingga terlambat. CV = tingkat variasi; semakin kecil berarti hasil semakin konsisten.</p></div></details>`;
         panels.appendChild(panel);
         const legend = panel.querySelector('.legend');
         suite.series.forEach((series, index) => {{
           const item = document.createElement('span'); item.className = `legend-item ${{series.kind}}`; item.style.setProperty('--series-color', colors[index % colors.length]);
-          item.innerHTML = `<span class="legend-swatch"></span><span>${{escapeHtml(series.label)}} · ${{escapeHtml(series.kind)}}</span>`; legend.appendChild(item);
+          const kindLabel = ({{measured: 'diukur', control: 'pembanding dasar', competitor: 'produk pembanding', reference: 'referensi eksternal'}})[series.kind] || series.kind;
+          item.innerHTML = `<span class="legend-swatch"></span><span>${{escapeHtml(series.label)}} · ${{escapeHtml(kindLabel)}}</span>`; legend.appendChild(item);
         }});
         const grid = panel.querySelector('.metric-grid');
         const renderBars = scale => {{
@@ -366,24 +410,26 @@ def render(data: dict[str, Any]) -> str:
               return `<div class="bar-row"${{range}}><div class="bar-track"><div class="bar ${{series.kind}}" style="--bar-size:${{size(value)}};--series-color:${{colors[index % colors.length]}}"></div></div><div class="bar-value">${{value === null ? 'N/A' : escapeHtml(format(raw, suite.unit))}}</div></div>`;
             }}).join('');
             const block = document.createElement('div'); block.className = 'metric';
-            block.innerHTML = `<div class="metric-name">${{escapeHtml(metric.label)}}<span class="metric-id mono">${{escapeHtml(metric.id)}}</span></div><div class="bars">${{rows}}</div>`; grid.appendChild(block);
+            const help = metric.explanation ? `<span class="metric-help">${{escapeHtml(metric.explanation)}}</span>` : '';
+            block.innerHTML = `<div class="metric-name">${{escapeHtml(metric.label)}}<span class="metric-id mono">${{escapeHtml(metric.id)}}</span>${{help}}</div><div class="bars">${{rows}}</div>`; grid.appendChild(block);
           }});
         }};
         renderBars('linear');
         panel.querySelectorAll('[data-scale]').forEach(button => button.addEventListener('click', () => {{ panel.querySelectorAll('[data-scale]').forEach(item => item.classList.toggle('active', item === button)); renderBars(button.dataset.scale); }}));
         const validation = panel.querySelector('.validation');
-        const validationLabel = suite.validation.label || `${{suite.validation.passed}} of ${{suite.validation.total}} outputs validated.`;
-        validation.innerHTML = `<strong>${{escapeHtml(validationLabel)}}</strong> ${{escapeHtml((suite.validation.notes || []).join(' '))}}`;
+        const validationLabel = suite.validation.plainLabel || `${{suite.validation.passed}} dari ${{suite.validation.total}} hasil berhasil diverifikasi.`;
+        validation.innerHTML = `<strong>${{escapeHtml(validationLabel)}}</strong> ${{escapeHtml(suite.validation.plainNote || '')}}`;
         const header = suite.series.map(series => `<th scope="col">${{escapeHtml(series.label)}}</th>`).join('');
         const rows = suite.metrics.map(metric => `<tr><td>${{escapeHtml(metric.label)}}</td>${{suite.series.map(series => `<td>${{formatCell(series.values[metric.id], suite.unit)}}</td>`).join('')}}</tr>`).join('');
-        panel.querySelector('.table-wrap').innerHTML = `<table><thead><tr><th scope="col">Metric</th>${{header}}</tr></thead><tbody>${{rows}}</tbody></table>`;
+        panel.querySelector('.table-wrap').innerHTML = `<table><thead><tr><th scope="col">Skenario</th>${{header}}</tr></thead><tbody>${{rows}}</tbody></table>`;
       }});
 
       const methodology = [...(data.methodology.summary || []), ...(data.methodology.disclosures || [])];
       document.getElementById('method-list').innerHTML = methodology.map(item => `<li>${{escapeHtml(item)}}</li>`).join('');
-      document.getElementById('environment').innerHTML = Object.entries(data.environment).map(([key, value]) => `<dt>${{escapeHtml(key.replace(/([A-Z])/g, ' $1'))}}</dt><dd class="mono">${{escapeHtml(value)}}</dd>`).join('');
-      document.getElementById('artifacts').innerHTML = `<h3>Raw evidence</h3>` + data.artifacts.map(artifact => `<a href="${{escapeHtml(artifact.path)}}">${{escapeHtml(artifact.label)}}</a>`).join('');
-      document.getElementById('footer').textContent = `Generated from schema v${{data.schemaVersion}} evidence. Reference series are never presented as measurements from this host.`;
+      const environmentLabels = {{cpu: 'Prosesor', cpuCount: 'CPU logis', memoryGiB: 'RAM (GiB)', java: 'Java', os: 'Sistem operasi', jvmHeapGiB: 'Heap JVM (GiB)', neo4jImage: 'Image Neo4j', neo4jVersion: 'Versi Neo4j', neo4jGdsVersion: 'Versi Neo4j GDS', neo4jGdsConcurrency: 'Worker Neo4j GDS'}};
+      document.getElementById('environment').innerHTML = Object.entries(data.environment).map(([key, value]) => `<dt>${{escapeHtml(environmentLabels[key] || key.replace(/([A-Z])/g, ' $1'))}}</dt><dd class="mono">${{escapeHtml(value)}}</dd>`).join('');
+      document.getElementById('artifacts').innerHTML = `<h3>Bukti mentah</h3>` + data.artifacts.map(artifact => `<a href="${{escapeHtml(artifact.path)}}">${{escapeHtml(artifact.label)}}</a>`).join('');
+      document.getElementById('footer').textContent = `Dibuat dari bukti benchmark schema v${{data.schemaVersion}}. Angka referensi eksternal tidak diperlakukan sebagai hasil pengukuran dari server ini.`;
     }})();
   </script>
 </body>

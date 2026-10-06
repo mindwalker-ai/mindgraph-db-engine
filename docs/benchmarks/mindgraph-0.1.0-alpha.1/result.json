@@ -1,7 +1,25 @@
 {
   "schemaVersion": 1,
-  "title": "MindGraph reproducible graph benchmark",
-  "subtitle": "MindGraph, its exact ArcadeDB upstream control, and Neo4j Community measured on one BytePlus host; ArcadeDB website numbers remain contextual references.",
+  "title": "Hasil Benchmark MindGraphDB",
+  "subtitle": "Perbandingan kinerja MindGraphDB, ArcadeDB asli, dan Neo4j Community pada satu server BytePlus yang sama.",
+  "audienceSummary": {
+    "intro": "Benchmark ini menjawab dua pertanyaan: apakah hasil perhitungan database benar, dan seberapa cepat pekerjaan graph diselesaikan pada skenario yang diuji.",
+    "highlights": [
+      {
+        "title": "Semua pemeriksaan kebenaran lulus",
+        "detail": "Seluruh 15 hasil algoritma dan query cocok dengan keluaran yang diharapkan. Jadi perbandingan kecepatan tidak mengorbankan kebenaran hasil."
+      },
+      {
+        "title": "Performa inti tetap dekat dengan ArcadeDB asli",
+        "detail": "Semua 9 query LSQB berada dalam selisih 6%. Empat dari 6 algoritma graph berada dalam selisih 9%; BFS dan SSSP sekitar 20% lebih lambat pada pengujian ini."
+      },
+      {
+        "title": "Tidak ada satu pemenang untuk semua pekerjaan",
+        "detail": "MindGraphDB lebih cepat dari Neo4j pada 8 dari 9 query LSQB. Pada algoritma graph, hasilnya terbagi: masing-masing lebih cepat pada 3 dari 6 algoritma."
+      }
+    ],
+    "readingGuide": "Pada grafik waktu (detik), angka lebih kecil berarti lebih cepat. Pada grafik percepatan (×), angka lebih besar berarti jalur analitik memberi peningkatan lebih tinggi. Angka publik ArcadeDB hanya referensi karena berasal dari dataset dan mesin yang berbeda."
+  },
   "generatedAt": "2026-09-29T20:06:18Z",
   "status": "verified",
   "release": {
@@ -23,59 +41,67 @@
   },
   "methodology": {
     "summary": [
-      "MindGraph, the exact ArcadeDB upstream commit, and Neo4j were executed sequentially on the same otherwise-idle host.",
-      "The graph comparison uses datagen-7_5-fb with 633,432 vertices and 34,185,747 edges; LSQB uses the same SF1 merged-FK source and exact Cypher queries from the pinned public harness.",
-      "MindGraph and upstream graph outputs are fingerprinted outside the timed region and must match before the report is marked verified.",
-      "Neo4j graph results are checked through complete-result semantic invariants for every algorithm and every run; all LSQB systems are checked against the nine official expected counts.",
-      "Graph algorithm timing reports five measured runs after one full warm-up. MindGraph and upstream LSQB report five measured runs; Neo4j LSQB reports three because each complete pass is substantially longer.",
-      "Data loading and Neo4j GDS projection construction are excluded from the timed query and algorithm regions."
+      "MindGraphDB, ArcadeDB asli dengan versi sumber yang sama, dan Neo4j dijalankan bergantian pada satu server yang sedang tidak menjalankan beban lain.",
+      "Pengujian algoritma memakai datagen-7_5-fb berisi 633.432 vertex dan 34.185.747 edge. Pengujian query memakai LSQB SF1 dengan sumber data dan query Cypher yang sama untuk setiap produk.",
+      "Keluaran MindGraphDB dan ArcadeDB asli diperiksa dengan sidik digital. Laporan hanya berstatus terverifikasi jika hasilnya sama.",
+      "Hasil Neo4j diperiksa secara menyeluruh untuk setiap algoritma dan pengulangan. Hasil sembilan query LSQB juga dicocokkan dengan jumlah keluaran resmi.",
+      "Pengujian algoritma diulang lima kali setelah satu pemanasan. Query LSQB diulang lima kali untuk MindGraphDB dan ArcadeDB asli, serta tiga kali untuk Neo4j karena satu putarannya jauh lebih lama.",
+      "Waktu memuat data dan membuat proyeksi Neo4j GDS tidak dimasukkan ke waktu eksekusi algoritma atau query."
     ],
     "disclosures": [
-      "ArcadeDB published references came from arcadedb.com/benchmarks.html and were not measured on this host; its graph chart names graph500-22, so those values are context rather than an apples-to-apples comparison with datagen-7_5-fb.",
-      "The graph algorithm section uses the public harness native load-once runner, not an official LDBC audited result or certification.",
-      "MindGraph and upstream are embedded JVM measurements; Neo4j is a Docker server measured over Bolt and GDS Community is explicitly limited to four concurrent workers. The dashboard therefore labels Neo4j as a same-host competitor series, not a perfectly symmetric engine microbenchmark.",
-      "Neo4j LSQB Q9 exceeded 300 seconds. It is retained as a completed, count-validated result rather than censored or replaced by a timeout value.",
-      "These results are not application TPS, production sizing, or a claim that one system is universally faster.",
-      "The inherited OLTP-to-OLAP benchmark uses randomized graph generation, so speedup is directional rather than a deterministic conformance value."
+      "Angka publik ArcadeDB berasal dari arcadedb.com dan tidak diukur pada server ini. Grafik publik memakai graph500-22, sehingga nilainya hanya konteks dan bukan perbandingan langsung dengan datagen-7_5-fb.",
+      "Pengujian algoritma memakai alat uji publik dengan pola load-once. Hasil ini bukan sertifikasi resmi LDBC.",
+      "MindGraphDB dan ArcadeDB asli dijalankan langsung di JVM. Neo4j berjalan sebagai server Docker melalui Bolt, sedangkan GDS Community dibatasi empat worker. Perbandingan memakai server yang sama, tetapi cara eksekusinya tidak sepenuhnya identik.",
+      "Query LSQB Q9 pada Neo4j memerlukan lebih dari 300 detik. Hasil lengkap tetap ditampilkan karena selesai dan jumlah keluarannya benar.",
+      "Hasil ini bukan angka transaksi per detik aplikasi, bukan acuan kapasitas production, dan bukan klaim bahwa satu produk selalu lebih cepat.",
+      "Pengujian percepatan OLTP ke analitik memakai graph yang dibuat secara acak. Karena itu, hasilnya menunjukkan arah manfaat dan bukan angka kepatuhan yang deterministik."
     ]
   },
   "suites": [
     {
       "id": "graphalytics",
-      "title": "Graph algorithm execution",
+      "title": "Kecepatan algoritma graph",
       "description": "Six algorithms on datagen-7_5-fb. MindGraph and upstream use the public harness's native load-once runner; Neo4j uses a prebuilt GDS projection. Published graph500-22 values are contextual references.",
+      "plainDescription": "Mengukur waktu yang dibutuhkan database untuk menyelesaikan enam pekerjaan graph umum pada 633 ribu node dan 34 juta hubungan.",
+      "takeaway": "MindGraphDB lebih cepat dari Neo4j pada PageRank, BFS, dan LCC; Neo4j lebih cepat pada WCC, SSSP, dan CDLP. Dibanding ArcadeDB asli, performa MindGraphDB tetap dekat, kecuali BFS dan SSSP yang sekitar 20% lebih lambat pada pengujian ini.",
       "unit": "seconds",
       "lowerIsBetter": true,
       "metrics": [
         {
           "id": "PR",
-          "label": "PageRank"
+          "label": "Peringkat pengaruh",
+          "explanation": "Menilai node mana yang paling berpengaruh berdasarkan jaringan koneksinya."
         },
         {
           "id": "WCC",
-          "label": "Weakly connected components"
+          "label": "Kelompok yang saling terhubung",
+          "explanation": "Mencari kelompok node yang masih memiliki jalur penghubung satu sama lain."
         },
         {
           "id": "BFS",
-          "label": "Breadth-first search"
+          "label": "Penelusuran bertingkat",
+          "explanation": "Menelusuri koneksi dari titik awal, lapis demi lapis."
         },
         {
           "id": "LCC",
-          "label": "Local clustering coefficient"
+          "label": "Kepadatan koneksi lokal",
+          "explanation": "Mengukur seberapa rapat koneksi di sekitar setiap node."
         },
         {
           "id": "SSSP",
-          "label": "Single-source shortest paths"
+          "label": "Rute terpendek dari satu titik",
+          "explanation": "Mencari jalur dengan biaya terendah dari satu node ke node lainnya."
         },
         {
           "id": "CDLP",
-          "label": "Community detection label propagation"
+          "label": "Deteksi komunitas",
+          "explanation": "Mengelompokkan node yang memiliki pola koneksi serupa."
         }
       ],
       "series": [
         {
           "id": "mindgraph",
-          "label": "MindGraph measured",
+          "label": "MindGraphDB · diukur di server ini",
           "kind": "measured",
           "values": {
             "PR": {
@@ -172,7 +198,7 @@
         },
         {
           "id": "upstream",
-          "label": "ArcadeDB upstream control",
+          "label": "ArcadeDB asli · server yang sama",
           "kind": "control",
           "values": {
             "PR": {
@@ -269,7 +295,7 @@
         },
         {
           "id": "neo4j",
-          "label": "Neo4j Community + GDS Community",
+          "label": "Neo4j Community + GDS · server yang sama",
           "kind": "competitor",
           "values": {
             "PR": {
@@ -366,7 +392,7 @@
         },
         {
           "id": "arcadedb-published",
-          "label": "ArcadeDB published reference \u00b7 graph500-22 / different host",
+          "label": "Angka publik ArcadeDB · dataset dan server berbeda",
           "kind": "reference",
           "values": {
             "PR": 0.1,
@@ -381,6 +407,8 @@
       "validation": {
         "passed": 6,
         "total": 6,
+        "plainLabel": "6 dari 6 hasil algoritma benar.",
+        "plainNote": "Setiap produk menghasilkan keluaran yang sesuai pemeriksaan pada seluruh pengulangan.",
         "notes": [
           "Output fingerprints matched across all measured runs for MindGraph measured, ArcadeDB upstream control.",
           "Complete-result semantic invariants passed in every measured run for Neo4j Community + GDS Community.",
@@ -390,52 +418,54 @@
     },
     {
       "id": "lsqb",
-      "title": "LSQB SF1",
+      "title": "Kecepatan query graph skala besar",
       "description": "The same nine Cypher pattern-matching queries on LSQB SF1: 3.95M vertices and 17.88M edges.",
+      "plainDescription": "Menjalankan sembilan pola pencarian yang sama pada graph berisi sekitar 3,95 juta node dan 17,88 juta hubungan.",
+      "takeaway": "MindGraphDB lebih cepat dari Neo4j pada 8 dari 9 query; Neo4j lebih cepat pada Q7. Dibanding ArcadeDB asli, seluruh waktu median MindGraphDB berada dalam selisih 6%. Kesimpulan ini berlaku untuk dataset, query, edisi, dan konfigurasi yang diuji.",
       "unit": "seconds",
       "lowerIsBetter": true,
       "metrics": [
         {
           "id": "Q1",
-          "label": "Query 1"
+          "label": "Pola query 1"
         },
         {
           "id": "Q2",
-          "label": "Query 2"
+          "label": "Pola query 2"
         },
         {
           "id": "Q3",
-          "label": "Query 3"
+          "label": "Pola query 3"
         },
         {
           "id": "Q4",
-          "label": "Query 4"
+          "label": "Pola query 4"
         },
         {
           "id": "Q5",
-          "label": "Query 5"
+          "label": "Pola query 5"
         },
         {
           "id": "Q6",
-          "label": "Query 6"
+          "label": "Pola query 6"
         },
         {
           "id": "Q7",
-          "label": "Query 7"
+          "label": "Pola query 7"
         },
         {
           "id": "Q8",
-          "label": "Query 8"
+          "label": "Pola query 8"
         },
         {
           "id": "Q9",
-          "label": "Query 9"
+          "label": "Pola query 9"
         }
       ],
       "series": [
         {
           "id": "mindgraph",
-          "label": "MindGraph measured",
+          "label": "MindGraphDB · diukur di server ini",
           "kind": "measured",
           "values": {
             "Q1": {
@@ -577,7 +607,7 @@
         },
         {
           "id": "upstream",
-          "label": "ArcadeDB upstream control",
+          "label": "ArcadeDB asli · server yang sama",
           "kind": "control",
           "values": {
             "Q1": {
@@ -719,7 +749,7 @@
         },
         {
           "id": "neo4j",
-          "label": "Neo4j Community + GDS Community",
+          "label": "Neo4j Community + GDS · server yang sama",
           "kind": "competitor",
           "values": {
             "Q1": {
@@ -843,7 +873,7 @@
         },
         {
           "id": "arcadedb-published",
-          "label": "ArcadeDB published reference",
+          "label": "Angka publik ArcadeDB · server berbeda",
           "kind": "reference",
           "values": {
             "Q1": 0.23,
@@ -861,6 +891,8 @@
       "validation": {
         "passed": 9,
         "total": 9,
+        "plainLabel": "9 dari 9 hasil query benar.",
+        "plainNote": "Jumlah hasil setiap query cocok dengan keluaran resmi LSQB SF1.",
         "notes": [
           "Counts were checked against the official LSQB SF1 expected output."
         ]
@@ -868,56 +900,58 @@
     },
     {
       "id": "olap-speedup",
-      "title": "Graph analytical view speedup",
+      "title": "Manfaat jalur analitik",
       "description": "Same 500K-vertex, approximately 8M-edge graph queried through OLTP and CSR-backed analytical paths.",
+      "plainDescription": "Membandingkan pekerjaan yang sama melalui jalur transaksi biasa dan jalur khusus analitik pada graph berisi 500 ribu node dan sekitar 8 juta hubungan.",
+      "takeaway": "Jalur analitik MindGraphDB memberi percepatan antara 3,5× dan 258,4×, tergantung jenis pekerjaan. Angka ini menunjukkan potensi manfaat arsitektur analitik, bukan jaminan untuk setiap aplikasi production.",
       "unit": "ratio",
       "lowerIsBetter": false,
       "metrics": [
         {
           "id": "one-hop-count",
-          "label": "1-hop count"
+          "label": "Hitung koneksi 1 tingkat"
         },
         {
           "id": "one-hop-ids",
-          "label": "1-hop IDs"
+          "label": "Ambil ID koneksi 1 tingkat"
         },
         {
           "id": "two-hop",
-          "label": "2-hop traversal"
+          "label": "Telusur 2 tingkat"
         },
         {
           "id": "three-hop",
-          "label": "3-hop traversal"
+          "label": "Telusur 3 tingkat"
         },
         {
           "id": "four-hop",
-          "label": "4-hop traversal"
+          "label": "Telusur 4 tingkat"
         },
         {
           "id": "five-hop",
-          "label": "5-hop traversal"
+          "label": "Telusur 5 tingkat"
         },
         {
           "id": "shortest-path",
-          "label": "Shortest Path"
+          "label": "Rute terpendek"
         },
         {
           "id": "connected-components",
-          "label": "Connected Components"
+          "label": "Kelompok yang saling terhubung"
         },
         {
           "id": "label-propagation",
-          "label": "Label Propagation"
+          "label": "Pengelompokan komunitas"
         },
         {
           "id": "pagerank-20",
-          "label": "PageRank (20 iter)"
+          "label": "Peringkat pengaruh (20 iterasi)"
         }
       ],
       "series": [
         {
           "id": "mindgraph",
-          "label": "MindGraph measured",
+          "label": "MindGraphDB · diukur di server ini",
           "kind": "measured",
           "values": {
             "one-hop-count": 3.5,
@@ -934,7 +968,7 @@
         },
         {
           "id": "upstream",
-          "label": "ArcadeDB upstream control",
+          "label": "ArcadeDB asli · server yang sama",
           "kind": "control",
           "values": {
             "one-hop-count": 3.6,
@@ -951,7 +985,7 @@
         },
         {
           "id": "arcadedb-published",
-          "label": "ArcadeDB published reference",
+          "label": "Angka publik ArcadeDB · server berbeda",
           "kind": "reference",
           "values": {
             "one-hop-count": 3.8,
@@ -972,6 +1006,8 @@
         "total": 10,
         "countsTowardTotal": false,
         "label": "10 of 10 speedup rows parsed.",
+        "plainLabel": "10 dari 10 skenario berhasil dibaca.",
+        "plainNote": "Bagian ini menunjukkan arah percepatan; graph dibuat secara acak sehingga tidak dihitung sebagai verifikasi kebenaran utama.",
         "notes": [
           "Speedup is OLTP elapsed time divided by OLAP elapsed time on the same process.",
           "The inherited workload is directional and does not provide conformance assertions for these rows."
