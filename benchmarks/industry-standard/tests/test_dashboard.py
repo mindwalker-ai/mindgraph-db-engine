@@ -120,12 +120,34 @@ class DashboardTest(unittest.TestCase):
 
         output = dashboard.render(data)
 
-        self.assertIn("Apa arti hasil benchmark ini?", output)
+        self.assertIn("Hasil utama", output)
         self.assertIn("This test checks correctness and speed.", output)
         self.assertIn("The winner depends on the workload.", output)
         self.assertIn("Ranks connected nodes.", output)
-        self.assertIn("Lihat angka rinci dan istilah statistik", output)
-        self.assertIn("Bagaimana pengujian dilakukan", output)
+        self.assertIn("Detail angka", output)
+        self.assertIn("Metode pengujian", output)
+
+    def test_presentation_limits_customer_view_to_selected_products_and_suites(self):
+        data = fixture()
+        data["presentation"] = {
+            "suiteIds": ["graphalytics"],
+            "seriesIds": ["mindgraph"],
+        }
+
+        output = dashboard.render(data)
+
+        self.assertIn("MindGraph measured", output)
+        self.assertNotIn("ArcadeDB published", output)
+
+    def test_rejects_unknown_customer_view_series(self):
+        data = fixture()
+        data["presentation"] = {
+            "suiteIds": ["graphalytics"],
+            "seriesIds": ["missing"],
+        }
+
+        with self.assertRaisesRegex(ValueError, "missing series: missing"):
+            dashboard.render(data)
 
     def test_cli_writes_html(self):
         with tempfile.TemporaryDirectory() as directory:

@@ -1,24 +1,34 @@
 {
   "schemaVersion": 1,
-  "title": "Hasil Benchmark MindGraphDB",
-  "subtitle": "Perbandingan kinerja MindGraphDB, ArcadeDB asli, dan Neo4j Community pada satu server BytePlus yang sama.",
+  "title": "MindGraphDB vs Neo4j",
+  "subtitle": "MindGraphDB vs Neo4j Community + GDS pada server dan dataset yang sama.",
+  "presentation": {
+    "suiteIds": [
+      "graphalytics",
+      "lsqb"
+    ],
+    "seriesIds": [
+      "mindgraph",
+      "neo4j"
+    ]
+  },
   "audienceSummary": {
-    "intro": "Benchmark ini menjawab dua pertanyaan: apakah hasil perhitungan database benar, dan seberapa cepat pekerjaan graph diselesaikan pada skenario yang diuji.",
+    "intro": "",
     "highlights": [
       {
-        "title": "Semua pemeriksaan kebenaran lulus",
-        "detail": "Seluruh 15 hasil algoritma dan query cocok dengan keluaran yang diharapkan. Jadi perbandingan kecepatan tidak mengorbankan kebenaran hasil."
+        "title": "8 dari 9 query",
+        "detail": "MindGraphDB lebih cepat."
       },
       {
-        "title": "Performa inti tetap dekat dengan ArcadeDB asli",
-        "detail": "Semua 9 query LSQB berada dalam selisih 6%. Empat dari 6 algoritma graph berada dalam selisih 9%; BFS dan SSSP sekitar 20% lebih lambat pada pengujian ini."
+        "title": "3 vs 3 algoritma",
+        "detail": "Hasil kecepatan imbang."
       },
       {
-        "title": "Tidak ada satu pemenang untuk semua pekerjaan",
-        "detail": "MindGraphDB lebih cepat dari Neo4j pada 8 dari 9 query LSQB. Pada algoritma graph, hasilnya terbagi: masing-masing lebih cepat pada 3 dari 6 algoritma."
+        "title": "15/15 valid",
+        "detail": "Semua hasil perhitungan benar."
       }
     ],
-    "readingGuide": "Pada grafik waktu (detik), angka lebih kecil berarti lebih cepat. Pada grafik percepatan (×), angka lebih besar berarti jalur analitik memberi peningkatan lebih tinggi. Angka publik ArcadeDB hanya referensi karena berasal dari dataset dan mesin yang berbeda."
+    "readingGuide": "Angka waktu yang lebih kecil berarti lebih cepat."
   },
   "generatedAt": "2026-09-29T20:06:18Z",
   "status": "verified",
@@ -41,29 +51,25 @@
   },
   "methodology": {
     "summary": [
-      "MindGraphDB, ArcadeDB asli dengan versi sumber yang sama, dan Neo4j dijalankan bergantian pada satu server yang sedang tidak menjalankan beban lain.",
-      "Pengujian algoritma memakai datagen-7_5-fb berisi 633.432 vertex dan 34.185.747 edge. Pengujian query memakai LSQB SF1 dengan sumber data dan query Cypher yang sama untuk setiap produk.",
-      "Keluaran MindGraphDB dan ArcadeDB asli diperiksa dengan sidik digital. Laporan hanya berstatus terverifikasi jika hasilnya sama.",
-      "Hasil Neo4j diperiksa secara menyeluruh untuk setiap algoritma dan pengulangan. Hasil sembilan query LSQB juga dicocokkan dengan jumlah keluaran resmi.",
-      "Pengujian algoritma diulang lima kali setelah satu pemanasan. Query LSQB diulang lima kali untuk MindGraphDB dan ArcadeDB asli, serta tiga kali untuk Neo4j karena satu putarannya jauh lebih lama.",
+      "MindGraphDB dan Neo4j dijalankan pada server yang sama.",
+      "Keduanya memakai dataset dan skenario query yang sama.",
+      "Semua hasil diperiksa sebelum waktu eksekusi dibandingkan.",
+      "Algoritma diulang lima kali. Query diulang lima kali pada MindGraphDB dan tiga kali pada Neo4j.",
       "Waktu memuat data dan membuat proyeksi Neo4j GDS tidak dimasukkan ke waktu eksekusi algoritma atau query."
     ],
     "disclosures": [
-      "Angka publik ArcadeDB berasal dari arcadedb.com dan tidak diukur pada server ini. Grafik publik memakai graph500-22, sehingga nilainya hanya konteks dan bukan perbandingan langsung dengan datagen-7_5-fb.",
-      "Pengujian algoritma memakai alat uji publik dengan pola load-once. Hasil ini bukan sertifikasi resmi LDBC.",
-      "MindGraphDB dan ArcadeDB asli dijalankan langsung di JVM. Neo4j berjalan sebagai server Docker melalui Bolt, sedangkan GDS Community dibatasi empat worker. Perbandingan memakai server yang sama, tetapi cara eksekusinya tidak sepenuhnya identik.",
-      "Query LSQB Q9 pada Neo4j memerlukan lebih dari 300 detik. Hasil lengkap tetap ditampilkan karena selesai dan jumlah keluarannya benar.",
-      "Hasil ini bukan angka transaksi per detik aplikasi, bukan acuan kapasitas production, dan bukan klaim bahwa satu produk selalu lebih cepat.",
-      "Pengujian percepatan OLTP ke analitik memakai graph yang dibuat secara acak. Karena itu, hasilnya menunjukkan arah manfaat dan bukan angka kepatuhan yang deterministik."
+      "MindGraphDB berjalan langsung di JVM; Neo4j berjalan sebagai server Docker melalui Bolt dengan GDS Community empat worker.",
+      "Query Q9 Neo4j tetap ditampilkan meskipun memerlukan lebih dari 300 detik karena prosesnya selesai dan hasilnya valid.",
+      "Hasil ini hanya berlaku untuk dataset dan konfigurasi yang diuji; bukan acuan sizing production."
     ]
   },
   "suites": [
     {
       "id": "graphalytics",
-      "title": "Kecepatan algoritma graph",
+      "title": "Algoritma graph",
       "description": "Six algorithms on datagen-7_5-fb. MindGraph and upstream use the public harness's native load-once runner; Neo4j uses a prebuilt GDS projection. Published graph500-22 values are contextual references.",
-      "plainDescription": "Mengukur waktu yang dibutuhkan database untuk menyelesaikan enam pekerjaan graph umum pada 633 ribu node dan 34 juta hubungan.",
-      "takeaway": "MindGraphDB lebih cepat dari Neo4j pada PageRank, BFS, dan LCC; Neo4j lebih cepat pada WCC, SSSP, dan CDLP. Dibanding ArcadeDB asli, performa MindGraphDB tetap dekat, kecuali BFS dan SSSP yang sekitar 20% lebih lambat pada pengujian ini.",
+      "plainDescription": "6 algoritma pada 633 ribu node dan 34 juta hubungan.",
+      "takeaway": "Imbang 3–3. MindGraphDB unggul pada PageRank, BFS, dan LCC.",
       "unit": "seconds",
       "lowerIsBetter": true,
       "metrics": [
@@ -101,7 +107,7 @@
       "series": [
         {
           "id": "mindgraph",
-          "label": "MindGraphDB · diukur di server ini",
+          "label": "MindGraphDB",
           "kind": "measured",
           "values": {
             "PR": {
@@ -295,7 +301,7 @@
         },
         {
           "id": "neo4j",
-          "label": "Neo4j Community + GDS · server yang sama",
+          "label": "Neo4j Community + GDS",
           "kind": "competitor",
           "values": {
             "PR": {
@@ -408,7 +414,7 @@
         "passed": 6,
         "total": 6,
         "plainLabel": "6 dari 6 hasil algoritma benar.",
-        "plainNote": "Setiap produk menghasilkan keluaran yang sesuai pemeriksaan pada seluruh pengulangan.",
+        "plainNote": "Hasil sesuai pada seluruh pengulangan.",
         "notes": [
           "Output fingerprints matched across all measured runs for MindGraph measured, ArcadeDB upstream control.",
           "Complete-result semantic invariants passed in every measured run for Neo4j Community + GDS Community.",
@@ -418,10 +424,10 @@
     },
     {
       "id": "lsqb",
-      "title": "Kecepatan query graph skala besar",
+      "title": "Query graph",
       "description": "The same nine Cypher pattern-matching queries on LSQB SF1: 3.95M vertices and 17.88M edges.",
-      "plainDescription": "Menjalankan sembilan pola pencarian yang sama pada graph berisi sekitar 3,95 juta node dan 17,88 juta hubungan.",
-      "takeaway": "MindGraphDB lebih cepat dari Neo4j pada 8 dari 9 query; Neo4j lebih cepat pada Q7. Dibanding ArcadeDB asli, seluruh waktu median MindGraphDB berada dalam selisih 6%. Kesimpulan ini berlaku untuk dataset, query, edisi, dan konfigurasi yang diuji.",
+      "plainDescription": "9 query pada 3,95 juta node dan 17,88 juta hubungan.",
+      "takeaway": "MindGraphDB unggul pada 8 dari 9 query. Neo4j unggul pada Q7.",
       "unit": "seconds",
       "lowerIsBetter": true,
       "metrics": [
@@ -465,7 +471,7 @@
       "series": [
         {
           "id": "mindgraph",
-          "label": "MindGraphDB · diukur di server ini",
+          "label": "MindGraphDB",
           "kind": "measured",
           "values": {
             "Q1": {
@@ -749,7 +755,7 @@
         },
         {
           "id": "neo4j",
-          "label": "Neo4j Community + GDS · server yang sama",
+          "label": "Neo4j Community + GDS",
           "kind": "competitor",
           "values": {
             "Q1": {
@@ -892,7 +898,7 @@
         "passed": 9,
         "total": 9,
         "plainLabel": "9 dari 9 hasil query benar.",
-        "plainNote": "Jumlah hasil setiap query cocok dengan keluaran resmi LSQB SF1.",
+        "plainNote": "Jumlah hasil sesuai keluaran resmi LSQB SF1.",
         "notes": [
           "Counts were checked against the official LSQB SF1 expected output."
         ]

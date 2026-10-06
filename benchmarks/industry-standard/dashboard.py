@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import copy
 import html
 import json
 import math
@@ -106,10 +107,47 @@ def _json_for_script(data: dict[str, Any]) -> str:
     )
 
 
+def _presentation_view(data: dict[str, Any]) -> dict[str, Any]:
+    """Return the customer-facing subset while preserving the full source JSON."""
+    presentation = data.get("presentation")
+    if not presentation:
+        return data
+
+    suite_ids = presentation.get("suiteIds")
+    series_ids = presentation.get("seriesIds")
+    if not isinstance(suite_ids, list) or not suite_ids or not all(isinstance(value, str) for value in suite_ids):
+        raise ValueError("presentation.suiteIds must be a non-empty string array")
+    if not isinstance(series_ids, list) or not series_ids or not all(isinstance(value, str) for value in series_ids):
+        raise ValueError("presentation.seriesIds must be a non-empty string array")
+
+    view = copy.deepcopy(data)
+    suites_by_id = {suite["id"]: suite for suite in view["suites"]}
+    missing_suites = [suite_id for suite_id in suite_ids if suite_id not in suites_by_id]
+    if missing_suites:
+        raise ValueError(f"presentation references unknown suites: {', '.join(missing_suites)}")
+
+    selected_suites = []
+    for suite_id in suite_ids:
+        suite = suites_by_id[suite_id]
+        series_by_id = {series["id"]: series for series in suite["series"]}
+        missing_series = [series_id for series_id in series_ids if series_id not in series_by_id]
+        if missing_series:
+            raise ValueError(
+                f"presentation suite {suite_id} is missing series: {', '.join(missing_series)}"
+            )
+        suite["series"] = [series_by_id[series_id] for series_id in series_ids]
+        if suite.get("plainDescription"):
+            suite["description"] = suite["plainDescription"]
+        suite["validation"]["notes"] = []
+        selected_suites.append(suite)
+    view["suites"] = selected_suites
+    return view
+
+
 def render(data: dict[str, Any]) -> str:
     validate(data)
     title = html.escape(str(data["title"]))
-    payload = _json_for_script(data)
+    payload = _json_for_script(_presentation_view(data))
     return f"""<!doctype html>
 <html lang="en">
 <head>
@@ -180,15 +218,15 @@ def render(data: dict[str, Any]) -> str:
     .kpi:nth-child(3), .kpi:nth-child(4) {{ border-top-color: var(--amber); }}
     .kpi strong {{ display: block; font-size: clamp(28px, 4vw, 48px); line-height: 1; letter-spacing: -.04em; margin: 12px 0; }}
     .kpi span {{ color: var(--ink-400); font-size: 14px; }}
-    .executive {{ margin: 8px 0 32px; padding: clamp(24px, 4vw, 40px); border: 1px solid rgba(33, 215, 197, .22); border-radius: var(--radius); background: linear-gradient(135deg, rgba(33, 215, 197, .10), rgba(16, 32, 54, .72) 62%); box-shadow: var(--shadow); }}
+    [hidden] {{ display: none !important; }}
+    .executive {{ margin: 8px 0 40px; padding: clamp(22px, 3vw, 32px); border: 1px solid rgba(33, 215, 197, .22); border-radius: var(--radius); background: linear-gradient(135deg, rgba(33, 215, 197, .10), rgba(16, 32, 54, .72) 62%); box-shadow: var(--shadow); }}
     .executive h2 {{ max-width: 820px; margin-top: 10px; }}
-    .executive-intro {{ color: var(--ink-200); max-width: 900px; font-size: 18px; margin: 0 0 28px; }}
+    .executive-intro {{ color: var(--ink-200); max-width: 900px; font-size: 16px; margin: 0 0 20px; }}
     .insight-grid {{ display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }}
-    .insight {{ min-height: 170px; padding: 22px; border: 1px solid rgba(142, 165, 189, .18); border-radius: 10px; background: rgba(7, 17, 31, .48); }}
-    .insight strong {{ display: block; font-size: 19px; line-height: 1.25; margin-bottom: 10px; }}
+    .insight {{ min-height: 112px; padding: 20px; border: 1px solid rgba(142, 165, 189, .18); border-radius: 10px; background: rgba(7, 17, 31, .48); }}
+    .insight strong {{ display: block; font-size: 24px; line-height: 1.1; margin-bottom: 8px; }}
     .insight p {{ color: var(--ink-200); margin: 0; font-size: 14px; }}
-    .insight-number {{ display: inline-grid; place-items: center; min-width: 30px; height: 30px; margin-bottom: 20px; padding: 0 8px; border-radius: 999px; color: var(--ink-950); background: var(--signal); font-weight: 800; }}
-    .reading-guide {{ display: flex; gap: 12px; align-items: flex-start; margin-top: 20px; padding: 16px 18px; color: var(--ink-200); background: rgba(7, 17, 31, .46); border-radius: 10px; }}
+    .reading-guide {{ display: flex; gap: 12px; align-items: flex-start; margin-top: 16px; padding: 12px 16px; color: var(--ink-200); background: rgba(7, 17, 31, .46); border-radius: 10px; font-size: 14px; }}
     .reading-guide strong {{ color: var(--paper); white-space: nowrap; }}
     .tabs {{ display: flex; gap: 8px; overflow-x: auto; padding: 8px 0 24px; scrollbar-width: thin; }}
     .tab {{ min-height: 44px; padding: 0 18px; border-radius: 999px; border: 1px solid var(--ink-700); background: transparent; color: var(--ink-200); font: inherit; font-weight: 650; cursor: pointer; white-space: nowrap; transition: background 160ms ease, color 160ms ease, border-color 160ms ease; }}
@@ -271,7 +309,7 @@ def render(data: dict[str, Any]) -> str:
   <main class="shell">
     <header class="hero">
       <div>
-        <div class="eyebrow">Bukti performa yang dapat diperiksa</div>
+        <div class="eyebrow">Benchmark performa</div>
         <h1 id="page-title"></h1>
         <p class="lead" id="page-subtitle"></p>
       </div>
@@ -282,26 +320,25 @@ def render(data: dict[str, Any]) -> str:
     </header>
 
     <section class="executive" aria-labelledby="summary-title">
-      <div class="eyebrow">Jawaban singkat</div>
-      <h2 id="summary-title">Apa arti hasil benchmark ini?</h2>
+      <div class="eyebrow">Ringkasan</div>
+      <h2 id="summary-title">Hasil utama</h2>
       <p class="executive-intro" id="summary-intro"></p>
       <div class="insight-grid" id="insights"></div>
       <div class="reading-guide"><strong>Cara membaca:</strong><span id="reading-guide"></span></div>
     </section>
 
-    <section class="kpis" id="kpis" aria-label="Benchmark summary"></section>
     <nav class="tabs" id="tabs" aria-label="Benchmark suites" role="tablist"></nav>
     <div id="suite-panels"></div>
 
     <section class="methodology" id="methodology" aria-label="Detail teknis benchmark">
       <details class="panel technical">
-        <summary>Bagaimana pengujian dilakukan</summary>
+        <summary>Metode pengujian</summary>
         <div class="technical-body">
           <ul id="method-list"></ul>
         </div>
       </details>
       <details class="panel technical">
-        <summary>Spesifikasi mesin dan bukti mentah</summary>
+        <summary>Spesifikasi &amp; bukti</summary>
         <div class="technical-body">
           <dl class="environment" id="environment"></dl>
           <div class="artifact-list" id="artifacts"></div>
@@ -338,33 +375,27 @@ def render(data: dict[str, Any]) -> str:
         if (suite.validation.countsTowardTotal !== false) {{ acc.passed += suite.validation.passed || 0; acc.total += suite.validation.total || 0; }}
         return acc;
       }}, {{passed: 0, total: 0}});
-      const measuredMetrics = data.suites.reduce((count, suite) => count + suite.metrics.length, 0);
       document.getElementById('page-title').textContent = data.title;
       document.getElementById('page-subtitle').textContent = data.subtitle || 'Hasil pengujian, pembanding, dan bukti mentah dalam satu laporan yang dapat diaudit.';
       const status = document.getElementById('status-label');
-      status.textContent = ({{verified: 'Hasil terverifikasi', partial: 'Verifikasi sebagian', failed: 'Verifikasi gagal'}})[data.status] || data.status;
+      status.textContent = ({{verified: 'Terverifikasi', partial: 'Verifikasi sebagian', failed: 'Verifikasi gagal'}})[data.status] || data.status;
       status.classList.add(data.status);
+      const measuredDate = new Date(data.generatedAt).toLocaleDateString('id-ID', {{day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC'}});
       const releaseRows = [
-        ['Versi', data.release.version], ['Kode sumber', data.release.commit], ['Diuji pada', data.generatedAt], ['Alat uji', data.release.harnessCommit]
+        ['Versi', data.release.version], ['Diuji', measuredDate], ['Server', `${{data.environment.cpuCount}} CPU · ${{data.environment.memoryGiB}} GiB RAM`]
       ];
       document.getElementById('release-meta').innerHTML = releaseRows.map(([key, value]) => `<div><dt>${{escapeHtml(key)}}</dt><dd class="mono">${{escapeHtml(value)}}</dd></div>`).join('');
       const audience = data.audienceSummary || {{}};
-      document.getElementById('summary-intro').textContent = audience.intro || 'Benchmark ini memeriksa dua hal: apakah jawaban database benar dan seberapa cepat pekerjaan graph diselesaikan.';
+      const summaryIntro = document.getElementById('summary-intro');
+      summaryIntro.textContent = audience.intro || '';
+      summaryIntro.hidden = !summaryIntro.textContent;
       const highlights = audience.highlights || [
         {{title: 'Hasilnya benar', detail: `${{validationTotals.passed}} dari ${{validationTotals.total}} pemeriksaan memberikan keluaran yang diharapkan.`}},
         {{title: 'Diuji dengan cara yang setara', detail: 'Semua hasil yang berlabel diukur dijalankan pada mesin yang sama.'}},
         {{title: 'Tidak ada pemenang mutlak', detail: 'Hasil bergantung pada jenis algoritma dan bentuk query yang dijalankan.'}}
       ];
-      document.getElementById('insights').innerHTML = highlights.map((item, index) => `<article class="insight"><span class="insight-number">${{index + 1}}</span><strong>${{escapeHtml(item.title)}}</strong><p>${{escapeHtml(item.detail)}}</p></article>`).join('');
+      document.getElementById('insights').innerHTML = highlights.map(item => `<article class="insight"><strong>${{escapeHtml(item.title)}}</strong><p>${{escapeHtml(item.detail)}}</p></article>`).join('');
       document.getElementById('reading-guide').textContent = audience.readingGuide || 'Untuk waktu dalam detik, angka lebih kecil berarti lebih cepat. Untuk nilai percepatan (×), angka lebih besar berarti jalur analitik memberi peningkatan lebih tinggi.';
-      const kpis = [
-        ['Kebenaran hasil', `${{validationTotals.passed}}/${{validationTotals.total}}`, 'hasil algoritma dan query sesuai harapan'],
-        ['Cakupan uji', measuredMetrics, 'skenario performa yang dilaporkan'],
-        ['Lingkungan', '1 server', 'produk yang diukur memakai mesin yang sama'],
-        ['Pengulangan', '3–5×', 'setiap skenario diulang untuk mengurangi kebetulan']
-      ];
-      document.getElementById('kpis').innerHTML = kpis.map(([label, value, note]) => `<article class="kpi"><div class="eyebrow">${{escapeHtml(label)}}</div><strong>${{escapeHtml(value)}}</strong><span>${{escapeHtml(note)}}</span></article>`).join('');
-
       const tabs = document.getElementById('tabs');
       const panels = document.getElementById('suite-panels');
       const activate = id => {{
@@ -381,15 +412,14 @@ def render(data: dict[str, Any]) -> str:
         const panel = document.createElement('section');
         panel.className = `suite${{suiteIndex === 0 ? ' active' : ''}}`; panel.id = `suite-${{suite.id}}`; panel.role = 'tabpanel';
         const toggle = suite.unit === 'ratio' ? '' : `<div class="toggle" aria-label="Skala grafik"><button type="button" class="active" data-scale="linear">Normal</button><button type="button" data-scale="log">Log</button></div>`;
-        const direction = suite.lowerIsBetter ? 'Semakin kecil waktunya, semakin cepat' : 'Semakin besar nilainya, semakin tinggi percepatannya';
-        const takeaway = suite.takeaway ? `<div class="takeaway"><strong>Kesimpulan sederhana</strong>${{escapeHtml(suite.takeaway)}}</div>` : '';
-        panel.innerHTML = `<div class="suite-head"><div><h2>${{escapeHtml(suite.title)}}</h2><p>${{escapeHtml(suite.plainDescription || suite.description)}}</p><span class="direction">${{direction}}</span></div>${{toggle}}</div>${{takeaway}}<div class="chart-card"><div class="legend"></div><div class="metric-grid"></div><div class="validation${{suite.validation.passed === suite.validation.total ? '' : ' partial'}}"></div></div><details class="technical"><summary>Lihat angka rinci dan istilah statistik</summary><div class="technical-body"><div class="table-wrap"></div><p class="glossary">Median = nilai tengah dari beberapa pengulangan. n = jumlah pengulangan. Rentang = hasil tercepat hingga terlambat. CV = tingkat variasi; semakin kecil berarti hasil semakin konsisten.</p></div></details>`;
+        const direction = suite.lowerIsBetter ? 'Lebih kecil = lebih cepat' : 'Lebih besar = percepatan lebih tinggi';
+        const takeaway = suite.takeaway ? `<div class="takeaway"><strong>Hasil</strong>${{escapeHtml(suite.takeaway)}}</div>` : '';
+        panel.innerHTML = `<div class="suite-head"><div><h2>${{escapeHtml(suite.title)}}</h2><p>${{escapeHtml(suite.plainDescription || suite.description)}}</p><span class="direction">${{direction}}</span></div>${{toggle}}</div>${{takeaway}}<div class="chart-card"><div class="legend"></div><div class="metric-grid"></div><div class="validation${{suite.validation.passed === suite.validation.total ? '' : ' partial'}}"></div></div><details class="technical"><summary>Detail angka</summary><div class="technical-body"><div class="table-wrap"></div><p class="glossary">Median = nilai tengah. n = jumlah pengulangan. Rentang = tercepat–terlambat. CV = variasi hasil.</p></div></details>`;
         panels.appendChild(panel);
         const legend = panel.querySelector('.legend');
         suite.series.forEach((series, index) => {{
           const item = document.createElement('span'); item.className = `legend-item ${{series.kind}}`; item.style.setProperty('--series-color', colors[index % colors.length]);
-          const kindLabel = ({{measured: 'diukur', control: 'pembanding dasar', competitor: 'produk pembanding', reference: 'referensi eksternal'}})[series.kind] || series.kind;
-          item.innerHTML = `<span class="legend-swatch"></span><span>${{escapeHtml(series.label)}} · ${{escapeHtml(kindLabel)}}</span>`; legend.appendChild(item);
+          item.innerHTML = `<span class="legend-swatch"></span><span>${{escapeHtml(series.label)}}</span>`; legend.appendChild(item);
         }});
         const grid = panel.querySelector('.metric-grid');
         const renderBars = scale => {{
@@ -410,8 +440,7 @@ def render(data: dict[str, Any]) -> str:
               return `<div class="bar-row"${{range}}><div class="bar-track"><div class="bar ${{series.kind}}" style="--bar-size:${{size(value)}};--series-color:${{colors[index % colors.length]}}"></div></div><div class="bar-value">${{value === null ? 'N/A' : escapeHtml(format(raw, suite.unit))}}</div></div>`;
             }}).join('');
             const block = document.createElement('div'); block.className = 'metric';
-            const help = metric.explanation ? `<span class="metric-help">${{escapeHtml(metric.explanation)}}</span>` : '';
-            block.innerHTML = `<div class="metric-name">${{escapeHtml(metric.label)}}<span class="metric-id mono">${{escapeHtml(metric.id)}}</span>${{help}}</div><div class="bars">${{rows}}</div>`; grid.appendChild(block);
+            block.innerHTML = `<div class="metric-name">${{escapeHtml(metric.label)}}<span class="metric-id mono">${{escapeHtml(metric.id)}}</span></div><div class="bars">${{rows}}</div>`; grid.appendChild(block);
           }});
         }};
         renderBars('linear');
@@ -429,7 +458,7 @@ def render(data: dict[str, Any]) -> str:
       const environmentLabels = {{cpu: 'Prosesor', cpuCount: 'CPU logis', memoryGiB: 'RAM (GiB)', java: 'Java', os: 'Sistem operasi', jvmHeapGiB: 'Heap JVM (GiB)', neo4jImage: 'Image Neo4j', neo4jVersion: 'Versi Neo4j', neo4jGdsVersion: 'Versi Neo4j GDS', neo4jGdsConcurrency: 'Worker Neo4j GDS'}};
       document.getElementById('environment').innerHTML = Object.entries(data.environment).map(([key, value]) => `<dt>${{escapeHtml(environmentLabels[key] || key.replace(/([A-Z])/g, ' $1'))}}</dt><dd class="mono">${{escapeHtml(value)}}</dd>`).join('');
       document.getElementById('artifacts').innerHTML = `<h3>Bukti mentah</h3>` + data.artifacts.map(artifact => `<a href="${{escapeHtml(artifact.path)}}">${{escapeHtml(artifact.label)}}</a>`).join('');
-      document.getElementById('footer').textContent = `Dibuat dari bukti benchmark schema v${{data.schemaVersion}}. Angka referensi eksternal tidak diperlakukan sebagai hasil pengukuran dari server ini.`;
+      document.getElementById('footer').textContent = `${{validationTotals.passed}}/${{validationTotals.total}} hasil terverifikasi · Bukti mentah tersedia di bagian spesifikasi.`;
     }})();
   </script>
 </body>
