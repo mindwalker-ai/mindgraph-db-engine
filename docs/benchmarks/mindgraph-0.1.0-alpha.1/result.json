@@ -17,12 +17,12 @@
     "intro": "Benchmark ini mengukur kecocokan setiap pola workload, bukan memilih pemenang dari jumlah query.",
     "highlights": [
       {
-        "title": "8 dari 9 LSQB",
-        "detail": "MindGraphDB lebih cepat."
+        "title": "6 algoritma tervalidasi",
+        "detail": "Ranking, connectivity, traversal, clustering, shortest path, dan community."
       },
       {
-        "title": "5 pola banking tervalidasi",
-        "detail": "Aliran dana, siklus, shared device, fan-in, dan centrality."
+        "title": "14 pola query tervalidasi",
+        "detail": "9 query graph umum dan 5 query perbankan sintetis."
       },
       {
         "title": "20/20 valid",
@@ -72,7 +72,7 @@
       "title": "Algoritma graph",
       "description": "Six algorithms on datagen-7_5-fb. MindGraph and upstream use the public harness's native load-once runner; Neo4j uses a prebuilt GDS projection. Published graph500-22 values are contextual references.",
       "plainDescription": "6 algoritma pada 633 ribu node dan 34 juta hubungan.",
-      "takeaway": "Imbang 3–3. MindGraphDB unggul pada PageRank, BFS, dan LCC.",
+      "takeaway": "MindGraphDB unggul pada PageRank, penelusuran bertingkat, dan kepadatan koneksi lokal. Connectivity, shortest path, dan community detection menjadi area optimasi.",
       "unit": "seconds",
       "lowerIsBetter": true,
       "metrics": [
@@ -430,7 +430,7 @@
       "title": "Query graph",
       "description": "The same nine Cypher pattern-matching queries on LSQB SF1: 3.95M vertices and 17.88M edges.",
       "plainDescription": "9 query pada 3,95 juta node dan 17,88 juta hubungan.",
-      "takeaway": "MindGraphDB unggul pada 8 dari 9 query. Neo4j unggul pada Q7.",
+      "takeaway": "MindGraphDB unggul pada traversal berantai, pertemanan, tag, dan multi-hop. Optional match pada like/reply menjadi area optimasi.",
       "unit": "seconds",
       "lowerIsBetter": true,
       "metrics": [

@@ -366,6 +366,15 @@ def summarize_banking(
     }
     data["suites"] = [item for item in data["suites"] if item["id"] != "banking"] + [suite]
     data.pop("bankingQueryExamples", None)
+    suites_by_id = {item["id"]: item for item in data["suites"]}
+    suites_by_id["graphalytics"]["takeaway"] = (
+        "MindGraphDB unggul pada PageRank, penelusuran bertingkat, dan kepadatan koneksi lokal. "
+        "Connectivity, shortest path, dan community detection menjadi area optimasi."
+    )
+    suites_by_id["lsqb"]["takeaway"] = (
+        "MindGraphDB unggul pada traversal berantai, pertemanan, tag, dan multi-hop. "
+        "Optional match pada like/reply menjadi area optimasi."
+    )
     presentation = data.setdefault("presentation", {})
     suite_ids = presentation.setdefault("suiteIds", [])
     if "banking" not in suite_ids:
@@ -373,10 +382,13 @@ def summarize_banking(
     data["audienceSummary"] = {
         "intro": "Benchmark ini mengukur kecocokan setiap pola workload, bukan memilih pemenang dari jumlah query.",
         "highlights": [
-            {"title": "8 dari 9 LSQB", "detail": "MindGraphDB lebih cepat."},
             {
-                "title": "5 pola banking tervalidasi",
-                "detail": "Aliran dana, siklus, shared device, fan-in, dan centrality.",
+                "title": "6 algoritma tervalidasi",
+                "detail": "Ranking, connectivity, traversal, clustering, shortest path, dan community.",
+            },
+            {
+                "title": "14 pola query tervalidasi",
+                "detail": "9 query graph umum dan 5 query perbankan sintetis.",
             },
             {"title": "20/20 valid", "detail": "Semua hasil perhitungan benar."},
         ],
