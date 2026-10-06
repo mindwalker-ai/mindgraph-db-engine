@@ -75,6 +75,9 @@ class DashboardTest(unittest.TestCase):
         self.assertIn("ArcadeDB published", output)
         self.assertIn("application/json", output)
         self.assertIn("n=${value.runs.length}", output)
+        self.assertNotIn("['Versi', data.release.version]", output)
+        self.assertIn("@media print", output)
+        self.assertIn("break-after: page", output)
         self.assertNotIn("https://cdn", output)
 
     def test_escapes_script_termination_in_data(self):

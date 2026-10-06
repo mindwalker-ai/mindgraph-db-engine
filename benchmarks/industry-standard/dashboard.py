@@ -328,6 +328,40 @@ def render(data: dict[str, Any]) -> str:
       .bar-row {{ grid-template-columns: minmax(0, 1fr) 80px; }}
       .reading-guide {{ display: grid; }}
     }}
+    @media print {{
+      @page {{ size: A4 landscape; margin: 10mm; }}
+      html, body {{ color-scheme: dark; background: var(--ink-950) !important; print-color-adjust: exact; -webkit-print-color-adjust: exact; }}
+      body::before {{ display: none; }}
+      .shell {{ width: 100%; padding: 0; }}
+      .hero {{ grid-template-columns: minmax(0, 1fr) 250px; gap: 24px; align-items: center; padding: 0 0 14px; }}
+      .hero h1 {{ font-size: 34px; margin: 6px 0 8px; }}
+      .lead {{ font-size: 14px; }}
+      .release-card {{ padding: 14px 16px; box-shadow: none; }}
+      .release-card dl {{ margin-top: 10px; gap: 6px; }}
+      .release-card div {{ grid-template-columns: 64px 1fr; gap: 8px; }}
+      .executive, .tabs, .methodology, footer, .toggle, .query-catalog, .suite > details.technical {{ display: none !important; }}
+      #suite-panels {{ display: block; }}
+      .suite, .suite.active {{ display: flex !important; flex-direction: column; animation: none; break-after: page; page-break-after: always; }}
+      .suite:last-child {{ break-after: auto; page-break-after: auto; }}
+      .suite-head {{ order: 1; display: block; margin: 0 0 10px; }}
+      .suite-head h2 {{ font-size: 25px; margin-bottom: 4px; }}
+      .suite-head p {{ font-size: 12px; }}
+      .direction {{ margin-top: 6px; padding: 3px 8px; font-size: 10px; }}
+      .chart-card {{ order: 2; padding: 15px 18px; box-shadow: none; break-inside: avoid; page-break-inside: avoid; }}
+      .legend {{ gap: 10px 20px; margin-bottom: 12px; }}
+      .legend-item {{ font-size: 11px; }}
+      .metric-grid {{ gap: 5px; }}
+      .metric {{ grid-template-columns: 170px minmax(0, 1fr); gap: 14px; break-inside: avoid; }}
+      .metric-name {{ font-size: 11px; }}
+      .metric-id {{ display: inline; margin-left: 6px; font-size: 9px; }}
+      .bars {{ gap: 3px; }}
+      .bar-row {{ grid-template-columns: minmax(0, 1fr) 70px; gap: 10px; min-height: 16px; }}
+      .bar-track {{ height: 9px; }}
+      .bar-value {{ font-size: 10px; }}
+      .validation {{ margin-top: 12px; padding: 8px 12px; font-size: 10px; }}
+      .takeaway {{ order: 3; margin: 10px 0 0; padding: 10px 14px; font-size: 12px; break-inside: avoid; page-break-inside: avoid; }}
+      .takeaway strong {{ display: inline; margin-right: 6px; }}
+    }}
     @media (prefers-reduced-motion: reduce) {{ *, *::before, *::after {{ scroll-behavior: auto !important; animation: none !important; transition: none !important; }} }}
   </style>
 </head>
@@ -339,7 +373,7 @@ def render(data: dict[str, Any]) -> str:
         <h1 id="page-title"></h1>
         <p class="lead" id="page-subtitle"></p>
       </div>
-      <aside class="release-card" aria-label="Informasi versi benchmark">
+      <aside class="release-card" aria-label="Informasi benchmark">
         <div class="status" id="status-label"></div>
         <dl id="release-meta"></dl>
       </aside>
@@ -408,7 +442,7 @@ def render(data: dict[str, Any]) -> str:
       status.classList.add(data.status);
       const measuredDate = new Date(data.generatedAt).toLocaleDateString('id-ID', {{day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC'}});
       const releaseRows = [
-        ['Versi', data.release.version], ['Diuji', measuredDate], ['Server', `${{data.environment.cpuCount}} CPU · ${{data.environment.memoryGiB}} GiB RAM`]
+        ['Diuji', measuredDate], ['Server', `${{data.environment.cpuCount}} CPU · ${{data.environment.memoryGiB}} GiB RAM`]
       ];
       document.getElementById('release-meta').innerHTML = releaseRows.map(([key, value]) => `<div><dt>${{escapeHtml(key)}}</dt><dd class="mono">${{escapeHtml(value)}}</dd></div>`).join('');
       const audience = data.audienceSummary || {{}};
