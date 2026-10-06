@@ -1,6 +1,6 @@
 # MindGraph 0.1.0-alpha.1 reproducible graph benchmark
 
-Measured on September 29–30, 2026 UTC on one dedicated BytePlus host. The candidate, its exact
+Measured on September 29–October 6, 2026 UTC on one dedicated BytePlus host. The candidate, its exact
 ArcadeDB upstream control, and Neo4j Community were executed sequentially against the same source
 datasets. Neo4j is a separately labeled competitor lane because its server/GDS execution surface
 is not identical to the embedded MindGraph and upstream runners.
@@ -24,7 +24,9 @@ The result is `verified` for the two suites with correctness evidence:
   run;
 - all six Neo4j graph algorithms passed complete-result semantic checks in every measured run;
 - all nine LSQB SF1 query counts matched the official expected values for all three systems in
-  every measured run.
+  every measured run; and
+- all five synthetic banking query results were stable across five measured runs and identical
+  between MindGraphDB and Neo4j.
 
 MindGraph remains close to its exact upstream control. All nine LSQB medians are within 6% of the
 control. Four graph-algorithm medians are within 9%; BFS and SSSP were about 20% slower in this run.
@@ -35,6 +37,10 @@ Neo4j is not uniformly faster or slower. On the graph workload it is faster for 
 CDLP, and slower for PageRank, BFS, and LCC. On LSQB it is faster for Q7 but slower for the other
 eight queries in this specific dataset, query shape, edition, and configuration. These are measured
 workload results, not a universal database ranking.
+
+The synthetic banking lane reinforces that conclusion. MindGraphDB was faster on fund-flow
+traversal and shared-device matching; Neo4j was faster on cycle detection and the two global
+aggregation patterns. The results are shown as measured rather than mapped from LSQB.
 
 ### Graph algorithm execution
 
@@ -76,6 +82,26 @@ Neo4j's initial SF1 load took 438.17 seconds and is excluded from query timing. 
 seconds in the measured set; the completed, count-validated timings are retained instead of being
 censored. This makes the long tail visible and prevents a false-green comparison.
 
+### Synthetic banking queries
+
+Five exact Cypher queries on a deterministic synthetic graph containing 50,000 accounts, 10,000
+devices, 500,000 transfers, and 50,000 account-to-device relationships. Both engines used the same
+CSV files, query text, and parameters. Each engine ran one warm-up before five measured runs;
+dataset loading and Neo4j index creation were excluded. Lower is better.
+
+| Query | Pattern | MindGraph median | Neo4j median | Identical result |
+|---|---|---:|---:|---:|
+| B1 | Fund-flow traversal, 1–3 hops | 2.306 ms | 5.464 ms | 1,221 paths |
+| B2 | Circular transfers, 2–5 hops | 99.447 ms | 51.666 ms | 7 cycles |
+| B3 | Accounts sharing one device | 0.648 ms | 4.848 ms | 10 pairs |
+| B4 | Small-transfer fan-in from at least five sources | 607.055 ms | 298.545 ms | 44,780 accounts |
+| B5 | Maximum unique counterparties | 213.348 ms | 179.455 ms | 12 counterparties |
+
+MindGraphDB leads B1 and B3; Neo4j leads B2, B4, and B5. This dataset was generated to exercise
+the five graph shapes and is explicitly synthetic. It does not reproduce a bank's transaction
+distribution, fraud rate, concurrency, retention period, or production service-level objectives,
+so these numbers are not capacity-planning guidance.
+
 ### Graph Analytical View speedup
 
 On the inherited 500,000-vertex/~8-million-edge workload, MindGraph's CSR-backed analytical path
@@ -116,3 +142,10 @@ MINDGRAPH_INDUSTRY_RUN_DIR=/opt/mindgraph-benchmark/runs/0.1.0-alpha.1 \
 The runner is resumable per stage and per measured run. Dataset hashes are recorded in
 [`evidence/dataset-sha256.txt`](evidence/dataset-sha256.txt); raw evidence file hashes and sizes are
 recorded in [`evidence/manifest.json`](evidence/manifest.json).
+
+The banking generator, exact queries, Neo4j runner, result validator, and report merger are in
+[`banking_workload.py`](../../../benchmarks/industry-standard/banking_workload.py). The synthetic
+dataset definition and hashes are preserved in
+[`evidence/banking-dataset-manifest.json`](evidence/banking-dataset-manifest.json) and
+[`evidence/banking-dataset-sha256.txt`](evidence/banking-dataset-sha256.txt); all ten measured logs,
+warm-ups, import output, and runtime fingerprint are stored beside them.

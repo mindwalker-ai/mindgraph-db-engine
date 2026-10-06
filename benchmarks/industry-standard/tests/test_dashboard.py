@@ -117,6 +117,7 @@ class DashboardTest(unittest.TestCase):
         data["suites"][0]["metrics"][0]["explanation"] = "Ranks connected nodes."
         data["suites"][0]["metrics"][0]["purpose"] = "Rank connected nodes."
         data["suites"][0]["metrics"][0]["query"] = "MATCH (n) RETURN count(n)"
+        data["suites"][0]["metrics"][0]["parameters"] = {"accountNo": "A000001"}
         data["suites"][0]["validation"]["plainLabel"] = "1 of 1 result is correct."
         data["suites"][0]["validation"]["plainNote"] = "Checked on every run."
 
@@ -128,6 +129,8 @@ class DashboardTest(unittest.TestCase):
         self.assertIn("Ranks connected nodes.", output)
         self.assertIn('class="technical query-catalog"', output)
         self.assertIn("MATCH (n) RETURN count(n)", output)
+        self.assertIn('"parameters":{"accountNo":"A000001"}', output)
+        self.assertIn('class="query-params"', output)
         self.assertIn("Detail angka", output)
         self.assertIn("Metode pengujian", output)
 
@@ -136,36 +139,6 @@ class DashboardTest(unittest.TestCase):
         data["suites"][0]["metrics"][0]["query"] = "  "
 
         with self.assertRaisesRegex(ValueError, "query must be a non-empty string"):
-            dashboard.render(data)
-
-    def test_renders_banking_examples_without_claiming_measurement(self):
-        data = fixture()
-        data["suites"][0]["metrics"][0]["query"] = "MATCH (n) RETURN count(n)"
-        data["bankingQueryExamples"] = [{
-            "id": "B1",
-            "title": "Trace funds",
-            "question": "Where did the funds go?",
-            "pattern": "1-3 hop traversal",
-            "query": "MATCH path = (:Account)-[:TRANSFERRED_TO*1..3]->(:Account) RETURN path",
-        }]
-
-        output = dashboard.render(data)
-
-        self.assertIn("Contoh query perbankan · belum diuji", output)
-        self.assertIn("Query berikut tidak menghasilkan angka pada grafik benchmark ini", output)
-        self.assertIn("TRANSFERRED_TO*1..3", output)
-
-    def test_rejects_blank_banking_example_query(self):
-        data = fixture()
-        data["bankingQueryExamples"] = [{
-            "id": "B1",
-            "title": "Trace funds",
-            "question": "Where did the funds go?",
-            "pattern": "Traversal",
-            "query": " ",
-        }]
-
-        with self.assertRaisesRegex(ValueError, r"bankingQueryExamples\[0\].query"):
             dashboard.render(data)
 
     def test_presentation_limits_customer_view_to_selected_products_and_suites(self):

@@ -2,6 +2,86 @@
   "schemaVersion": 1,
   "files": [
     {
+      "path": "banking-dataset-manifest.json",
+      "bytes": 2862,
+      "sha256": "62c6000a3b3ce32e506e6c50d310ec3fa634281c649ac524380099b7c22d382a"
+    },
+    {
+      "path": "banking-dataset-sha256.txt",
+      "bytes": 699,
+      "sha256": "1fefb0c35526e95109b868e4999d4dc2499bc3723789fe59184d57dc40575f7b"
+    },
+    {
+      "path": "banking-mindgraph-run-1.txt",
+      "bytes": 1828,
+      "sha256": "fedf4e7b4d0c40c31efbc54807b36da5e2ab203b066b4d837ce4196cf3692174"
+    },
+    {
+      "path": "banking-mindgraph-run-2.txt",
+      "bytes": 1828,
+      "sha256": "42f39044ef736d46806aab237aa5ef0e05dada3c48626ff4665416f1926e9e18"
+    },
+    {
+      "path": "banking-mindgraph-run-3.txt",
+      "bytes": 1828,
+      "sha256": "3525332d6beef990372d0caece5cb3930052c9cf44fe47c211b1ae300468de2d"
+    },
+    {
+      "path": "banking-mindgraph-run-4.txt",
+      "bytes": 1828,
+      "sha256": "85a346803af1e27effeceb94c5d542f222e520cd11ee0a3b2b24b348a761f104"
+    },
+    {
+      "path": "banking-mindgraph-run-5.txt",
+      "bytes": 1828,
+      "sha256": "bcfafcf08595094f6180ae43d2f7dfcefd7a1dc93e46ec42047362fff3aa5d82"
+    },
+    {
+      "path": "banking-mindgraph-warmup.txt",
+      "bytes": 2063,
+      "sha256": "944ec75ef9e5bbf2fa51ff1b486e021c330772113cc3681454ac4a2a7a2f39f3"
+    },
+    {
+      "path": "banking-neo4j-import.txt",
+      "bytes": 8056,
+      "sha256": "3964e7ee70f09851c4057bd069928c14f736a8a40c3c6c9d27befc1344e91437"
+    },
+    {
+      "path": "banking-neo4j-run-1.txt",
+      "bytes": 169,
+      "sha256": "dbb6ea949e6c960bbedeb23f59732edc43be9af33c0b5d8cefaea542acde335a"
+    },
+    {
+      "path": "banking-neo4j-run-2.txt",
+      "bytes": 169,
+      "sha256": "8709e7c2ee30b220dd6bfcf7dc71311eebac68260bf04aaad1cdd5bf44c9fcd1"
+    },
+    {
+      "path": "banking-neo4j-run-3.txt",
+      "bytes": 169,
+      "sha256": "624ca6b0e88176aa3ccbaeaacf035dcb10d0668603bb14c6101f14df8c961cf8"
+    },
+    {
+      "path": "banking-neo4j-run-4.txt",
+      "bytes": 169,
+      "sha256": "daaf31f7dd4a948abb9bb2920b4d65105da42d77b9fa621c854265c9728651e3"
+    },
+    {
+      "path": "banking-neo4j-run-5.txt",
+      "bytes": 169,
+      "sha256": "3f5c43b1389be76f95c0d3064fbe6bb690278b5fdfac8263df28bad16365cc74"
+    },
+    {
+      "path": "banking-neo4j-warmup.txt",
+      "bytes": 169,
+      "sha256": "6a8bbe7b9e8294e0d8730e40077b7a8213c4ab70188c8083bcdb8dfa5ea4f787"
+    },
+    {
+      "path": "banking-runtime.txt",
+      "bytes": 655,
+      "sha256": "7c1a9aa4bcba8235616e3ad6e90ef4c03d6079123ca06ccb1480246ea367f3e9"
+    },
+    {
       "path": "dataset-sha256.txt",
       "bytes": 3876,
       "sha256": "6a9cb91bb05874444dd58214eb0a3123d090b38637b4aaa622dcf530393ce4a9"

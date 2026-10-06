@@ -5,7 +5,8 @@
   "presentation": {
     "suiteIds": [
       "graphalytics",
-      "lsqb"
+      "lsqb",
+      "banking"
     ],
     "seriesIds": [
       "mindgraph",
@@ -16,21 +17,21 @@
     "intro": "",
     "highlights": [
       {
-        "title": "8 dari 9 query",
+        "title": "8 dari 9 LSQB",
         "detail": "MindGraphDB lebih cepat."
       },
       {
-        "title": "3 vs 3 algoritma",
-        "detail": "Hasil kecepatan imbang."
+        "title": "2 vs 3 query banking",
+        "detail": "Pemenang bergantung pada pola query."
       },
       {
-        "title": "15/15 valid",
+        "title": "20/20 valid",
         "detail": "Semua hasil perhitungan benar."
       }
     ],
     "readingGuide": "Angka waktu yang lebih kecil berarti lebih cepat."
   },
-  "generatedAt": "2026-09-29T20:06:18Z",
+  "generatedAt": "2026-10-06T09:01:44Z",
   "status": "verified",
   "release": {
     "version": "0.1.0-alpha.1",
@@ -55,51 +56,16 @@
       "Keduanya memakai dataset dan skenario query yang sama.",
       "Semua hasil diperiksa sebelum waktu eksekusi dibandingkan.",
       "Algoritma diulang lima kali. Query diulang lima kali pada MindGraphDB dan tiga kali pada Neo4j.",
-      "Waktu memuat data dan membuat proyeksi Neo4j GDS tidak dimasukkan ke waktu eksekusi algoritma atau query."
+      "Waktu memuat data dan membuat proyeksi Neo4j GDS tidak dimasukkan ke waktu eksekusi algoritma atau query.",
+      "The synthetic banking comparison uses 50,000 accounts, 10,000 devices, 500,000 transfers, five exact Cypher queries, one warm-up, and five measured runs."
     ],
     "disclosures": [
       "MindGraphDB berjalan langsung di JVM; Neo4j berjalan sebagai server Docker melalui Bolt dengan GDS Community empat worker.",
       "Query Q9 Neo4j tetap ditampilkan meskipun memerlukan lebih dari 300 detik karena prosesnya selesai dan hasilnya valid.",
-      "Hasil ini hanya berlaku untuk dataset dan konfigurasi yang diuji; bukan acuan sizing production."
+      "Hasil ini hanya berlaku untuk dataset dan konfigurasi yang diuji; bukan acuan sizing production.",
+      "The banking graph is deterministic and synthetic; it demonstrates query behavior, not a bank's production distribution, concurrency, or capacity requirement."
     ]
   },
-  "bankingQueryExamples": [
-    {
-      "id": "B1",
-      "title": "Telusuri aliran dana",
-      "question": "Dana dari satu rekening mengalir ke mana saja sampai tiga tingkat?",
-      "pattern": "Traversal 1-3 tingkat",
-      "query": "MATCH path = (source:Account {accountNo: $accountNo})-[:TRANSFERRED_TO*1..3]->(destination:Account) RETURN path LIMIT 100"
-    },
-    {
-      "id": "B2",
-      "title": "Deteksi transaksi berputar",
-      "question": "Apakah dana kembali lagi ke rekening asal melalui beberapa rekening?",
-      "pattern": "Pencarian siklus 2-5 tingkat",
-      "query": "MATCH path = (account:Account)-[:TRANSFERRED_TO*2..5]->(account) RETURN account.accountNo, path LIMIT 100"
-    },
-    {
-      "id": "B3",
-      "title": "Rekening dengan perangkat yang sama",
-      "question": "Rekening berbeda mana yang menggunakan device yang sama?",
-      "pattern": "Relasi melalui shared node",
-      "query": "MATCH (first:Account)-[:USES_DEVICE]->(device:Device)<-[:USES_DEVICE]-(second:Account) WHERE first.accountNo < second.accountNo RETURN device.deviceId, first.accountNo, second.accountNo LIMIT 100"
-    },
-    {
-      "id": "B4",
-      "title": "Banyak transaksi kecil ke satu rekening",
-      "question": "Rekening mana yang menerima banyak transaksi kecil dari banyak sumber?",
-      "pattern": "Fan-in dan agregasi transaksi",
-      "query": "MATCH (source:Account)-[txn:TRANSFERRED_TO]->(target:Account) WHERE txn.timestamp >= $startTime AND txn.timestamp < $endTime AND txn.amount < $threshold WITH target, count(txn) AS transactionCount, sum(txn.amount) AS totalAmount, count(DISTINCT source) AS sourceCount WHERE sourceCount >= 5 RETURN target.accountNo, sourceCount, transactionCount, totalAmount ORDER BY sourceCount DESC"
-    },
-    {
-      "id": "B5",
-      "title": "Counterparty paling sentral",
-      "question": "Rekening mana yang terhubung dengan paling banyak counterparty?",
-      "pattern": "Degree centrality sederhana",
-      "query": "MATCH (source:Account)-[txn:TRANSFERRED_TO]->(target:Account) RETURN target.accountNo, count(DISTINCT source) AS uniqueCounterparties, count(txn) AS transactionCount, sum(txn.amount) AS totalIncoming ORDER BY uniqueCounterparties DESC LIMIT 20"
-    }
-  ],
   "suites": [
     {
       "id": "graphalytics",
@@ -1074,6 +1040,239 @@
           "The inherited workload is directional and does not provide conformance assertions for these rows."
         ]
       }
+    },
+    {
+      "id": "banking",
+      "title": "Query perbankan sintetis",
+      "description": "Five measured Cypher queries on the same deterministic synthetic graph: 50,000 accounts, 10,000 devices, 500,000 transfers, and 50,000 device links.",
+      "plainDescription": "5 query pada 50 ribu rekening dan 500 ribu transaksi sintetis.",
+      "takeaway": "MindGraphDB unggul pada 2 query; Neo4j unggul pada 3 query.",
+      "unit": "seconds",
+      "lowerIsBetter": true,
+      "metrics": [
+        {
+          "id": "B1",
+          "label": "Telusuri aliran dana",
+          "purpose": "Dana dari satu rekening mengalir ke mana saja sampai tiga tingkat?",
+          "query": "MATCH (source:Account {accountNo: $accountNo})-[:TRANSFERRED_TO*1..3]->(destination:Account) RETURN count(*) AS result",
+          "parameters": {
+            "accountNo": "A000000"
+          }
+        },
+        {
+          "id": "B2",
+          "label": "Deteksi transaksi berputar",
+          "purpose": "Apakah dana kembali lagi ke rekening asal melalui beberapa rekening?",
+          "query": "MATCH (account:Account {accountNo: $accountNo})-[:TRANSFERRED_TO*2..5]->(destination:Account {accountNo: $accountNo}) RETURN count(*) AS result",
+          "parameters": {
+            "accountNo": "A000000"
+          }
+        },
+        {
+          "id": "B3",
+          "label": "Rekening dengan perangkat yang sama",
+          "purpose": "Berapa pasangan rekening yang menggunakan device yang sama?",
+          "query": "MATCH (first:Account)-[:USES_DEVICE]->(device:Device {deviceId: $deviceId})<-[:USES_DEVICE]-(second:Account) WHERE first.accountNo < second.accountNo RETURN count(*) AS result",
+          "parameters": {
+            "deviceId": "D00000"
+          }
+        },
+        {
+          "id": "B4",
+          "label": "Banyak transaksi kecil ke satu rekening",
+          "purpose": "Berapa rekening yang menerima transaksi kecil dari sedikitnya lima sumber?",
+          "query": "MATCH (source:Account)-[txn:TRANSFERRED_TO]->(target:Account) WHERE txn.timestamp >= $startTime AND txn.timestamp < $endTime AND txn.amount < $threshold WITH target, count(DISTINCT source) AS sourceCount WHERE sourceCount >= 5 RETURN count(*) AS result",
+          "parameters": {
+            "startTime": 0,
+            "endTime": 9999999999999,
+            "threshold": 5000000
+          }
+        },
+        {
+          "id": "B5",
+          "label": "Counterparty paling sentral",
+          "purpose": "Berapa jumlah counterparty unik tertinggi pada satu rekening?",
+          "query": "MATCH (source:Account)-[:TRANSFERRED_TO]->(target:Account) WITH target, count(DISTINCT source) AS uniqueCounterparties RETURN max(uniqueCounterparties) AS result",
+          "parameters": {}
+        }
+      ],
+      "series": [
+        {
+          "id": "mindgraph",
+          "label": "MindGraphDB",
+          "kind": "measured",
+          "values": {
+            "B1": {
+              "median": 0.002306,
+              "min": 0.002187,
+              "max": 0.002337,
+              "mean": 0.0022881999999999998,
+              "standardDeviation": 5.2082242655246645e-05,
+              "coefficientOfVariationPercent": 2.276122832586603,
+              "runs": [
+                0.002309,
+                0.002306,
+                0.002302,
+                0.002187,
+                0.002337
+              ]
+            },
+            "B2": {
+              "median": 0.099447,
+              "min": 0.097296,
+              "max": 0.100779,
+              "mean": 0.09917499999999999,
+              "standardDeviation": 0.001178558950583295,
+              "coefficientOfVariationPercent": 1.188362944878543,
+              "runs": [
+                0.099796,
+                0.099447,
+                0.097296,
+                0.100779,
+                0.098557
+              ]
+            },
+            "B3": {
+              "median": 0.000648,
+              "min": 0.000629,
+              "max": 0.000791,
+              "mean": 0.0006746,
+              "standardDeviation": 6.0394039440991195e-05,
+              "coefficientOfVariationPercent": 8.95257032923083,
+              "runs": [
+                0.000791,
+                0.000629,
+                0.000631,
+                0.000674,
+                0.000648
+              ]
+            },
+            "B4": {
+              "median": 0.607055,
+              "min": 0.598367,
+              "max": 0.62848,
+              "mean": 0.6091382000000001,
+              "standardDeviation": 0.01024524399709447,
+              "coefficientOfVariationPercent": 1.6819243969750164,
+              "runs": [
+                0.603736,
+                0.598367,
+                0.607055,
+                0.608053,
+                0.62848
+              ]
+            },
+            "B5": {
+              "median": 0.213348,
+              "min": 0.209591,
+              "max": 0.224064,
+              "mean": 0.21605180000000002,
+              "standardDeviation": 0.005447752578816336,
+              "coefficientOfVariationPercent": 2.521502981607344,
+              "runs": [
+                0.213348,
+                0.209591,
+                0.224064,
+                0.212476,
+                0.22078
+              ]
+            }
+          }
+        },
+        {
+          "id": "neo4j",
+          "label": "Neo4j Community + GDS",
+          "kind": "competitor",
+          "values": {
+            "B1": {
+              "median": 0.005464,
+              "min": 0.005033,
+              "max": 0.007844,
+              "mean": 0.0058985999999999995,
+              "standardDeviation": 0.001009063050557298,
+              "coefficientOfVariationPercent": 17.106822814859427,
+              "runs": [
+                0.007844,
+                0.005859,
+                0.005464,
+                0.005293,
+                0.005033
+              ]
+            },
+            "B2": {
+              "median": 0.051666,
+              "min": 0.050122,
+              "max": 0.053689,
+              "mean": 0.05191900000000001,
+              "standardDeviation": 0.001194638020489889,
+              "coefficientOfVariationPercent": 2.3009650041215908,
+              "runs": [
+                0.053689,
+                0.05148,
+                0.050122,
+                0.052638,
+                0.051666
+              ]
+            },
+            "B3": {
+              "median": 0.004848,
+              "min": 0.003835,
+              "max": 0.004949,
+              "mean": 0.004626,
+              "standardDeviation": 0.0004085682317557253,
+              "coefficientOfVariationPercent": 8.83199809242813,
+              "runs": [
+                0.004949,
+                0.004637,
+                0.003835,
+                0.004861,
+                0.004848
+              ]
+            },
+            "B4": {
+              "median": 0.298545,
+              "min": 0.291468,
+              "max": 0.30852,
+              "mean": 0.29962279999999997,
+              "standardDeviation": 0.006491725976964836,
+              "coefficientOfVariationPercent": 2.1666328386774425,
+              "runs": [
+                0.30852,
+                0.294141,
+                0.291468,
+                0.30544,
+                0.298545
+              ]
+            },
+            "B5": {
+              "median": 0.179455,
+              "min": 0.176148,
+              "max": 0.212527,
+              "mean": 0.1852806,
+              "standardDeviation": 0.013684268728726424,
+              "coefficientOfVariationPercent": 7.3856997055959575,
+              "runs": [
+                0.179874,
+                0.176148,
+                0.178399,
+                0.212527,
+                0.179455
+              ]
+            }
+          }
+        }
+      ],
+      "validation": {
+        "passed": 5,
+        "total": 5,
+        "plainLabel": "5 dari 5 hasil query identik.",
+        "plainNote": "MindGraphDB dan Neo4j mengembalikan nilai yang sama pada seluruh pengulangan.",
+        "notes": [
+          "All queries used the same deterministic synthetic dataset and parameters.",
+          "Every scalar result was stable across five measured runs and identical across engines.",
+          "Synthetic results demonstrate query behavior; they are not production sizing guidance."
+        ]
+      }
     }
   ],
   "artifacts": [
@@ -1104,6 +1303,30 @@
     {
       "label": "Neo4j LSQB load and warm-up",
       "path": "evidence/neo4j-lsqb-load-and-warmup.txt"
+    },
+    {
+      "label": "Synthetic banking dataset manifest",
+      "path": "evidence/banking-dataset-manifest.json"
+    },
+    {
+      "label": "MindGraphDB banking run",
+      "path": "evidence/banking-mindgraph-run-1.txt"
+    },
+    {
+      "label": "Neo4j banking run",
+      "path": "evidence/banking-neo4j-run-1.txt"
+    },
+    {
+      "label": "Neo4j banking import",
+      "path": "evidence/banking-neo4j-import.txt"
+    },
+    {
+      "label": "Banking runtime fingerprint",
+      "path": "evidence/banking-runtime.txt"
+    },
+    {
+      "label": "Synthetic banking dataset checksums",
+      "path": "evidence/banking-dataset-sha256.txt"
     }
   ]
 }

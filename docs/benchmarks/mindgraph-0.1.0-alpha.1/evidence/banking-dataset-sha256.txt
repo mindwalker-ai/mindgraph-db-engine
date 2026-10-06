@@ -1,0 +1,5 @@
+7d1d6f614d51670cc8d833f9d17568a965135eb6a3501e406a4cd1d0809ecf07  /opt/mindgraph-benchmark/banking-runs/0.1.0-alpha.1/dataset/accounts.csv
+c2d270960db4965fc487985898ffbc2645d03bb34c965184ad4a9e14fdd7160b  /opt/mindgraph-benchmark/banking-runs/0.1.0-alpha.1/dataset/devices.csv
+fa9fb57f11634294c14fbb0820d3784613efb64ecc14e646936c74b620dc0727  /opt/mindgraph-benchmark/banking-runs/0.1.0-alpha.1/dataset/transfers.csv
+37d593458b3f23f3ade1455366e23179f9720d359272dbf12f282bb2cfdb8c0b  /opt/mindgraph-benchmark/banking-runs/0.1.0-alpha.1/dataset/uses_device.csv
+62c6000a3b3ce32e506e6c50d310ec3fa634281c649ac524380099b7c22d382a  /opt/mindgraph-benchmark/banking-runs/0.1.0-alpha.1/dataset/manifest.json

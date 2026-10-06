@@ -29,8 +29,36 @@ or read the [methodology and findings report](../../docs/benchmarks/mindgraph-0.
 - Record each system's deployment surface, edition, image digest, concurrency ceiling, and sample
   count. A same-host result is not automatically an identical execution-mode result.
 - Treat LSQB as a pattern-matching microbenchmark, not a production capacity estimate.
-- Label domain-specific banking examples as illustrative until that exact workload is executed; do
-  not attach LSQB timing values to queries that were not measured.
+- Label a domain-specific query as measured only when that exact query, parameter set, and dataset
+  were executed; never attach LSQB timing values to a banking query that was not run.
+
+## Synthetic banking query lane
+
+`banking_workload.py` defines the five measured Cypher queries, generates the deterministic
+synthetic graph, executes the Neo4j lane, validates scalar results, and merges the measured logs
+into the normalized dashboard JSON. `BankingQueryBenchmark.java` executes the same definitions
+against embedded MindGraphDB.
+
+The published lane contains 50,000 accounts, 10,000 devices, 500,000 transfers, and 50,000
+account-to-device relationships. It is designed to make fund-flow, cycle, shared-device, fan-in,
+and counterparty-centrality patterns inspectable. It is not a model of a bank's transaction
+distribution and must not be used for production sizing.
+
+Generate the exact dataset with:
+
+```bash
+python3 benchmarks/industry-standard/banking_workload.py generate \
+  artifacts/industry-standard/banking-dataset
+```
+
+After five measured logs from each engine have been preserved, merge them into the report with:
+
+```bash
+python3 benchmarks/industry-standard/banking_workload.py summarize \
+  artifacts/industry-standard/evidence \
+  artifacts/industry-standard/result.json \
+  artifacts/industry-standard/result.json
+```
 
 ## Generate the report
 

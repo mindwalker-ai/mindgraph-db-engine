@@ -59,43 +59,6 @@ LSQB_QUERY_DETAILS = {
         "query": "MATCH (p1:Person)-[:KNOWS]-(p2:Person)-[:KNOWS]-(p3:Person)-[:HAS_INTEREST]->(t:Tag) WHERE NOT (p1)-[:KNOWS]-(p3) AND p1 <> p3 RETURN count(*) AS count",
     },
 }
-BANKING_QUERY_EXAMPLES = [
-    {
-        "id": "B1",
-        "title": "Telusuri aliran dana",
-        "question": "Dana dari satu rekening mengalir ke mana saja sampai tiga tingkat?",
-        "pattern": "Traversal 1-3 tingkat",
-        "query": "MATCH path = (source:Account {accountNo: $accountNo})-[:TRANSFERRED_TO*1..3]->(destination:Account) RETURN path LIMIT 100",
-    },
-    {
-        "id": "B2",
-        "title": "Deteksi transaksi berputar",
-        "question": "Apakah dana kembali lagi ke rekening asal melalui beberapa rekening?",
-        "pattern": "Pencarian siklus 2-5 tingkat",
-        "query": "MATCH path = (account:Account)-[:TRANSFERRED_TO*2..5]->(account) RETURN account.accountNo, path LIMIT 100",
-    },
-    {
-        "id": "B3",
-        "title": "Rekening dengan perangkat yang sama",
-        "question": "Rekening berbeda mana yang menggunakan device yang sama?",
-        "pattern": "Relasi melalui shared node",
-        "query": "MATCH (first:Account)-[:USES_DEVICE]->(device:Device)<-[:USES_DEVICE]-(second:Account) WHERE first.accountNo < second.accountNo RETURN device.deviceId, first.accountNo, second.accountNo LIMIT 100",
-    },
-    {
-        "id": "B4",
-        "title": "Banyak transaksi kecil ke satu rekening",
-        "question": "Rekening mana yang menerima banyak transaksi kecil dari banyak sumber?",
-        "pattern": "Fan-in dan agregasi transaksi",
-        "query": "MATCH (source:Account)-[txn:TRANSFERRED_TO]->(target:Account) WHERE txn.timestamp >= $startTime AND txn.timestamp < $endTime AND txn.amount < $threshold WITH target, count(txn) AS transactionCount, sum(txn.amount) AS totalAmount, count(DISTINCT source) AS sourceCount WHERE sourceCount >= 5 RETURN target.accountNo, sourceCount, transactionCount, totalAmount ORDER BY sourceCount DESC",
-    },
-    {
-        "id": "B5",
-        "title": "Counterparty paling sentral",
-        "question": "Rekening mana yang terhubung dengan paling banyak counterparty?",
-        "pattern": "Degree centrality sederhana",
-        "query": "MATCH (source:Account)-[txn:TRANSFERRED_TO]->(target:Account) RETURN target.accountNo, count(DISTINCT source) AS uniqueCounterparties, count(txn) AS transactionCount, sum(txn.amount) AS totalIncoming ORDER BY uniqueCounterparties DESC LIMIT 20",
-    },
-]
 OLAP_METRICS = [
     ("one-hop-count", "1-hop count"),
     ("one-hop-ids", "1-hop IDs"),
@@ -388,7 +351,6 @@ def collect(evidence: Path) -> dict[str, Any]:
         "release": metadata["release"],
         "environment": metadata["environment"],
         "methodology": metadata["methodology"],
-        "bankingQueryExamples": BANKING_QUERY_EXAMPLES,
         "suites": [
             {
                 "id": "graphalytics",

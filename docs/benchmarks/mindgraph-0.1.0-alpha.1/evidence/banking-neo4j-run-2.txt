@@ -1,0 +1,5 @@
+  B1 time: 0.005859s (result=1221)
+  B2 time: 0.051480s (result=7)
+  B3 time: 0.004637s (result=10)
+  B4 time: 0.294141s (result=44780)
+  B5 time: 0.176148s (result=12)

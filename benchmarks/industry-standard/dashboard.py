@@ -58,17 +58,6 @@ def validate(data: dict[str, Any]) -> None:
     if not isinstance(data["suites"], list) or not data["suites"]:
         raise ValueError("suites must be a non-empty array")
 
-    banking_examples = data.get("bankingQueryExamples", [])
-    if not isinstance(banking_examples, list):
-        raise ValueError("bankingQueryExamples must be an array")
-    for example_index, example in enumerate(banking_examples):
-        path = f"bankingQueryExamples[{example_index}]"
-        if not isinstance(example, dict):
-            raise ValueError(f"{path} must be an object")
-        for field in ("id", "title", "question", "pattern", "query"):
-            if not isinstance(example.get(field), str) or not example[field].strip():
-                raise ValueError(f"{path}.{field} must be a non-empty string")
-
     suite_ids: set[str] = set()
     for suite_index, suite in enumerate(data["suites"]):
         path = f"suites[{suite_index}]"
@@ -95,6 +84,18 @@ def validate(data: dict[str, Any]) -> None:
                     raise ValueError(
                         f"{path}.metrics[{metric_index}].{optional_text} must be a non-empty string"
                     )
+            if "parameters" in metric:
+                if not isinstance(metric["parameters"], dict):
+                    raise ValueError(f"{path}.metrics[{metric_index}].parameters must be an object")
+                for parameter, value in metric["parameters"].items():
+                    if not isinstance(parameter, str) or not parameter:
+                        raise ValueError(
+                            f"{path}.metrics[{metric_index}].parameters keys must be non-empty strings"
+                        )
+                    if value is not None and not isinstance(value, (str, int, float, bool)):
+                        raise ValueError(
+                            f"{path}.metrics[{metric_index}].parameters.{parameter} must be scalar"
+                        )
             metric_ids.append(metric["id"])
         if len(metric_ids) != len(set(metric_ids)):
             raise ValueError(f"{path}.metrics contains duplicate ids")
@@ -286,10 +287,8 @@ def render(data: dict[str, Any]) -> str:
     .query-item {{ padding: 16px; border: 1px solid rgba(142, 165, 189, .14); border-radius: 10px; background: rgba(7, 17, 31, .5); }}
     .query-item h4 {{ margin: 0; font-size: 15px; }}
     .query-item p {{ margin: 4px 0 12px; color: var(--ink-400); font-size: 13px; }}
+    .query-item .query-params {{ margin: 10px 0 0; color: var(--signal); font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace; font-size: 11px; }}
     .query-item pre {{ margin: 0; padding: 14px; overflow-x: auto; white-space: pre-wrap; overflow-wrap: anywhere; border-radius: 8px; color: var(--ink-200); background: var(--ink-950); font: 12px/1.55 "IBM Plex Mono", "SFMono-Regular", Consolas, monospace; }}
-    .example-note {{ margin: 0 0 16px; padding: 12px 14px; border-left: 3px solid var(--amber); color: var(--ink-200); background: rgba(246, 185, 74, .08); font-size: 13px; }}
-    .example-note strong {{ color: var(--amber); }}
-    .query-pattern {{ display: inline-flex; margin: 0 0 10px; padding: 4px 8px; border-radius: 999px; color: var(--signal); background: rgba(33, 215, 197, .08); font-size: 11px; font-weight: 700; }}
     details.technical {{ margin-top: 20px; border: 1px solid rgba(142, 165, 189, .16); border-radius: var(--radius); background: rgba(11, 23, 40, .58); }}
     details.panel.technical {{ padding: 0; }}
     details.technical > summary {{ cursor: pointer; min-height: 52px; padding: 15px 20px; color: var(--paper); font-weight: 700; list-style-position: inside; }}
@@ -425,7 +424,6 @@ def render(data: dict[str, Any]) -> str:
       document.getElementById('reading-guide').textContent = audience.readingGuide || 'Untuk waktu dalam detik, angka lebih kecil berarti lebih cepat. Untuk nilai percepatan (×), angka lebih besar berarti jalur analitik memberi peningkatan lebih tinggi.';
       const tabs = document.getElementById('tabs');
       const panels = document.getElementById('suite-panels');
-      const bankingExamples = data.bankingQueryExamples || [];
       const activate = id => {{
         document.querySelectorAll('.tab').forEach(tab => tab.setAttribute('aria-selected', tab.dataset.target === id ? 'true' : 'false'));
         document.querySelectorAll('.suite').forEach(panel => panel.classList.toggle('active', panel.id === `suite-${{id}}`));
@@ -443,9 +441,11 @@ def render(data: dict[str, Any]) -> str:
         const direction = suite.lowerIsBetter ? 'Lebih kecil = lebih cepat' : 'Lebih besar = percepatan lebih tinggi';
         const takeaway = suite.takeaway ? `<div class="takeaway"><strong>Hasil</strong>${{escapeHtml(suite.takeaway)}}</div>` : '';
         const queryMetrics = suite.metrics.filter(metric => metric.query);
-        const queryCatalog = queryMetrics.length ? `<details class="technical query-catalog"><summary>Lihat ${{queryMetrics.length}} query Cypher</summary><div class="technical-body query-list">${{queryMetrics.map(metric => `<article class="query-item"><h4>${{escapeHtml(metric.id)}} · ${{escapeHtml(metric.purpose || metric.label)}}</h4><pre><code>${{escapeHtml(metric.query)}}</code></pre></article>`).join('')}}</div></details>` : '';
-        const bankingCatalog = queryMetrics.length && bankingExamples.length ? `<details class="technical query-catalog banking-catalog"><summary>Contoh query perbankan · belum diuji</summary><div class="technical-body"><p class="example-note"><strong>Ilustrasi relevansi.</strong> Query berikut tidak menghasilkan angka pada grafik benchmark ini. Angka di grafik berasal dari sembilan query LSQB di atas.</p><div class="query-list">${{bankingExamples.map(example => `<article class="query-item"><h4>${{escapeHtml(example.id)}} · ${{escapeHtml(example.title)}}</h4><p>${{escapeHtml(example.question)}}</p><span class="query-pattern">${{escapeHtml(example.pattern)}}</span><pre><code>${{escapeHtml(example.query)}}</code></pre></article>`).join('')}}</div></div></details>` : '';
-        panel.innerHTML = `<div class="suite-head"><div><h2>${{escapeHtml(suite.title)}}</h2><p>${{escapeHtml(suite.plainDescription || suite.description)}}</p><span class="direction">${{direction}}</span></div>${{toggle}}</div>${{takeaway}}${{queryCatalog}}${{bankingCatalog}}<div class="chart-card"><div class="legend"></div><div class="metric-grid"></div><div class="validation${{suite.validation.passed === suite.validation.total ? '' : ' partial'}}"></div></div><details class="technical"><summary>Detail angka</summary><div class="technical-body"><div class="table-wrap"></div><p class="glossary">Median = nilai tengah. n = jumlah pengulangan. Rentang = tercepat–terlambat. CV = variasi hasil.</p></div></details>`;
+        const queryCatalog = queryMetrics.length ? `<details class="technical query-catalog"><summary>Lihat ${{queryMetrics.length}} query Cypher</summary><div class="technical-body query-list">${{queryMetrics.map(metric => {{
+          const parameters = metric.parameters && Object.keys(metric.parameters).length ? `<p class="query-params">Parameter: ${{Object.entries(metric.parameters).map(([key, value]) => `${{escapeHtml(key)}}=${{escapeHtml(value)}}`).join(' · ')}}</p>` : '';
+          return `<article class="query-item"><h4>${{escapeHtml(metric.id)}} · ${{escapeHtml(metric.purpose || metric.label)}}</h4><pre><code>${{escapeHtml(metric.query)}}</code></pre>${{parameters}}</article>`;
+        }}).join('')}}</div></details>` : '';
+        panel.innerHTML = `<div class="suite-head"><div><h2>${{escapeHtml(suite.title)}}</h2><p>${{escapeHtml(suite.plainDescription || suite.description)}}</p><span class="direction">${{direction}}</span></div>${{toggle}}</div>${{takeaway}}${{queryCatalog}}<div class="chart-card"><div class="legend"></div><div class="metric-grid"></div><div class="validation${{suite.validation.passed === suite.validation.total ? '' : ' partial'}}"></div></div><details class="technical"><summary>Detail angka</summary><div class="technical-body"><div class="table-wrap"></div><p class="glossary">Median = nilai tengah. n = jumlah pengulangan. Rentang = tercepat–terlambat. CV = variasi hasil.</p></div></details>`;
         panels.appendChild(panel);
         const legend = panel.querySelector('.legend');
         suite.series.forEach((series, index) => {{
