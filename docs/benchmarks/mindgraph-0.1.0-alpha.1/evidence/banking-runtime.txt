@@ -1,0 +1,10 @@
+host=iv-yew5sceby83z47go0uu1
+Linux iv-yew5sceby83z47go0uu1 6.8.0-55-generic #57-Ubuntu SMP PREEMPT_DYNAMIC Wed Feb 12 23:42:21 UTC 2025 x86_64 x86_64 x86_64 GNU/Linux
+               total        used        free      shared  buff/cache   available
+Mem:            30Gi        13Gi       2.4Gi       2.6Mi        15Gi        17Gi
+Swap:             0B          0B          0B
+neo4j_image=sha256:91fb0bf237c41b7b3dcbe84703aa0b82e0d7d067b16e1c8ab21f03fc679edf4e
+2026.09.0
+openjdk version "21.0.12.1" 2026-08-18
+OpenJDK Runtime Environment (build 21.0.12.1+1-1-24.04.4-Ubuntu)
+OpenJDK 64-Bit Server VM (build 21.0.12.1+1-1-24.04.4-Ubuntu, mixed mode, sharing)
