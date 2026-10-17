@@ -1,0 +1,50 @@
+{
+  "source": "https://arcadedb.com/benchmarks.html",
+  "published": "2026-04-30",
+  "lastUpdated": "2026-07-30",
+  "captured": "2026-09-29",
+  "disclaimer": "Published ArcadeDB values copied for visual reference only; they were not measured on the MindGraph benchmark host.",
+  "graphalytics": {
+    "dataset": "graph500-22",
+    "unit": "seconds",
+    "embedded": {
+      "PR": 0.10,
+      "WCC": 0.08,
+      "BFS": 0.09,
+      "LCC": 2.35,
+      "SSSP": 0.92,
+      "CDLP": 1.11
+    }
+  },
+  "lsqb": {
+    "dataset": "LDBC SNB SF1",
+    "unit": "seconds",
+    "embedded": {
+      "Q1": 0.23,
+      "Q2": 0.18,
+      "Q3": 0.10,
+      "Q4": 0.03,
+      "Q5": 0.29,
+      "Q6": 0.11,
+      "Q7": 0.09,
+      "Q8": 0.19,
+      "Q9": 1.18
+    }
+  },
+  "olapSpeedup": {
+    "dataset": "500K vertices, approximately 8M edges",
+    "unit": "ratio",
+    "values": {
+      "one-hop-count": 3.8,
+      "one-hop-ids": 5.1,
+      "two-hop": 9.4,
+      "three-hop": 11.9,
+      "four-hop": 15.6,
+      "five-hop": 33.5,
+      "shortest-path": 54.0,
+      "connected-components": 37.3,
+      "label-propagation": 235.6,
+      "pagerank-20": 462.3
+    }
+  }
+}

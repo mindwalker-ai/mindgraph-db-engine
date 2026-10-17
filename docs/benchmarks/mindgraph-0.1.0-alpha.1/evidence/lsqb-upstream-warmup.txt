@@ -1,0 +1,108 @@
+WARNING: Using incubator modules: jdk.incubator.vector
+======================================================================
+ArcadeDB LSQB BENCHMARK (embedded, Cypher)
+======================================================================
+
+[ArcadeDB] Loading LSQB data...
+
+2026-09-30 02:10:54.651 INFO  [HashIndex] Building hash index 'Country_0_16409029647571' on 1 properties...
+2026-09-30 02:10:54.653 INFO  [HashIndex] Completed building hash index 'Country_0_16409029647571': processed 0 records in 2ms
+2026-09-30 02:10:54.661 INFO  [HashIndex] Building hash index 'City_0_16409052554600' on 1 properties...
+2026-09-30 02:10:54.661 INFO  [HashIndex] Completed building hash index 'City_0_16409052554600': processed 0 records in 0ms
+2026-09-30 02:10:54.666 INFO  [HashIndex] Building hash index 'TagClass_0_16409057807804' on 1 properties...
+2026-09-30 02:10:54.666 INFO  [HashIndex] Completed building hash index 'TagClass_0_16409057807804': processed 0 records in 0ms
+2026-09-30 02:10:54.671 INFO  [HashIndex] Building hash index 'Tag_0_16409062183916' on 1 properties...
+2026-09-30 02:10:54.671 INFO  [HashIndex] Completed building hash index 'Tag_0_16409062183916': processed 0 records in 0ms
+2026-09-30 02:10:54.677 INFO  [HashIndex] Building hash index 'Person_0_16409068916813' on 1 properties...
+2026-09-30 02:10:54.678 INFO  [HashIndex] Completed building hash index 'Person_0_16409068916813': processed 0 records in 0ms
+2026-09-30 02:10:54.681 INFO  [HashIndex] Building hash index 'Forum_0_16409072878889' on 1 properties...
+2026-09-30 02:10:54.681 INFO  [HashIndex] Completed building hash index 'Forum_0_16409072878889': processed 0 records in 0ms
+2026-09-30 02:10:54.686 INFO  [HashIndex] Building hash index 'Comment_0_16409077260796' on 1 properties...
+2026-09-30 02:10:54.686 INFO  [HashIndex] Completed building hash index 'Comment_0_16409077260796': processed 0 records in 0ms
+2026-09-30 02:10:54.690 INFO  [HashIndex] Building hash index 'Post_0_16409081236923' on 1 properties...
+2026-09-30 02:10:54.690 INFO  [HashIndex] Completed building hash index 'Post_0_16409081236923': processed 0 records in 0ms
+2026-09-30 02:10:54.691 INFO  [HashIndex] Building hash index 'Message_0_16409082659971' on 1 properties...
+2026-09-30 02:10:54.691 INFO  [HashIndex] Completed building hash index 'Message_0_16409082659971': processed 0 records in 0ms  Loading vertices...
+    Country: 111
+    City: 1343
+    TagClass: 71
+    Tag: 16080
+    Person: 11000
+    Forum: 109617
+    Post: 1229275
+    Comment: 2580332
+  Loading edges...
+    IS_PART_OF (City.csv): 1343
+    IS_LOCATED_IN (Person.csv): 11000
+    HAS_TYPE (Tag.csv): 16080
+    HAS_CREATOR (Post.csv): 1229275
+    CONTAINER_OF (Post.csv): 1229275
+    HAS_CREATOR (Comment.csv): 2580332
+    REPLY_OF (Comment.csv): 1274592
+    REPLY_OF (Comment.csv): 1305740
+    HAS_MEMBER (Forum_hasMember_Person.csv): 3268415
+    HAS_TAG (Comment_hasTag_Tag.csv): 3148317
+    HAS_TAG (Post_hasTag_Tag.csv): 815205
+    KNOWS (Person_knows_Person.csv): 226293
+    LIKES (Person_likes_Comment.csv): 1668015
+    LIKES (Person_likes_Post.csv): 853145
+    HAS_INTEREST (Person_hasInterest_Tag.csv): 255596
+  Load time: 290.669s
+
+[ArcadeDB] Preparing Graph Analytical View...
+
+2026-09-30 02:15:45.208 INFO  [CSRBuilder] CSR build started for vertex types [Country, City, TagClass, Tag, Person, Forum, Post, Comment], edge types [IS_PART_OF, IS_LOCATED_IN, HAS_MEMBER, CONTAINER_OF, REPLY_OF, HAS_TAG, HAS_TYPE, HAS_CREATOR, KNOWS, LIKES, HAS_INTEREST]...
+2026-09-30 02:15:45.601 INFO  [GraphOlapVectorOpsProvider] Graph-OLAP SIMD vector ops enabled
+2026-09-30 02:16:03.920 INFO  [CSRBuilder] CSR built: 3947829 nodes (8 buckets), 17882623 edges (11 edge types), 8 columns (0 edge prop columns), 498.3 MB, 18712 ms  GAV ready: 18.728s  (nodes=3947829)
+
+[ArcadeDB] Running Q1...
+[To redirect Truffle log output to a file use one of the following options:
+* '--log.file=<path>' if the option is passed using a guest language launcher.
+* '-Dpolyglot.log.file=<path>' if the option is passed using the host Java launcher.
+* Configure logging using the polyglot embedding API.]
+[engine] WARNING: The polyglot engine uses a fallback runtime that does not support runtime compilation to native code.
+Execution without runtime compilation will negatively impact the guest application performance.
+The following cause was found: JVMCI is not enabled for this JVM. Enable JVMCI using -XX:+EnableJVMCI.
+For more information see: https://www.graalvm.org/latest/reference-manual/embed-languages/#runtime-optimization-support.
+To disable this warning use the '--engine.WarnInterpreterOnly=false' option or the '-Dpolyglot.engine.WarnInterpreterOnly=false' system property.
+  Q1 time: 0.611s  (count=221636419)
+
+[ArcadeDB] Running Q2...
+  Q2 time: 0.406s  (count=1085627)
+
+[ArcadeDB] Running Q3...
+  Q3 time: 0.241s  (count=753570)
+
+[ArcadeDB] Running Q4...
+  Q4 time: 6.794s  (count=14836038)
+
+[ArcadeDB] Running Q5...
+  Q5 time: 0.376s  (count=13824510)
+
+[ArcadeDB] Running Q6...
+  Q6 time: 0.457s  (count=1668134320)
+
+[ArcadeDB] Running Q7...
+  Q7 time: 17.871s  (count=26190133)
+
+[ArcadeDB] Running Q8...
+  Q8 time: 0.195s  (count=6907213)
+
+[ArcadeDB] Running Q9...
+  Q9 time: 2.407s  (count=1596153418)
+
+======================================================================
+SUMMARY  -  LSQB SF1
+======================================================================
+Query        ArcadeDB
+----------------------
+LOAD          290.67s
+Q1              0.61s
+Q2              0.41s
+Q3              0.24s
+Q4              6.79s
+Q5              0.38s
+Q6              0.46s
+Q7             17.87s
+Q8              0.20s
+Q9              2.41s

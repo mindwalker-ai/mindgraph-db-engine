@@ -1,0 +1,16 @@
+Received notification from DBMS server: <GqlStatusObject gql_status='01N01', status_description='warn: feature deprecated with replacement. id is deprecated. It is replaced by elementId or consider using an application-generated id.', position=<SummaryInputPosition line=1, column=31, offset=30>, raw_classification='DEPRECATION', classification=<NotificationClassification.DEPRECATION: 'DEPRECATION'>, raw_severity='WARNING', severity=<NotificationSeverity.WARNING: 'WARNING'>, diagnostic_record={'_classification': 'DEPRECATION', '_severity': 'WARNING', '_position': {'offset': 30, 'line': 1, 'column': 31}, 'OPERATION': '', 'OPERATION_CODE': '0', 'CURRENT_SCHEMA': '/'}> for query: 'MATCH (n:Node {id: 6}) RETURN id(n) AS nodeId'
+Neo4j version: 2026.09.0
+GDS version: 2026.09.0
+GDS concurrency: 4
+  PageRank time: 4.258s
+  SEMANTIC_VALIDATION PR: PASS rows=633432 checksum=508725.45230964466 maximum=28.40639211915812
+  WCC time: 0.121s
+  SEMANTIC_VALIDATION WCC: PASS rows=633432 components=1
+  BFS time: 0.843s
+  SEMANTIC_VALIDATION BFS: PASS reached=633432
+  LCC time: 28.291s
+  SEMANTIC_VALIDATION LCC: PASS rows=633432 checksum=55493.72945357105 maximum=1.0
+  SSSP time: 0.967s
+  SEMANTIC_VALIDATION SSSP: PASS reached=633432 checksum=2093398.506930452 maximum=5.44446
+  CDLP time: 2.968s
+  SEMANTIC_VALIDATION CDLP: PASS rows=633432 communities=1

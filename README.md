@@ -28,6 +28,14 @@ Mindwalker establishes its own release, compatibility, security, and product-ext
 The reproducible performance envelope for this candidate is documented in
 [docs/mindgraph-baseline-0.1.0-alpha.1.md](docs/mindgraph-baseline-0.1.0-alpha.1.md).
 
+Reproducible graph-algorithm, LSQB, synthetic banking-query, and OLTP-to-OLAP benchmark evidence
+is generated with the public ArcadeDB harness tooling in
+[benchmarks/industry-standard/](benchmarks/industry-standard/). Its self-contained HTML dashboard
+keeps measurements from the benchmark host visibly separate from third-party published references.
+The verified `0.1.0-alpha.1` run is available as an
+[HTML dashboard](docs/benchmarks/mindgraph-0.1.0-alpha.1/index.html) with a concise
+[methodology and findings report](docs/benchmarks/mindgraph-0.1.0-alpha.1/REPORT.md).
+
 The exact upstream source and stable-release anchor are documented in [UPSTREAM.md](UPSTREAM.md).
 
 ## Why MindGraph DB Engine

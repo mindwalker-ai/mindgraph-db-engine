@@ -1,0 +1,108 @@
+WARNING: Using incubator modules: jdk.incubator.vector
+======================================================================
+ArcadeDB BENCHMARK
+======================================================================
+
+[ArcadeDB] Loading data...
+
+2026-09-30 01:51:13.467 INFO  [HashIndex] Building hash index 'Vertex_0_15227848271408' on 1 properties...
+2026-09-30 01:51:13.470 INFO  [HashIndex] Completed building hash index 'Vertex_0_15227848271408': processed 0 records in 2ms
+2026-09-30 01:51:13.476 INFO  [HashIndex] Building hash index 'Vertex_1_15227867741815' on 1 properties...
+2026-09-30 01:51:13.477 INFO  [HashIndex] Completed building hash index 'Vertex_1_15227867741815': processed 0 records in 1ms
+2026-09-30 01:51:13.477 INFO  [HashIndex] Building hash index 'Vertex_2_15227868971025' on 1 properties...
+2026-09-30 01:51:13.478 INFO  [HashIndex] Completed building hash index 'Vertex_2_15227868971025': processed 0 records in 0ms
+2026-09-30 01:51:13.478 INFO  [HashIndex] Building hash index 'Vertex_3_15227869971288' on 1 properties...
+2026-09-30 01:51:13.479 INFO  [HashIndex] Completed building hash index 'Vertex_3_15227869971288': processed 0 records in 0ms
+2026-09-30 01:51:13.480 INFO  [HashIndex] Building hash index 'Vertex_4_15227870944025' on 1 properties...
+2026-09-30 01:51:13.480 INFO  [HashIndex] Completed building hash index 'Vertex_4_15227870944025': processed 0 records in 0ms
+2026-09-30 01:51:13.481 INFO  [HashIndex] Building hash index 'Vertex_5_15227872222586' on 1 properties...
+2026-09-30 01:51:13.481 INFO  [HashIndex] Completed building hash index 'Vertex_5_15227872222586': processed 0 records in 0ms
+2026-09-30 01:51:13.482 INFO  [HashIndex] Building hash index 'Vertex_6_15227873126206' on 1 properties...
+2026-09-30 01:51:13.482 INFO  [HashIndex] Completed building hash index 'Vertex_6_15227873126206': processed 0 records in 0ms
+2026-09-30 01:51:13.482 INFO  [HashIndex] Building hash index 'Vertex_7_15227873965641' on 1 properties...
+2026-09-30 01:51:13.483 INFO  [HashIndex] Completed building hash index 'Vertex_7_15227873965641': processed 0 records in 0ms  Vertices: 633432
+
+2026-09-30 01:51:39.403 INFO  [GraphBatch] GraphBatch: relaxing durability for the bulk load (useWAL true->false, walFlush NO->NO); the previous settings are restored on close()
+2026-09-30 01:51:39.407 INFO  [GraphBatch] GraphBatch: relaxing async executor durability for the bulk load (useWAL true->false, walFlush NO->NO); the previous settings are restored on close()/abandon()
+2026-09-30 01:51:43.277 INFO  [GraphBatch] Connecting 5000000 deferred incoming edges...
+2026-09-30 01:51:45.543 INFO  [GraphBatch] Incoming edges connected: 5000000 edges in 2264.8 ms (2207719 edges/sec)
+2026-09-30 01:51:49.171 INFO  [GraphBatch] Connecting 5000000 deferred incoming edges...
+2026-09-30 01:51:51.051 INFO  [GraphBatch] Incoming edges connected: 5000000 edges in 1879.8 ms (2659816 edges/sec)
+2026-09-30 01:51:54.610 INFO  [GraphBatch] Connecting 5000000 deferred incoming edges...
+2026-09-30 01:51:56.355 INFO  [GraphBatch] Incoming edges connected: 5000000 edges in 1744.9 ms (2865556 edges/sec)
+2026-09-30 01:52:00.057 INFO  [GraphBatch] Connecting 5000000 deferred incoming edges...
+2026-09-30 01:52:01.723 INFO  [GraphBatch] Incoming edges connected: 5000000 edges in 1665.1 ms (3002744 edges/sec)
+2026-09-30 01:52:05.402 INFO  [GraphBatch] Connecting 5000000 deferred incoming edges...
+2026-09-30 01:52:06.931 INFO  [GraphBatch] Incoming edges connected: 5000000 edges in 1529.0 ms (3270129 edges/sec)
+2026-09-30 01:52:10.776 INFO  [GraphBatch] Connecting 5000000 deferred incoming edges...
+2026-09-30 01:52:12.101 INFO  [GraphBatch] Incoming edges connected: 5000000 edges in 1325.1 ms (3773403 edges/sec)
+2026-09-30 01:52:15.508 INFO  [GraphBatch] Connecting 4185747 deferred incoming edges...
+2026-09-30 01:52:16.512 INFO  [GraphBatch] Incoming edges connected: 4185747 edges in 1003.7 ms (4170236 edges/sec)
+2026-09-30 01:52:16.512 INFO  [GraphBatch] Batch updating 570330 OUT + 607615 IN vertex head chunk pointers...
+2026-09-30 01:52:18.445 INFO  [GraphBatch] Batch vertex update: 633432 vertices in 1933.0 ms
+2026-09-30 01:52:18.446 INFO  [GraphBatch] GraphBatch: restored async executor durability (useWAL false->true, walFlush NO->NO)
+2026-09-30 01:52:18.446 INFO  [GraphBatch] GraphBatch closed: vertices=0 edges=34185747 flushes=342 avgFlushMs=68.2  Edges: 34185747
+
+[ArcadeDB] Building Graph Analytical View...
+
+2026-09-30 01:52:19.549 INFO  [CSRBuilder] CSR build started for vertex types [Vertex], edge types [EDGE]...
+2026-09-30 01:52:19.686 INFO  [GraphOlapVectorOpsProvider] Graph-OLAP SIMD vector ops enabled
+2026-09-30 01:52:51.742 INFO  [CSRBuilder] CSR built: 633432 nodes (8 buckets), 34185747 edges (1 edge types), 8 columns (1 edge prop columns), 665.9 MB, 32193 ms  GAV build: 33.297s
+  Total load time: 98.534s
+  GAV nodes: 633432
+  Source vertex 6 -> dense ID 272417
+
+[ArcadeDB] Running PageRank (damping=0.85, iter=10)...
+[To redirect Truffle log output to a file use one of the following options:
+* '--log.file=<path>' if the option is passed using a guest language launcher.
+* '-Dpolyglot.log.file=<path>' if the option is passed using the host Java launcher.
+* Configure logging using the polyglot embedding API.]
+[engine] WARNING: The polyglot engine uses a fallback runtime that does not support runtime compilation to native code.
+Execution without runtime compilation will negatively impact the guest application performance.
+The following cause was found: JVMCI is not enabled for this JVM. Enable JVMCI using -XX:+EnableJVMCI.
+For more information see: https://www.graalvm.org/latest/reference-manual/embed-languages/#runtime-optimization-support.
+To disable this warning use the '--engine.WarnInterpreterOnly=false' option or the '-Dpolyglot.engine.WarnInterpreterOnly=false' system property.
+    Top PR: node=291218, rank=0.001964
+    Top PR: node=483557, rank=0.001527
+    Top PR: node=516930, rank=0.001255
+  PageRank time: 0.46s
+  VALIDATION PR: -5400951704599003554
+
+[ArcadeDB] Running WCC...
+  Components: 1
+  WCC time: 0.265s
+  VALIDATION WCC: 9073443432913434853
+
+[ArcadeDB] Running BFS from vertex 6...
+  Reached: 633432 nodes
+  BFS time: 0.223s
+  VALIDATION BFS: 4155231070819122868
+
+[ArcadeDB] Running LCC...
+    Top LCC: node=988, coeff=1.000000
+    Top LCC: node=1192, coeff=1.000000
+    Top LCC: node=1245, coeff=1.000000
+  LCC time: 6.487s
+  VALIDATION LCC: 5427120159798623169
+
+[ArcadeDB] Running SSSP from vertex 6...
+  Reached: 633432 nodes
+  SSSP time: 2.148s
+  VALIDATION SSSP: 8342261799653486589
+
+[ArcadeDB] Running CDLP (max_iter=10)...
+  CDLP time: 3.897s
+  VALIDATION CDLP: 1814829210744029182
+
+======================================================================
+SUMMARY  -  datagen-7_5-fb (633432 vertices, 34185747 edges)
+======================================================================
+Algorithm    ArcadeDB
+----------------------
+LOAD           98.53s
+PR              0.46s
+WCC             0.27s
+BFS             0.22s
+LCC             6.49s
+SSSP            2.15s
+CDLP            3.90s
