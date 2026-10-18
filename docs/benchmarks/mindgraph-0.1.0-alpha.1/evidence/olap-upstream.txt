@@ -1,0 +1,164 @@
+[INFO] Scanning for projects...
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for com.arcadedb:arcadedb-load-tests:jar:26.10.1-SNAPSHOT
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-deploy-plugin is missing. @ line 53, column 21
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for com.arcadedb:arcadedb-e2e-ha:jar:26.10.1-SNAPSHOT
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-deploy-plugin is missing. @ line 44, column 21
+[WARNING] 
+[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
+[WARNING] 
+[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
+[WARNING] 
+[INFO] Inspecting build with total of 1 modules
+[INFO] Installing Central Publishing features
+[INFO] 
+[INFO] --------------------< com.arcadedb:arcadedb-engine >--------------------
+[INFO] Building ArcadeDB Engine 26.10.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- buildnumber:3.3.1:create (default) @ arcadedb-engine ---
+[INFO] Storing buildNumber: 50db74952c1ff1ac49bca7120f8ac51de6f2b40d at timestamp: 1790706232113
+[WARNING] Cannot get the branch information from the git repository: 
+Detecting the current branch failed: fatal: ref HEAD is not a symbolic ref
+
+[INFO] Storing scmBranch: UNKNOWN
+[INFO] 
+[INFO] --- antlr4:4.13.2:antlr4 (default) @ arcadedb-engine ---
+[INFO] No grammars to process
+[INFO] ANTLR 4: Processing source directory /opt/mindgraph-benchmark/industry-runs/0.1.0-alpha.1/sources/upstream/engine/src/main/antlr4
+[INFO] 
+[INFO] --- resources:3.5.0:resources (default-resources) @ arcadedb-engine ---
+[INFO] Copying 4 resources from src/main/resources to target/classes
+[INFO] 
+[INFO] --- compiler:3.16.0:compile (default-compile) @ arcadedb-engine ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- resources:3.5.0:testResources (default-testResources) @ arcadedb-engine ---
+[INFO] Copying 226 resources from src/test/resources to target/test-classes
+[INFO] 
+[INFO] --- compiler:3.16.0:testCompile (default-testCompile) @ arcadedb-engine ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- clean:3.5.0:clean (remove-stale-test-databases) @ arcadedb-engine ---
+[INFO] 
+[INFO] --- surefire:3.6.0:test (default-test) @ arcadedb-engine ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+WARNING: Using incubator modules: jdk.incubator.vector
+[INFO] Running performance.GraphOLAPBenchmark
+
+=== Graph OLAP Benchmark ===
+Vertices: 500,000  |  Edges/vertex: 16  |  Total edges: ~8,000,000
+
+Creating graph... done (86,974 ms)
+
+Building CSR... done (4,573 ms)
+
+  === GAV Stats ===
+  Name:            null
+  Status:          READY
+  Vertices:        500,000
+  Edges:           7,999,988
+  Auto-update:     null
+  Properties:      5
+  Memory total:    138.4 MB
+    CSR arrays:    64.8 MB
+    Column stores: 65.9 MB
+    Node mapping:  7.6 MB
+    Per vertex:    290.2 bytes
+    Per edge:      18.1 bytes
+  Edge types:
+    KNOWS: 7,999,988 edges, 64.8 MB
+
+  OLTP RAM estimate (in-memory objects): 1.2 GB
+  GAV/OLTP RAM ratio: 9.0x more compact
+
+--- 1-hop traversal (count out-neighbors) ---
+  OLTP:  1,000 samples in 5,993 us  (6.0 us/sample)  total: 16,000
+  OLAP:  1,000 samples in 1,653 us  (1.7 us/sample)  total: 16,000
+
+--- 1-hop traversal (get out-neighbor IDs) ---
+  OLTP:  1,000 samples in 18,175 us  (18.2 us/sample)  total: 16,000
+  OLAP:  1,000 samples in 1,812 us  (1.8 us/sample)  total: 16,000
+
+--- 2-hop traversal (friends of friends count) ---
+  OLTP:  200 samples in 17,800 us  (89.0 us/sample)  total: 51,200
+  OLAP:  200 samples in 1,106 us  (5.5 us/sample)  total: 51,199
+
+--- 3-hop traversal (count reachable at depth 3) ---
+  OLTP:  50 samples in 40,081 us  (801.6 us/sample)  total: 204,800
+  OLAP:  50 samples in 2,352 us  (47.0 us/sample)  total: 204,800
+
+--- 4-hop traversal (count reachable at depth 4) ---
+  OLTP:  10 samples in 95,039 us  (9,503.9 us/sample)  total: 655,358
+  OLAP:  10 samples in 5,136 us  (513.6 us/sample)  total: 655,358
+
+--- 5-hop traversal (count reachable at depth 5) ---
+  OLTP:  3 samples in 427,038 us  (142,346.0 us/sample)  total: 3,145,706
+  OLAP:  3 samples in 13,037 us  (4,345.7 us/sample)  total: 3,145,707
+
+--- Shortest Path (BFS, 100 random pairs) ---
+  OLTP:  100 pairs in 26,584 ms  (265.8 ms/pair)  found: 100  avg hops: 4.9
+  OLAP:  100 pairs in 433 ms  (4.3 ms/pair)  found: 100  avg hops: 4.9
+
+--- PageRank (20 iterations) ---
+  OLTP:  83,757 ms  (top rank=0.000004)
+  OLAP:  320 ms  (top rank=0.000004)
+
+--- Connected Components (Union-Find) ---
+  OLTP:  3,407 ms  (components: 1)
+  OLAP:  158 ms  (components: 1)
+
+--- Label Propagation (max 20 iterations) ---
+  OLTP:  39,869 ms  (communities: 1)
+  OLAP:  677 ms  (communities: 1)
+
+
+Graph: 500K vertices, ~8M edges
+
+  ┌──────────────────────┬─────────────┬─────────────┬─────────┐
+  │      Benchmark       │    OLTP     │    OLAP     │ Speedup │
+  ├──────────────────────┼─────────────┼─────────────┼─────────┤
+  │     1-hop count      │   6.0 us    │   1.7 us    │  3.6x   │
+  ├──────────────────────┼─────────────┼─────────────┼─────────┤
+  │      1-hop IDs       │   18.2 us   │   1.8 us    │  10.0x  │
+  ├──────────────────────┼─────────────┼─────────────┼─────────┤
+  │        2-hop         │   89.0 us   │   5.5 us    │  16.1x  │
+  ├──────────────────────┼─────────────┼─────────────┼─────────┤
+  │        3-hop         │  801.6 us   │   47.0 us   │  17.0x  │
+  ├──────────────────────┼─────────────┼─────────────┼─────────┤
+  │        4-hop         │  9,504 us   │  513.6 us   │  18.5x  │
+  ├──────────────────────┼─────────────┼─────────────┼─────────┤
+  │        5-hop         │ 142,346 us  │  4,346 us   │  32.8x  │
+  ├──────────────────────┼─────────────┼─────────────┼─────────┤
+  │    Shortest Path     │ 266 ms/pair │ 4.3 ms/pair │  61.4x  │
+  ├──────────────────────┼─────────────┼─────────────┼─────────┤
+  │  PageRank (20 iter)  │  83,757 ms  │   320 ms    │ 261.7x  │
+  ├──────────────────────┼─────────────┼─────────────┼─────────┤
+  │ Connected Components │  3,407 ms   │   158 ms    │  21.6x  │
+  ├──────────────────────┼─────────────┼─────────────┼─────────┤
+  │  Label Propagation   │  39,869 ms  │   677 ms    │  58.9x  │
+  └──────────────────────┴─────────────┴─────────────┴─────────┘
+
+  Memory: GAV (OLAP) uses 138.4 MB vs ~1.2 GB OLTP estimate — 9.0x more compact.
+
+  The OLAP engine dominates across the board, especially on full-graph algorithms
+  like PageRank (261.7x faster) and Connected Components (21.6x faster).
+
+[INFO] Tests run: 22, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 247.8 s -- in performance.GraphOLAPBenchmark
+[INFO] 
+[INFO] Results:
+[INFO] 
+[INFO] Tests run: 22, Failures: 0, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  04:10 min
+[INFO] Finished at: 2026-09-30T02:28:01+08:00
+[INFO] ------------------------------------------------------------------------

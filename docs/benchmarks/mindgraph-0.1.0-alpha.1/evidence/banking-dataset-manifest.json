@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "kind": "synthetic-banking-graph",
+  "seed": 20260930,
+  "counts": {
+    "accounts": 50000,
+    "devices": 10000,
+    "transfers": 500000,
+    "usesDevice": 50000
+  },
+  "files": {
+    "accounts.csv": "7d1d6f614d51670cc8d833f9d17568a965135eb6a3501e406a4cd1d0809ecf07",
+    "devices.csv": "c2d270960db4965fc487985898ffbc2645d03bb34c965184ad4a9e14fdd7160b",
+    "uses_device.csv": "37d593458b3f23f3ade1455366e23179f9720d359272dbf12f282bb2cfdb8c0b",
+    "transfers.csv": "fa9fb57f11634294c14fbb0820d3784613efb64ecc14e646936c74b620dc0727"
+  },
+  "queries": {
+    "B1": {
+      "title": "Telusuri aliran dana",
+      "question": "Dana dari satu rekening mengalir ke mana saja sampai tiga tingkat?",
+      "pattern": "Traversal 1-3 tingkat",
+      "query": "MATCH (source:Account {accountNo: $accountNo})-[:TRANSFERRED_TO*1..3]->(destination:Account) RETURN count(*) AS result",
+      "parameters": {
+        "accountNo": "A000000"
+      }
+    },
+    "B2": {
+      "title": "Deteksi transaksi berputar",
+      "question": "Apakah dana kembali lagi ke rekening asal melalui beberapa rekening?",
+      "pattern": "Pencarian siklus 2-5 tingkat",
+      "query": "MATCH (account:Account {accountNo: $accountNo})-[:TRANSFERRED_TO*2..5]->(destination:Account {accountNo: $accountNo}) RETURN count(*) AS result",
+      "parameters": {
+        "accountNo": "A000000"
+      }
+    },
+    "B3": {
+      "title": "Rekening dengan perangkat yang sama",
+      "question": "Berapa pasangan rekening yang menggunakan device yang sama?",
+      "pattern": "Relasi melalui shared node",
+      "query": "MATCH (first:Account)-[:USES_DEVICE]->(device:Device {deviceId: $deviceId})<-[:USES_DEVICE]-(second:Account) WHERE first.accountNo < second.accountNo RETURN count(*) AS result",
+      "parameters": {
+        "deviceId": "D00000"
+      }
+    },
+    "B4": {
+      "title": "Banyak transaksi kecil ke satu rekening",
+      "question": "Berapa rekening yang menerima transaksi kecil dari sedikitnya lima sumber?",
+      "pattern": "Fan-in dan agregasi transaksi",
+      "query": "MATCH (source:Account)-[txn:TRANSFERRED_TO]->(target:Account) WHERE txn.timestamp >= $startTime AND txn.timestamp < $endTime AND txn.amount < $threshold WITH target, count(DISTINCT source) AS sourceCount WHERE sourceCount >= 5 RETURN count(*) AS result",
+      "parameters": {
+        "startTime": 0,
+        "endTime": 9999999999999,
+        "threshold": 5000000
+      }
+    },
+    "B5": {
+      "title": "Counterparty paling sentral",
+      "question": "Berapa jumlah counterparty unik tertinggi pada satu rekening?",
+      "pattern": "Degree centrality sederhana",
+      "query": "MATCH (source:Account)-[:TRANSFERRED_TO]->(target:Account) WITH target, count(DISTINCT source) AS uniqueCounterparties RETURN max(uniqueCounterparties) AS result",
+      "parameters": {}
+    }
+  }
+}

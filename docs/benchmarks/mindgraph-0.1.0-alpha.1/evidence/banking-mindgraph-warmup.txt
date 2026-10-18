@@ -1,0 +1,25 @@
+WARNING: Using incubator modules: jdk.incubator.vector
+
+2026-10-06 16:54:10.233 INFO  [HashIndex] Building hash index 'Account_0_587804612563915' on 1 properties...
+2026-10-06 16:54:10.236 INFO  [HashIndex] Completed building hash index 'Account_0_587804612563915': processed 0 records in 3ms
+2026-10-06 16:54:10.246 INFO  [HashIndex] Building hash index 'Device_0_587804637763846' on 1 properties...
+2026-10-06 16:54:10.246 INFO  [HashIndex] Completed building hash index 'Device_0_587804637763846': processed 0 records in 0ms  Loaded transfers=500000
+  Loaded accounts=50000 devices=10000
+
+2026-10-06 16:54:16.605 INFO  [CSRBuilder] CSR build started for vertex types [Account, Device], edge types [TRANSFERRED_TO, USES_DEVICE]...
+2026-10-06 16:54:16.637 INFO  [GraphOlapVectorOpsProvider] Graph-OLAP SIMD vector ops enabled
+2026-10-06 16:54:17.011 INFO  [CSRBuilder] CSR built: 60000 nodes (2 buckets), 550000 edges (2 edge types), 4 columns (0 edge prop columns), 11.4 MB, 401 ms  Analytical view nodes=60000
+[To redirect Truffle log output to a file use one of the following options:
+* '--log.file=<path>' if the option is passed using a guest language launcher.
+* '-Dpolyglot.log.file=<path>' if the option is passed using the host Java launcher.
+* Configure logging using the polyglot embedding API.]
+[engine] WARNING: The polyglot engine uses a fallback runtime that does not support runtime compilation to native code.
+Execution without runtime compilation will negatively impact the guest application performance.
+The following cause was found: JVMCI is not enabled for this JVM. Enable JVMCI using -XX:+EnableJVMCI.
+For more information see: https://www.graalvm.org/latest/reference-manual/embed-languages/#runtime-optimization-support.
+To disable this warning use the '--engine.WarnInterpreterOnly=false' option or the '-Dpolyglot.engine.WarnInterpreterOnly=false' system property.
+  B1 time: 0.427223s (result=1221)
+  B2 time: 0.215751s (result=7)
+  B3 time: 0.011848s (result=10)
+  B4 time: 0.834416s (result=44780)
+  B5 time: 0.294916s (result=12)

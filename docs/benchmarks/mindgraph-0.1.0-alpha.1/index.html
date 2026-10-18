@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>MindGraphDB vs Neo4j</title>
+  <style>
+    :root {
+      --ink-950: #07111f;
+      --ink-900: #0b1728;
+      --ink-850: #102036;
+      --ink-800: #162940;
+      --ink-700: #28405b;
+      --ink-400: #8ea5bd;
+      --ink-200: #cbd8e6;
+      --paper: #edf5fb;
+      --signal: #21d7c5;
+      --signal-strong: #05ae9f;
+      --amber: #f6b94a;
+      --danger: #f06a6a;
+      --radius: 12px;
+      --shadow: 0 24px 64px rgba(1, 9, 18, .32);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      min-height: 100dvh;
+      color: var(--paper);
+      background:
+        radial-gradient(circle at 88% -10%, rgba(33, 215, 197, .13), transparent 34rem),
+        radial-gradient(circle at -8% 30%, rgba(246, 185, 74, .08), transparent 30rem),
+        var(--ink-950);
+      font-family: "Avenir Next", Avenir, "Segoe UI", sans-serif;
+      line-height: 1.5;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: .16;
+      background-image: linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: linear-gradient(to bottom, black, transparent 72%);
+    }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    button:focus-visible, a:focus-visible { outline: 3px solid var(--amber); outline-offset: 3px; }
+    .shell { width: min(1280px, calc(100% - 48px)); margin: 0 auto; padding: 48px 0 96px; position: relative; }
+    .eyebrow, .mono { font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace; }
+    .eyebrow { color: var(--signal); font-size: 12px; letter-spacing: .16em; text-transform: uppercase; font-weight: 700; }
+    .hero { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(280px, .7fr); gap: 48px; align-items: end; padding: 48px 0 40px; }
+    h1 { font-size: clamp(42px, 7vw, 88px); line-height: .98; letter-spacing: -.055em; margin: 16px 0 24px; max-width: 900px; }
+    .lead { color: var(--ink-200); font-size: clamp(17px, 2vw, 21px); max-width: 760px; margin: 0; }
+    .release-card { background: linear-gradient(145deg, rgba(22, 41, 64, .92), rgba(11, 23, 40, .8)); border: 1px solid rgba(142, 165, 189, .2); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); }
+    .release-card dl { margin: 20px 0 0; display: grid; gap: 12px; }
+    .release-card div { display: grid; grid-template-columns: 96px 1fr; gap: 16px; }
+    dt { color: var(--ink-400); font-size: 12px; text-transform: uppercase; letter-spacing: .08em; }
+    dd { margin: 0; overflow-wrap: anywhere; }
+    .status { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; }
+    .status::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--signal); box-shadow: 0 0 18px var(--signal); }
+    .status.partial::before { background: var(--amber); box-shadow: 0 0 18px var(--amber); }
+    .status.failed::before { background: var(--danger); box-shadow: 0 0 18px var(--danger); }
+    .kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin: 8px 0 48px; }
+    .kpi { background: rgba(16, 32, 54, .68); border-top: 2px solid var(--signal); padding: 24px; min-height: 152px; }
+    .kpi:nth-child(3), .kpi:nth-child(4) { border-top-color: var(--amber); }
+    .kpi strong { display: block; font-size: clamp(28px, 4vw, 48px); line-height: 1; letter-spacing: -.04em; margin: 12px 0; }
+    .kpi span { color: var(--ink-400); font-size: 14px; }
+    [hidden] { display: none !important; }
+    .executive { margin: 8px 0 40px; padding: clamp(22px, 3vw, 32px); border: 1px solid rgba(33, 215, 197, .22); border-radius: var(--radius); background: linear-gradient(135deg, rgba(33, 215, 197, .10), rgba(16, 32, 54, .72) 62%); box-shadow: var(--shadow); }
+    .executive h2 { max-width: 820px; margin-top: 10px; }
+    .executive-intro { color: var(--ink-200); max-width: 900px; font-size: 16px; margin: 0 0 20px; }
+    .insight-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+    .insight { min-height: 112px; padding: 20px; border: 1px solid rgba(142, 165, 189, .18); border-radius: 10px; background: rgba(7, 17, 31, .48); }
+    .insight strong { display: block; font-size: 24px; line-height: 1.1; margin-bottom: 8px; }
+    .insight p { color: var(--ink-200); margin: 0; font-size: 14px; }
+    .reading-guide { display: flex; gap: 12px; align-items: flex-start; margin-top: 16px; padding: 12px 16px; color: var(--ink-200); background: rgba(7, 17, 31, .46); border-radius: 10px; font-size: 14px; }
+    .reading-guide strong { color: var(--paper); white-space: nowrap; }
+    .tabs { display: flex; gap: 8px; overflow-x: auto; padding: 8px 0 24px; scrollbar-width: thin; }
+    .tab { min-height: 44px; padding: 0 18px; border-radius: 999px; border: 1px solid var(--ink-700); background: transparent; color: var(--ink-200); font: inherit; font-weight: 650; cursor: pointer; white-space: nowrap; transition: background 160ms ease, color 160ms ease, border-color 160ms ease; }
+    .tab:hover { border-color: var(--signal); color: var(--paper); }
+    .tab:active { background: var(--ink-800); }
+    .tab[aria-selected="true"] { background: var(--signal); border-color: var(--signal); color: var(--ink-950); }
+    .suite { display: none; }
+    .suite.active { display: block; animation: reveal 220ms ease-out; }
+    @keyframes reveal { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .suite-head { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 24px; align-items: start; margin: 16px 0 24px; }
+    h2 { font-size: clamp(28px, 4vw, 44px); line-height: 1.1; letter-spacing: -.035em; margin: 0 0 12px; }
+    .suite-head p { color: var(--ink-400); max-width: 760px; margin: 0; }
+    .direction { display: inline-flex; margin-top: 14px; padding: 6px 10px; border-radius: 999px; color: var(--paper); background: var(--ink-800); font-size: 12px; font-weight: 700; }
+    .toggle { display: flex; background: var(--ink-900); border: 1px solid var(--ink-700); border-radius: 999px; padding: 4px; }
+    .toggle button { min-height: 40px; padding: 0 16px; border: 0; border-radius: 999px; background: transparent; color: var(--ink-400); cursor: pointer; font: inherit; font-size: 13px; font-weight: 700; }
+    .toggle button.active { color: var(--paper); background: var(--ink-700); }
+    .chart-card { background: rgba(11, 23, 40, .84); border: 1px solid rgba(142, 165, 189, .18); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); }
+    .legend { display: flex; flex-wrap: wrap; gap: 16px 24px; margin-bottom: 32px; }
+    .legend-item { display: inline-flex; align-items: center; gap: 8px; color: var(--ink-200); font-size: 13px; }
+    .legend-swatch { width: 22px; height: 8px; border-radius: 999px; background: var(--series-color); }
+    .legend-item.reference .legend-swatch { background: repeating-linear-gradient(90deg, var(--series-color) 0 5px, transparent 5px 8px); border: 1px solid var(--series-color); }
+    .metric-grid { display: grid; gap: 24px; }
+    .metric { display: grid; grid-template-columns: minmax(120px, 180px) minmax(0, 1fr); gap: 24px; align-items: center; }
+    .metric-name { font-weight: 700; }
+    .metric-id { color: var(--ink-400); font-size: 12px; display: block; margin-top: 4px; }
+    .metric-help { color: var(--ink-400); font-size: 12px; display: block; margin-top: 6px; font-weight: 400; line-height: 1.4; }
+    .bars { display: grid; gap: 8px; }
+    .bar-row { display: grid; grid-template-columns: minmax(0, 1fr) 96px; gap: 16px; align-items: center; min-height: 32px; }
+    .bar-track { height: 14px; background: rgba(142, 165, 189, .12); border-radius: 999px; overflow: hidden; }
+    .bar { height: 100%; width: max(3px, calc(var(--bar-size) * 1%)); border-radius: inherit; background: var(--series-color); transition: width 280ms ease; }
+    .bar.reference { background: repeating-linear-gradient(90deg, var(--series-color) 0 6px, transparent 6px 10px); border: 1px solid var(--series-color); }
+    .bar-value { font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace; font-variant-numeric: tabular-nums; text-align: right; color: var(--paper); font-size: 13px; }
+    .validation { margin: 24px 0 0; padding: 16px 20px; border-left: 3px solid var(--signal); background: rgba(33, 215, 197, .07); color: var(--ink-200); }
+    .validation.partial { border-left-color: var(--amber); background: rgba(246, 185, 74, .07); }
+    .takeaway { margin: 0 0 20px; padding: 18px 20px; border-radius: var(--radius); background: rgba(246, 185, 74, .08); border: 1px solid rgba(246, 185, 74, .2); color: var(--ink-200); }
+    .takeaway strong { color: var(--amber); display: block; margin-bottom: 4px; }
+    .query-catalog { margin: 0 0 20px; }
+    .query-list { display: grid; gap: 12px; }
+    .query-item { padding: 16px; border: 1px solid rgba(142, 165, 189, .14); border-radius: 10px; background: rgba(7, 17, 31, .5); }
+    .query-item h4 { margin: 0; font-size: 15px; }
+    .query-item p { margin: 4px 0 12px; color: var(--ink-400); font-size: 13px; }
+    .query-item .query-params { margin: 10px 0 0; color: var(--signal); font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace; font-size: 11px; }
+    .query-item pre { margin: 0; padding: 14px; overflow-x: auto; white-space: pre-wrap; overflow-wrap: anywhere; border-radius: 8px; color: var(--ink-200); background: var(--ink-950); font: 12px/1.55 "IBM Plex Mono", "SFMono-Regular", Consolas, monospace; }
+    details.technical { margin-top: 20px; border: 1px solid rgba(142, 165, 189, .16); border-radius: var(--radius); background: rgba(11, 23, 40, .58); }
+    details.panel.technical { padding: 0; }
+    details.technical > summary { cursor: pointer; min-height: 52px; padding: 15px 20px; color: var(--paper); font-weight: 700; list-style-position: inside; }
+    details.technical[open] > summary { border-bottom: 1px solid rgba(142, 165, 189, .16); }
+    .technical-body { padding: 20px; }
+    .glossary { color: var(--ink-400); font-size: 12px; margin: 14px 4px 0; }
+    .table-wrap { overflow-x: auto; margin-top: 24px; border-radius: var(--radius); border: 1px solid rgba(142, 165, 189, .16); }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 720px; }
+    th { color: var(--ink-400); text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .08em; font-weight: 700; background: var(--ink-900); }
+    th, td { padding: 12px 16px; border-bottom: 1px solid rgba(142, 165, 189, .12); }
+    th:not(:first-child), td:not(:first-child) { text-align: right; font-variant-numeric: tabular-nums; }
+    .cell-detail { display: block; margin-top: 3px; color: var(--ink-400); font-size: 11px; white-space: nowrap; }
+    tbody tr:hover td { background: rgba(33, 215, 197, .04); }
+    .methodology { margin-top: 64px; display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(300px, .7fr); gap: 24px; }
+    .panel { background: rgba(16, 32, 54, .6); border-radius: var(--radius); padding: 24px; }
+    .panel h3 { margin: 0 0 16px; font-size: 20px; }
+    .panel ul { margin: 0; padding-left: 20px; color: var(--ink-200); }
+    .panel li + li { margin-top: 8px; }
+    .environment { display: grid; grid-template-columns: 120px 1fr; gap: 12px 16px; margin: 0; }
+    .artifact-list { display: grid; gap: 8px; margin-top: 16px; }
+    .artifact-list a { color: var(--signal); text-decoration: none; overflow-wrap: anywhere; }
+    .artifact-list a:hover { text-decoration: underline; }
+    footer { color: var(--ink-400); margin-top: 64px; padding-top: 24px; border-top: 1px solid rgba(142, 165, 189, .16); font-size: 13px; }
+    @media (max-width: 900px) {
+      .hero, .methodology { grid-template-columns: 1fr; }
+      .kpis { grid-template-columns: repeat(2, 1fr); }
+      .insight-grid { grid-template-columns: 1fr; }
+      .suite-head { grid-template-columns: 1fr; }
+      .toggle { width: max-content; }
+    }
+    @media (max-width: 620px) {
+      .shell { width: min(100% - 32px, 1280px); padding-top: 24px; }
+      .hero { gap: 32px; padding-top: 32px; }
+      .kpis { grid-template-columns: 1fr; }
+      .metric { grid-template-columns: 1fr; gap: 8px; }
+      .chart-card { padding: 16px; }
+      .bar-row { grid-template-columns: minmax(0, 1fr) 80px; }
+      .reading-guide { display: grid; }
+    }
+    @media print {
+      @page { size: A4 landscape; margin: 10mm; }
+      html, body { color-scheme: dark; background: var(--ink-950) !important; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+      body::before { display: none; }
+      .shell { width: 100%; padding: 0; }
+      .hero { grid-template-columns: minmax(0, 1fr) 250px; gap: 24px; align-items: center; padding: 0 0 14px; }
+      .hero h1 { font-size: 34px; margin: 6px 0 8px; }
+      .lead { font-size: 14px; }
+      .release-card { padding: 14px 16px; box-shadow: none; }
+      .release-card dl { margin-top: 10px; gap: 6px; }
+      .release-card div { grid-template-columns: 64px 1fr; gap: 8px; }
+      .executive, .tabs, .methodology, footer, .toggle, .query-catalog, .suite > details.technical { display: none !important; }
+      #suite-panels { display: block; }
+      .suite, .suite.active { display: flex !important; flex-direction: column; animation: none; break-after: page; page-break-after: always; }
+      .suite:last-child { break-after: auto; page-break-after: auto; }
+      .suite-head { order: 1; display: block; margin: 0 0 10px; }
+      .suite-head h2 { font-size: 25px; margin-bottom: 4px; }
+      .suite-head p { font-size: 12px; }
+      .direction { margin-top: 6px; padding: 3px 8px; font-size: 10px; }
+      .chart-card { order: 2; padding: 15px 18px; box-shadow: none; break-inside: avoid; page-break-inside: avoid; }
+      .legend { gap: 10px 20px; margin-bottom: 12px; }
+      .legend-item { font-size: 11px; }
+      .metric-grid { gap: 5px; }
+      .metric { grid-template-columns: 170px minmax(0, 1fr); gap: 14px; break-inside: avoid; }
+      .metric-name { font-size: 11px; }
+      .metric-id { display: inline; margin-left: 6px; font-size: 9px; }
+      .bars { gap: 3px; }
+      .bar-row { grid-template-columns: minmax(0, 1fr) 70px; gap: 10px; min-height: 16px; }
+      .bar-track { height: 9px; }
+      .bar-value { font-size: 10px; }
+      .validation { margin-top: 12px; padding: 8px 12px; font-size: 10px; }
+      .takeaway { order: 3; margin: 10px 0 0; padding: 10px 14px; font-size: 12px; break-inside: avoid; page-break-inside: avoid; }
+      .takeaway strong { display: inline; margin-right: 6px; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation: none !important; transition: none !important; } }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="hero">
+      <div>
+        <div class="eyebrow">Benchmark performa</div>
+        <h1 id="page-title"></h1>
+        <p class="lead" id="page-subtitle"></p>
+      </div>
+      <aside class="release-card" aria-label="Informasi benchmark">
+        <div class="status" id="status-label"></div>
+        <dl id="release-meta"></dl>
+      </aside>
+    </header>
+
+    <section class="executive" aria-labelledby="summary-title">
+      <div class="eyebrow">Ringkasan</div>
+      <h2 id="summary-title">Hasil utama</h2>
+      <p class="executive-intro" id="summary-intro"></p>
+      <div class="insight-grid" id="insights"></div>
+      <div class="reading-guide"><strong>Cara membaca:</strong><span id="reading-guide"></span></div>
+    </section>
+
+    <nav class="tabs" id="tabs" aria-label="Benchmark suites" role="tablist"></nav>
+    <div id="suite-panels"></div>
+
+    <section class="methodology" id="methodology" aria-label="Detail teknis benchmark">
+      <details class="panel technical">
+        <summary>Metode pengujian</summary>
+        <div class="technical-body">
+          <ul id="method-list"></ul>
+        </div>
+      </details>
+      <details class="panel technical">
+        <summary>Spesifikasi &amp; bukti</summary>
+        <div class="technical-body">
+          <dl class="environment" id="environment"></dl>
+          <div class="artifact-list" id="artifacts"></div>
+        </div>
+      </details>
+    </section>
+    <footer id="footer"></footer>
+  </main>
+  <script id="benchmark-data" type="application/json">{"schemaVersion":1,"title":"MindGraphDB vs Neo4j","subtitle":"MindGraphDB vs Neo4j Community + GDS pada server dan dataset yang sama.","presentation":{"suiteIds":["graphalytics","lsqb","banking"],"seriesIds":["mindgraph","neo4j"]},"audienceSummary":{"intro":"Benchmark ini mengukur kecocokan setiap pola workload, bukan memilih pemenang dari jumlah query.","highlights":[{"title":"6 algoritma tervalidasi","detail":"Ranking, connectivity, traversal, clustering, shortest path, dan community."},{"title":"14 pola query tervalidasi","detail":"9 query graph umum dan 5 query perbankan sintetis."},{"title":"20/20 valid","detail":"Semua hasil perhitungan benar."}],"readingGuide":"Angka waktu yang lebih kecil berarti lebih cepat."},"generatedAt":"2026-10-06T09:01:44Z","status":"verified","release":{"version":"0.1.0-alpha.1","commit":"c7ffbdf3e1d154359c6b043b6f8bfdd325e50f55","harnessCommit":"02e1d824a2ff1bfc1574bbdda7cb9b3c2344bfff"},"environment":{"cpu":"Intel(R) Xeon(R) 6986P-C","cpuCount":8,"memoryGiB":31,"java":"openjdk version 21.0.12.1 2026-08-18","os":"Ubuntu 24.04 LTS","jvmHeapGiB":12,"neo4jImage":"neo4j@sha256:91fb0bf237c41b7b3dcbe84703aa0b82e0d7d067b16e1c8ab21f03fc679edf4e","neo4jVersion":"2026.09.0","neo4jGdsVersion":"2026.09.0","neo4jGdsConcurrency":4},"methodology":{"summary":["MindGraphDB dan Neo4j dijalankan pada server yang sama.","Keduanya memakai dataset dan skenario query yang sama.","Semua hasil diperiksa sebelum waktu eksekusi dibandingkan.","Algoritma diulang lima kali. Query diulang lima kali pada MindGraphDB dan tiga kali pada Neo4j.","Waktu memuat data dan membuat proyeksi Neo4j GDS tidak dimasukkan ke waktu eksekusi algoritma atau query.","The synthetic banking comparison uses 50,000 accounts, 10,000 devices, 500,000 transfers, five exact Cypher queries, one warm-up, and five measured runs."],"disclosures":["MindGraphDB berjalan langsung di JVM; Neo4j berjalan sebagai server Docker melalui Bolt dengan GDS Community empat worker.","Query Q9 Neo4j tetap ditampilkan meskipun memerlukan lebih dari 300 detik karena prosesnya selesai dan hasilnya valid.","Hasil ini hanya berlaku untuk dataset dan konfigurasi yang diuji; bukan acuan sizing production.","The banking graph is deterministic and synthetic; it demonstrates query behavior, not a bank's production distribution, concurrency, or capacity requirement."]},"suites":[{"id":"graphalytics","title":"Algoritma graph","description":"6 algoritma pada 633 ribu node dan 34 juta hubungan.","plainDescription":"6 algoritma pada 633 ribu node dan 34 juta hubungan.","takeaway":"MindGraphDB unggul pada PageRank, penelusuran bertingkat, dan kepadatan koneksi lokal. Connectivity, shortest path, dan community detection menjadi area optimasi.","unit":"seconds","lowerIsBetter":true,"metrics":[{"id":"PR","label":"Peringkat pengaruh","explanation":"Menilai node mana yang paling berpengaruh berdasarkan jaringan koneksinya."},{"id":"WCC","label":"Kelompok yang saling terhubung","explanation":"Mencari kelompok node yang masih memiliki jalur penghubung satu sama lain."},{"id":"BFS","label":"Penelusuran bertingkat","explanation":"Menelusuri koneksi dari titik awal, lapis demi lapis."},{"id":"LCC","label":"Kepadatan koneksi lokal","explanation":"Mengukur seberapa rapat koneksi di sekitar setiap node."},{"id":"SSSP","label":"Rute terpendek dari satu titik","explanation":"Mencari jalur dengan biaya terendah dari satu node ke node lainnya."},{"id":"CDLP","label":"Deteksi komunitas","explanation":"Mengelompokkan node yang memiliki pola koneksi serupa."}],"series":[{"id":"mindgraph","label":"MindGraphDB","kind":"measured","values":{"PR":{"median":0.472,"min":0.458,"max":0.523,"mean":0.4806,"standardDeviation":0.02255304857441672,"coefficientOfVariationPercent":4.69268592892566,"runs":[0.482,0.458,0.523,0.472,0.468]},"WCC":{"median":0.267,"min":0.258,"max":0.34,"mean":0.2806,"standardDeviation":0.03021655175561898,"coefficientOfVariationPercent":10.76855016237312,"runs":[0.263,0.267,0.258,0.34,0.275]},"BFS":{"median":0.309,"min":0.226,"max":0.329,"mean":0.2874,"standardDeviation":0.041907517225433434,"coefficientOfVariationPercent":14.581599591312955,"runs":[0.329,0.324,0.309,0.226,0.249]},"LCC":{"median":6.285,"min":6.132,"max":6.356,"mean":6.254,"standardDeviation":0.0968648543074318,"coefficientOfVariationPercent":1.5488464072182893,"runs":[6.132,6.147,6.35,6.356,6.285]},"SSSP":{"median":2.188,"min":2.102,"max":2.195,"mean":2.1698,"standardDeviation":0.034706771673551,"coefficientOfVariationPercent":1.5995378225435983,"runs":[2.102,2.173,2.195,2.188,2.191]},"CDLP":{"median":3.883,"min":3.834,"max":3.986,"mean":3.9066,"standardDeviation":0.06053627011965646,"coefficientOfVariationPercent":1.5495896718286095,"runs":[3.97,3.986,3.834,3.883,3.86]}}},{"id":"neo4j","label":"Neo4j Community + GDS","kind":"competitor","values":{"PR":{"median":4.253,"min":4.247,"max":4.264,"mean":4.2543999999999995,"standardDeviation":0.006019966777317063,"coefficientOfVariationPercent":0.14149978322012655,"runs":[4.264,4.253,4.247,4.25,4.258]},"WCC":{"median":0.125,"min":0.121,"max":0.181,"mean":0.1356,"standardDeviation":0.022764885240211512,"coefficientOfVariationPercent":16.788263451483417,"runs":[0.181,0.126,0.125,0.125,0.121]},"BFS":{"median":0.847,"min":0.843,"max":0.86,"mean":0.8486,"standardDeviation":0.006280127387243038,"coefficientOfVariationPercent":0.7400574342732781,"runs":[0.86,0.85,0.847,0.843,0.843]},"LCC":{"median":28.472,"min":28.236,"max":28.585,"mean":28.412200000000002,"standardDeviation":0.12912846316749857,"coefficientOfVariationPercent":0.454482451790071,"runs":[28.472,28.585,28.236,28.477,28.291]},"SSSP":{"median":0.967,"min":0.95,"max":1.004,"mean":0.9730000000000001,"standardDeviation":0.017765134392961977,"coefficientOfVariationPercent":1.8258103178789287,"runs":[0.977,1.004,0.967,0.95,0.967]},"CDLP":{"median":2.402,"min":2.399,"max":2.968,"mean":2.571,"standardDeviation":0.2272531627942722,"coefficientOfVariationPercent":8.839096180251738,"runs":[2.399,2.4,2.402,2.686,2.968]}}}],"validation":{"passed":6,"total":6,"plainLabel":"6 dari 6 hasil algoritma benar.","plainNote":"Hasil sesuai pada seluruh pengulangan.","notes":[]}},{"id":"lsqb","title":"Query graph","description":"9 query pada 3,95 juta node dan 17,88 juta hubungan.","plainDescription":"9 query pada 3,95 juta node dan 17,88 juta hubungan.","takeaway":"MindGraphDB unggul pada traversal berantai, pertemanan, tag, dan multi-hop. Optional match pada like/reply menjadi area optimasi.","unit":"seconds","lowerIsBetter":true,"metrics":[{"id":"Q1","label":"Pola query 1","purpose":"Rantai lokasi, forum, post, komentar, dan tag.","query":"MATCH (co:Country)\u003c-[:IS_PART_OF]-(ci:City)\u003c-[:IS_LOCATED_IN]-(p:Person)\u003c-[:HAS_MEMBER]-(f:Forum)-[:CONTAINER_OF]-\u003e(po:Post)\u003c-[:REPLY_OF]-(cm:Comment)-[:HAS_TAG]-\u003e(t:Tag)-[:HAS_TYPE]-\u003e(tc:TagClass) RETURN count(*) AS count"},{"id":"Q2","label":"Pola query 2","purpose":"Teman yang membalas post milik temannya.","query":"MATCH (p1:Person)-[:KNOWS]-(p2:Person), (p1)\u003c-[:HAS_CREATOR]-(c:Comment)-[:REPLY_OF]-\u003e(po:Post)-[:HAS_CREATOR]-\u003e(p2) RETURN count(*) AS count"},{"id":"Q3","label":"Pola query 3","purpose":"Segitiga pertemanan dalam negara yang sama.","query":"MATCH (co:Country) MATCH (p1:Person)-[:IS_LOCATED_IN]-\u003e(c1:City)-[:IS_PART_OF]-\u003e(co) MATCH (p2:Person)-[:IS_LOCATED_IN]-\u003e(c2:City)-[:IS_PART_OF]-\u003e(co) MATCH (p3:Person)-[:IS_LOCATED_IN]-\u003e(c3:City)-[:IS_PART_OF]-\u003e(co) MATCH (p1)-[:KNOWS]-(p2)-[:KNOWS]-(p3)-[:KNOWS]-(p1) RETURN count(*) AS count"},{"id":"Q4","label":"Pola query 4","purpose":"Pesan bertag yang mendapat like dan balasan.","query":"MATCH (tg:Tag)\u003c-[:HAS_TAG]-(m:Message)-[:HAS_CREATOR]-\u003e(cr:Person), (m)\u003c-[:LIKES]-(lk:Person), (m)\u003c-[:REPLY_OF]-(rp:Comment) RETURN count(*) AS count"},{"id":"Q5","label":"Pola query 5","purpose":"Tag berbeda antara pesan dan komentarnya.","query":"MATCH (t1:Tag)\u003c-[:HAS_TAG]-(m:Message)\u003c-[:REPLY_OF]-(c:Comment)-[:HAS_TAG]-\u003e(t2:Tag) WHERE t1 \u003c\u003e t2 RETURN count(*) AS count"},{"id":"Q6","label":"Pola query 6","purpose":"Minat pada jaringan pertemanan dua tingkat.","query":"MATCH (p1:Person)-[:KNOWS]-(p2:Person)-[:KNOWS]-(p3:Person)-[:HAS_INTEREST]-\u003e(t:Tag) WHERE p1 \u003c\u003e p3 RETURN count(*) AS count"},{"id":"Q7","label":"Pola query 7","purpose":"Pesan bertag beserta like dan balasan opsional.","query":"MATCH (tg:Tag)\u003c-[:HAS_TAG]-(m:Message)-[:HAS_CREATOR]-\u003e(cr:Person) OPTIONAL MATCH (m)\u003c-[:LIKES]-(lk:Person) OPTIONAL MATCH (m)\u003c-[:REPLY_OF]-(rp:Comment) RETURN count(*) AS count"},{"id":"Q8","label":"Pola query 8","purpose":"Tag baru pada komentar yang tidak ada di pesan.","query":"MATCH (t1:Tag)\u003c-[:HAS_TAG]-(m:Message)\u003c-[:REPLY_OF]-(c:Comment)-[:HAS_TAG]-\u003e(t2:Tag) WHERE NOT (c)-[:HAS_TAG]-\u003e(t1) AND t1 \u003c\u003e t2 RETURN count(*) AS count"},{"id":"Q9","label":"Pola query 9","purpose":"Teman dari teman yang belum terhubung langsung.","query":"MATCH (p1:Person)-[:KNOWS]-(p2:Person)-[:KNOWS]-(p3:Person)-[:HAS_INTEREST]-\u003e(t:Tag) WHERE NOT (p1)-[:KNOWS]-(p3) AND p1 \u003c\u003e p3 RETURN count(*) AS count"}],"series":[{"id":"mindgraph","label":"MindGraphDB","kind":"measured","values":{"Q1":{"median":0.666,"min":0.64,"max":0.729,"mean":0.6724,"standardDeviation":0.030571882506643243,"coefficientOfVariationPercent":4.546680920083766,"runs":[0.666,0.653,0.729,0.64,0.674]},"Q2":{"median":0.436,"min":0.433,"max":0.446,"mean":0.43760000000000004,"standardDeviation":0.004923413450036473,"coefficientOfVariationPercent":1.1250944812697605,"runs":[0.433,0.436,0.446,0.433,0.44]},"Q3":{"median":0.257,"min":0.245,"max":0.322,"mean":0.267,"standardDeviation":0.028474550040343046,"coefficientOfVariationPercent":10.664625483274548,"runs":[0.245,0.257,0.322,0.265,0.246]},"Q4":{"median":7.948,"min":7.667,"max":8.313,"mean":7.955800000000001,"standardDeviation":0.21208809490398114,"coefficientOfVariationPercent":2.665829896477804,"runs":[7.667,7.848,8.003,8.313,7.948]},"Q5":{"median":0.453,"min":0.422,"max":0.463,"mean":0.44580000000000003,"standardDeviation":0.015992498241363055,"coefficientOfVariationPercent":3.587370623903781,"runs":[0.432,0.453,0.459,0.422,0.463]},"Q6":{"median":0.465,"min":0.451,"max":0.472,"mean":0.46299999999999997,"standardDeviation":0.0073484692283495275,"coefficientOfVariationPercent":1.5871423819329433,"runs":[0.468,0.465,0.459,0.451,0.472]},"Q7":{"median":19.492,"min":18.942,"max":19.9,"mean":19.4184,"standardDeviation":0.3154917431566152,"coefficientOfVariationPercent":1.624705141291843,"runs":[19.9,19.502,18.942,19.256,19.492]},"Q8":{"median":0.19,"min":0.187,"max":0.195,"mean":0.191,"standardDeviation":0.0034058772731852833,"coefficientOfVariationPercent":1.7831818184216142,"runs":[0.187,0.188,0.195,0.195,0.19]},"Q9":{"median":2.275,"min":2.261,"max":2.405,"mean":2.3047999999999997,"standardDeviation":0.05366712215127612,"coefficientOfVariationPercent":2.3284936719574856,"runs":[2.405,2.267,2.275,2.316,2.261]}}},{"id":"neo4j","label":"Neo4j Community + GDS","kind":"competitor","values":{"Q1":{"median":9.426,"min":9.196,"max":10.025,"mean":9.549,"standardDeviation":0.3494347817070688,"coefficientOfVariationPercent":3.6593861316061247,"runs":[10.025,9.426,9.196]},"Q2":{"median":2.714,"min":2.711,"max":2.856,"mean":2.760333333333333,"standardDeviation":0.06765763486522089,"coefficientOfVariationPercent":2.451067559421117,"runs":[2.856,2.711,2.714]},"Q3":{"median":18.448,"min":18.396,"max":18.686,"mean":18.51,"standardDeviation":0.126248432333501,"coefficientOfVariationPercent":0.682055280029719,"runs":[18.686,18.448,18.396]},"Q4":{"median":10.053,"min":9.986,"max":10.057,"mean":10.032000000000002,"standardDeviation":0.032567877834864596,"coefficientOfVariationPercent":0.3246399305708193,"runs":[10.057,10.053,9.986]},"Q5":{"median":9.756,"min":9.705,"max":9.774,"mean":9.745,"standardDeviation":0.029223278392404625,"coefficientOfVariationPercent":0.29987971669989355,"runs":[9.774,9.756,9.705]},"Q6":{"median":50.086,"min":49.959,"max":51.264,"mean":50.43633333333333,"standardDeviation":0.5875408260046472,"coefficientOfVariationPercent":1.1649158199538308,"runs":[51.264,49.959,50.086]},"Q7":{"median":13.833,"min":13.819,"max":13.971,"mean":13.874333333333334,"standardDeviation":0.06859219262342368,"coefficientOfVariationPercent":0.4943818991189271,"runs":[13.971,13.833,13.819]},"Q8":{"median":25.63,"min":25.624,"max":25.648,"mean":25.634,"standardDeviation":0.010198039027185956,"coefficientOfVariationPercent":0.039783252817297166,"runs":[25.63,25.648,25.624]},"Q9":{"median":474.131,"min":471.22,"max":480.357,"mean":475.23600000000005,"standardDeviation":3.811120657584421,"coefficientOfVariationPercent":0.8019427521451281,"runs":[474.131,471.22,480.357]}}}],"validation":{"passed":9,"total":9,"plainLabel":"9 dari 9 hasil query benar.","plainNote":"Jumlah hasil sesuai keluaran resmi LSQB SF1.","notes":[]}},{"id":"banking","title":"Query perbankan sintetis","description":"5 query pada 50 ribu rekening dan 500 ribu transaksi sintetis.","plainDescription":"5 query pada 50 ribu rekening dan 500 ribu transaksi sintetis.","takeaway":"MindGraphDB unggul pada traversal aliran dana dan shared-device. Agregasi global menjadi area optimasi.","unit":"seconds","lowerIsBetter":true,"metrics":[{"id":"B1","label":"Telusuri aliran dana","purpose":"Dana dari satu rekening mengalir ke mana saja sampai tiga tingkat?","query":"MATCH (source:Account {accountNo: $accountNo})-[:TRANSFERRED_TO*1..3]-\u003e(destination:Account) RETURN count(*) AS result","parameters":{"accountNo":"A000000"}},{"id":"B2","label":"Deteksi transaksi berputar","purpose":"Apakah dana kembali lagi ke rekening asal melalui beberapa rekening?","query":"MATCH (account:Account {accountNo: $accountNo})-[:TRANSFERRED_TO*2..5]-\u003e(destination:Account {accountNo: $accountNo}) RETURN count(*) AS result","parameters":{"accountNo":"A000000"}},{"id":"B3","label":"Rekening dengan perangkat yang sama","purpose":"Berapa pasangan rekening yang menggunakan device yang sama?","query":"MATCH (first:Account)-[:USES_DEVICE]-\u003e(device:Device {deviceId: $deviceId})\u003c-[:USES_DEVICE]-(second:Account) WHERE first.accountNo \u003c second.accountNo RETURN count(*) AS result","parameters":{"deviceId":"D00000"}},{"id":"B4","label":"Banyak transaksi kecil ke satu rekening","purpose":"Berapa rekening yang menerima transaksi kecil dari sedikitnya lima sumber?","query":"MATCH (source:Account)-[txn:TRANSFERRED_TO]-\u003e(target:Account) WHERE txn.timestamp \u003e= $startTime AND txn.timestamp \u003c $endTime AND txn.amount \u003c $threshold WITH target, count(DISTINCT source) AS sourceCount WHERE sourceCount \u003e= 5 RETURN count(*) AS result","parameters":{"startTime":0,"endTime":9999999999999,"threshold":5000000}},{"id":"B5","label":"Counterparty paling sentral","purpose":"Berapa jumlah counterparty unik tertinggi pada satu rekening?","query":"MATCH (source:Account)-[:TRANSFERRED_TO]-\u003e(target:Account) WITH target, count(DISTINCT source) AS uniqueCounterparties RETURN max(uniqueCounterparties) AS result","parameters":{}}],"series":[{"id":"mindgraph","label":"MindGraphDB","kind":"measured","values":{"B1":{"median":0.002306,"min":0.002187,"max":0.002337,"mean":0.0022881999999999998,"standardDeviation":5.2082242655246645e-05,"coefficientOfVariationPercent":2.276122832586603,"runs":[0.002309,0.002306,0.002302,0.002187,0.002337]},"B2":{"median":0.099447,"min":0.097296,"max":0.100779,"mean":0.09917499999999999,"standardDeviation":0.001178558950583295,"coefficientOfVariationPercent":1.188362944878543,"runs":[0.099796,0.099447,0.097296,0.100779,0.098557]},"B3":{"median":0.000648,"min":0.000629,"max":0.000791,"mean":0.0006746,"standardDeviation":6.0394039440991195e-05,"coefficientOfVariationPercent":8.95257032923083,"runs":[0.000791,0.000629,0.000631,0.000674,0.000648]},"B4":{"median":0.607055,"min":0.598367,"max":0.62848,"mean":0.6091382000000001,"standardDeviation":0.01024524399709447,"coefficientOfVariationPercent":1.6819243969750164,"runs":[0.603736,0.598367,0.607055,0.608053,0.62848]},"B5":{"median":0.213348,"min":0.209591,"max":0.224064,"mean":0.21605180000000002,"standardDeviation":0.005447752578816336,"coefficientOfVariationPercent":2.521502981607344,"runs":[0.213348,0.209591,0.224064,0.212476,0.22078]}}},{"id":"neo4j","label":"Neo4j Community + GDS","kind":"competitor","values":{"B1":{"median":0.005464,"min":0.005033,"max":0.007844,"mean":0.0058985999999999995,"standardDeviation":0.001009063050557298,"coefficientOfVariationPercent":17.106822814859427,"runs":[0.007844,0.005859,0.005464,0.005293,0.005033]},"B2":{"median":0.051666,"min":0.050122,"max":0.053689,"mean":0.05191900000000001,"standardDeviation":0.001194638020489889,"coefficientOfVariationPercent":2.3009650041215908,"runs":[0.053689,0.05148,0.050122,0.052638,0.051666]},"B3":{"median":0.004848,"min":0.003835,"max":0.004949,"mean":0.004626,"standardDeviation":0.0004085682317557253,"coefficientOfVariationPercent":8.83199809242813,"runs":[0.004949,0.004637,0.003835,0.004861,0.004848]},"B4":{"median":0.298545,"min":0.291468,"max":0.30852,"mean":0.29962279999999997,"standardDeviation":0.006491725976964836,"coefficientOfVariationPercent":2.1666328386774425,"runs":[0.30852,0.294141,0.291468,0.30544,0.298545]},"B5":{"median":0.179455,"min":0.176148,"max":0.212527,"mean":0.1852806,"standardDeviation":0.013684268728726424,"coefficientOfVariationPercent":7.3856997055959575,"runs":[0.179874,0.176148,0.178399,0.212527,0.179455]}}}],"validation":{"passed":5,"total":5,"plainLabel":"5 dari 5 hasil query identik.","plainNote":"MindGraphDB dan Neo4j mengembalikan nilai yang sama pada seluruh pengulangan.","notes":[]}}],"artifacts":[{"label":"Normalized result JSON","path":"result.json"},{"label":"Run metadata","path":"metadata.json"},{"label":"Raw evidence manifest","path":"evidence/manifest.json"},{"label":"Dataset checksums","path":"evidence/dataset-sha256.txt"},{"label":"Neo4j runtime fingerprint","path":"evidence/neo4j-runtime.txt"},{"label":"Neo4j graph import","path":"evidence/neo4j-graph-import.txt"},{"label":"Neo4j LSQB load and warm-up","path":"evidence/neo4j-lsqb-load-and-warmup.txt"},{"label":"Synthetic banking dataset manifest","path":"evidence/banking-dataset-manifest.json"},{"label":"MindGraphDB banking run","path":"evidence/banking-mindgraph-run-1.txt"},{"label":"Neo4j banking run","path":"evidence/banking-neo4j-run-1.txt"},{"label":"Neo4j banking import","path":"evidence/banking-neo4j-import.txt"},{"label":"Banking runtime fingerprint","path":"evidence/banking-runtime.txt"},{"label":"Synthetic banking dataset checksums","path":"evidence/banking-dataset-sha256.txt"}]}</script>
+  <script>
+    (() => {
+      const data = JSON.parse(document.getElementById('benchmark-data').textContent);
+      const colors = ['#21d7c5', '#f6b94a', '#7aa8ff', '#f06a6a', '#a78bfa'];
+      const escapeHtml = (value) => String(value).replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+      const numeric = value => value && typeof value === 'object' ? Number(value.median) : Number(value);
+      const format = (value, unit) => {
+        if (value === null || value === undefined) return 'N/A';
+        const number = numeric(value);
+        if (unit === 'seconds') return `${number < 0.01 ? number.toFixed(3) : number < 1 ? number.toFixed(2) : number.toFixed(2)} s`;
+        if (unit === 'milliseconds') return `${number.toFixed(number < 10 ? 2 : 1)} ms`;
+        if (unit === 'ratio') return `${number.toFixed(1)}×`;
+        if (unit === 'megabytes') return `${number.toFixed(1)} MB`;
+        return `${number.toLocaleString()} ${unit}`;
+      };
+      const formatCell = (value, unit) => {
+        if (value === null || value === undefined) return 'N/A';
+        const primary = escapeHtml(format(value, unit));
+        if (!value || typeof value !== 'object' || value.min === undefined || value.max === undefined) return primary;
+        const sample = Array.isArray(value.runs) ? `n=${value.runs.length} · ` : '';
+        const detail = `${sample}${format(value.min, unit)}–${format(value.max, unit)} · CV ${Number(value.coefficientOfVariationPercent || 0).toFixed(1)}%`;
+        return `${primary}<span class="cell-detail">${escapeHtml(detail)}</span>`;
+      };
+      const validationTotals = data.suites.reduce((acc, suite) => {
+        if (suite.validation.countsTowardTotal !== false) { acc.passed += suite.validation.passed || 0; acc.total += suite.validation.total || 0; }
+        return acc;
+      }, {passed: 0, total: 0});
+      document.getElementById('page-title').textContent = data.title;
+      document.getElementById('page-subtitle').textContent = data.subtitle || 'Hasil pengujian, pembanding, dan bukti mentah dalam satu laporan yang dapat diaudit.';
+      const status = document.getElementById('status-label');
+      status.textContent = ({verified: 'Terverifikasi', partial: 'Verifikasi sebagian', failed: 'Verifikasi gagal'})[data.status] || data.status;
+      status.classList.add(data.status);
+      const measuredDate = new Date(data.generatedAt).toLocaleDateString('id-ID', {day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC'});
+      const releaseRows = [
+        ['Diuji', measuredDate], ['Server', `${data.environment.cpuCount} CPU · ${data.environment.memoryGiB} GiB RAM`]
+      ];
+      document.getElementById('release-meta').innerHTML = releaseRows.map(([key, value]) => `<div><dt>${escapeHtml(key)}</dt><dd class="mono">${escapeHtml(value)}</dd></div>`).join('');
+      const audience = data.audienceSummary || {};
+      const summaryIntro = document.getElementById('summary-intro');
+      summaryIntro.textContent = audience.intro || '';
+      summaryIntro.hidden = !summaryIntro.textContent;
+      const highlights = audience.highlights || [
+        {title: 'Hasilnya benar', detail: `${validationTotals.passed} dari ${validationTotals.total} pemeriksaan memberikan keluaran yang diharapkan.`},
+        {title: 'Diuji dengan cara yang setara', detail: 'Semua hasil yang berlabel diukur dijalankan pada mesin yang sama.'},
+        {title: 'Tidak ada pemenang mutlak', detail: 'Hasil bergantung pada jenis algoritma dan bentuk query yang dijalankan.'}
+      ];
+      document.getElementById('insights').innerHTML = highlights.map(item => `<article class="insight"><strong>${escapeHtml(item.title)}</strong><p>${escapeHtml(item.detail)}</p></article>`).join('');
+      document.getElementById('reading-guide').textContent = audience.readingGuide || 'Untuk waktu dalam detik, angka lebih kecil berarti lebih cepat. Untuk nilai percepatan (×), angka lebih besar berarti jalur analitik memberi peningkatan lebih tinggi.';
+      const tabs = document.getElementById('tabs');
+      const panels = document.getElementById('suite-panels');
+      const activate = id => {
+        document.querySelectorAll('.tab').forEach(tab => tab.setAttribute('aria-selected', tab.dataset.target === id ? 'true' : 'false'));
+        document.querySelectorAll('.suite').forEach(panel => panel.classList.toggle('active', panel.id === `suite-${id}`));
+      };
+
+      data.suites.forEach((suite, suiteIndex) => {
+        const tab = document.createElement('button');
+        tab.className = 'tab'; tab.type = 'button'; tab.role = 'tab'; tab.dataset.target = suite.id;
+        tab.setAttribute('aria-controls', `suite-${suite.id}`); tab.setAttribute('aria-selected', suiteIndex === 0 ? 'true' : 'false');
+        tab.textContent = suite.title; tab.addEventListener('click', () => activate(suite.id)); tabs.appendChild(tab);
+
+        const panel = document.createElement('section');
+        panel.className = `suite${suiteIndex === 0 ? ' active' : ''}`; panel.id = `suite-${suite.id}`; panel.role = 'tabpanel';
+        const toggle = suite.unit === 'ratio' ? '' : `<div class="toggle" aria-label="Skala grafik"><button type="button" class="active" data-scale="linear">Normal</button><button type="button" data-scale="log">Log</button></div>`;
+        const direction = suite.lowerIsBetter ? 'Lebih kecil = lebih cepat' : 'Lebih besar = percepatan lebih tinggi';
+        const takeaway = suite.takeaway ? `<div class="takeaway"><strong>Hasil</strong>${escapeHtml(suite.takeaway)}</div>` : '';
+        const queryMetrics = suite.metrics.filter(metric => metric.query);
+        const queryCatalog = queryMetrics.length ? `<details class="technical query-catalog"><summary>Lihat ${queryMetrics.length} query Cypher</summary><div class="technical-body query-list">${queryMetrics.map(metric => {
+          const parameters = metric.parameters && Object.keys(metric.parameters).length ? `<p class="query-params">Parameter: ${Object.entries(metric.parameters).map(([key, value]) => `${escapeHtml(key)}=${escapeHtml(value)}`).join(' · ')}</p>` : '';
+          return `<article class="query-item"><h4>${escapeHtml(metric.id)} · ${escapeHtml(metric.purpose || metric.label)}</h4><pre><code>${escapeHtml(metric.query)}</code></pre>${parameters}</article>`;
+        }).join('')}</div></details>` : '';
+        panel.innerHTML = `<div class="suite-head"><div><h2>${escapeHtml(suite.title)}</h2><p>${escapeHtml(suite.plainDescription || suite.description)}</p><span class="direction">${direction}</span></div>${toggle}</div>${takeaway}${queryCatalog}<div class="chart-card"><div class="legend"></div><div class="metric-grid"></div><div class="validation${suite.validation.passed === suite.validation.total ? '' : ' partial'}"></div></div><details class="technical"><summary>Detail angka</summary><div class="technical-body"><div class="table-wrap"></div><p class="glossary">Median = nilai tengah. n = jumlah pengulangan. Rentang = tercepat–terlambat. CV = variasi hasil.</p></div></details>`;
+        panels.appendChild(panel);
+        const legend = panel.querySelector('.legend');
+        suite.series.forEach((series, index) => {
+          const item = document.createElement('span'); item.className = `legend-item ${series.kind}`; item.style.setProperty('--series-color', colors[index % colors.length]);
+          item.innerHTML = `<span class="legend-swatch"></span><span>${escapeHtml(series.label)}</span>`; legend.appendChild(item);
+        });
+        const grid = panel.querySelector('.metric-grid');
+        const renderBars = scale => {
+          grid.innerHTML = '';
+          suite.metrics.forEach(metric => {
+            const values = suite.series.map(series => series.values[metric.id] == null ? null : numeric(series.values[metric.id]));
+            const positive = values.filter(value => value !== null && value > 0);
+            const max = positive.length ? Math.max(...positive) : 1;
+            const min = positive.length ? Math.min(...positive) : 1;
+            const size = value => {
+              if (value === null) return 0;
+              if (scale === 'log' && value > 0 && max > min) return 8 + 92 * (Math.log10(value) - Math.log10(min)) / (Math.log10(max) - Math.log10(min));
+              return max === 0 ? 0 : 100 * value / max;
+            };
+            const rows = suite.series.map((series, index) => {
+              const raw = series.values[metric.id]; const value = raw == null ? null : numeric(raw);
+              const range = raw && typeof raw === 'object' && raw.min !== undefined && raw.max !== undefined ? ` title="range ${escapeHtml(format(raw.min, suite.unit))}–${escapeHtml(format(raw.max, suite.unit))}"` : '';
+              return `<div class="bar-row"${range}><div class="bar-track"><div class="bar ${series.kind}" style="--bar-size:${size(value)};--series-color:${colors[index % colors.length]}"></div></div><div class="bar-value">${value === null ? 'N/A' : escapeHtml(format(raw, suite.unit))}</div></div>`;
+            }).join('');
+            const block = document.createElement('div'); block.className = 'metric';
+            block.innerHTML = `<div class="metric-name">${escapeHtml(metric.label)}<span class="metric-id mono">${escapeHtml(metric.id)}</span></div><div class="bars">${rows}</div>`; grid.appendChild(block);
+          });
+        };
+        renderBars('linear');
+        panel.querySelectorAll('[data-scale]').forEach(button => button.addEventListener('click', () => { panel.querySelectorAll('[data-scale]').forEach(item => item.classList.toggle('active', item === button)); renderBars(button.dataset.scale); }));
+        const validation = panel.querySelector('.validation');
+        const validationLabel = suite.validation.plainLabel || `${suite.validation.passed} dari ${suite.validation.total} hasil berhasil diverifikasi.`;
+        validation.innerHTML = `<strong>${escapeHtml(validationLabel)}</strong> ${escapeHtml(suite.validation.plainNote || '')}`;
+        const header = suite.series.map(series => `<th scope="col">${escapeHtml(series.label)}</th>`).join('');
+        const rows = suite.metrics.map(metric => `<tr><td>${escapeHtml(metric.label)}</td>${suite.series.map(series => `<td>${formatCell(series.values[metric.id], suite.unit)}</td>`).join('')}</tr>`).join('');
+        panel.querySelector('.table-wrap').innerHTML = `<table><thead><tr><th scope="col">Skenario</th>${header}</tr></thead><tbody>${rows}</tbody></table>`;
+      });
+
+      const methodology = [...(data.methodology.summary || []), ...(data.methodology.disclosures || [])];
+      document.getElementById('method-list').innerHTML = methodology.map(item => `<li>${escapeHtml(item)}</li>`).join('');
+      const environmentLabels = {cpu: 'Prosesor', cpuCount: 'CPU logis', memoryGiB: 'RAM (GiB)', java: 'Java', os: 'Sistem operasi', jvmHeapGiB: 'Heap JVM (GiB)', neo4jImage: 'Image Neo4j', neo4jVersion: 'Versi Neo4j', neo4jGdsVersion: 'Versi Neo4j GDS', neo4jGdsConcurrency: 'Worker Neo4j GDS'};
+      document.getElementById('environment').innerHTML = Object.entries(data.environment).map(([key, value]) => `<dt>${escapeHtml(environmentLabels[key] || key.replace(/([A-Z])/g, ' $1'))}</dt><dd class="mono">${escapeHtml(value)}</dd>`).join('');
+      document.getElementById('artifacts').innerHTML = `<h3>Bukti mentah</h3>` + data.artifacts.map(artifact => `<a href="${escapeHtml(artifact.path)}">${escapeHtml(artifact.label)}</a>`).join('');
+      document.getElementById('footer').textContent = `${validationTotals.passed}/${validationTotals.total} hasil terverifikasi · Bukti mentah tersedia di bagian spesifikasi.`;
+    })();
+  </script>
+</body>
+</html>

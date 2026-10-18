@@ -39,6 +39,9 @@ jobs:
       - name: Verify fork baseline
         run: ./scripts/mindgraph/verify-baseline.sh
 
+      - name: Test benchmark evidence tooling
+        run: python3 -m unittest discover -s benchmarks/industry-standard/tests -p 'test_*.py'
+
   engine:
     name: Engine build and unit tests
     runs-on: ubuntu-24.04

@@ -1,0 +1,9 @@
+Looking in indexes: https://mirrors.ivolces.com/pypi/simple/
+Collecting neo4j
+  Downloading https://mirrors.ivolces.com/pypi/packages/e6/cf/1c3795866cefaac6e648d4e98c373cafd97810f6e317c307371007ab4abb/neo4j-6.2.0-py3-none-any.whl (327 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 327.8/327.8 kB 30.1 MB/s eta 0:00:00
+Collecting pytz (from neo4j)
+  Downloading https://mirrors.ivolces.com/pypi/packages/ec/dd/96da98f892250475bdf2328112d7468abdd4acc7b902b6af23f4ed958ea0/pytz-2026.2-py2.py3-none-any.whl (510 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 510.1/510.1 kB 51.6 MB/s eta 0:00:00
+Installing collected packages: pytz, neo4j
+Successfully installed neo4j-6.2.0 pytz-2026.2
